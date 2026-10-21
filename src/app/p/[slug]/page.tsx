@@ -43,7 +43,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
   const reviews = reviewsFor(p); const sum = ratingSummary(reviews);
   const groups = optionsFor(p.slug, p.category);
   const kind = { photo: "Add 1 photo", text: "Add a name", "photo+text": "Add a photo and text", "multi-photo": `Add up to ${p.template.photoSlots} photos` }[p.personalisation];
-  const gallery = [{ src: p.image, label: "Product" }, { src: c.image, label: "In context" }];
+  const gallery = [{ src: p.image, label: "Product" }, ...(p.images ?? []).map((src, i) => ({ src, label: i === 0 ? "In use" : "Detail" })), ...(p.images ? [] : [{ src: c.image, label: "In context" }])];
 
   return (
     <div className="container-x">
