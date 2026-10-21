@@ -31,6 +31,7 @@ cat-bags hf_20261021_042031_f19254ee-1bfe-45a2-ae6a-bb538e2dc192
 diwali hf_20261021_042031_0c8b947e-bad0-47ee-b823-35f3d96e6e82
 wedding hf_20261021_042031_bdfc4612-f7cf-42a4-aa9c-5af7eeec4ec9
 birthday hf_20261021_042031_0f418d1d-3f33-4815-800f-4eeae3ef20de
+cat-diaries hf_20261021_060802_6acda4fe-43e5-42a4-8c98-ff4aa92f01f3
 LIST
 # One hero image per product (87), listed in scripts/product-images.txt
 while read -r name id; do fetch "$name" "$id" 1200; done < "$OLDPWD/scripts/product-images.txt"

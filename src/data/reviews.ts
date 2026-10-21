@@ -83,6 +83,15 @@ const BY_CAT: Record<string, T[]> = {
     { r: 3, t: "Good but pricey for school supplies", b: "Quality is good and the kids love the personalisation. Just a bit more than I'd usually spend on stationery." },
     { r: 5, t: "Return gifts sorted", b: "Ordered 20 personalised pencil boxes for the birthday party. Every parent asked where we got them." },
   ],
+  "diaries-planners": [
+    { r: 5, t: "Leather feels expensive", b: "Got the genuine leather with gold-foil initials for my father. The leather smells and feels like the real thing and the foil is crisp. He uses it every morning." },
+    { r: 5, t: "Corporate order, 120 diaries", b: "Logo embossed on every one, welcome page from our MD inside, delivered to three offices. The proof came in a day and the final matched it exactly." },
+    { r: 4, t: "Planner layout is practical", b: "Day per page with time slots is exactly what I needed. Paper takes fountain-pen ink without ghosting. Wish it had a monthly overview up front." },
+    { r: 5, t: "Five-year diary is a lovely idea", b: "Started it on our wedding date. One line a night, and next year I'll see what we wrote this year. The linen cover and spine name look elegant." },
+    { r: 5, t: "Gift set did the job", b: "Ordered the combo box for Diwali gifts to clients. Pen, diary and keychain all with their names, boxed and ribboned. Zero effort on my side." },
+    { r: 3, t: "Good diary, embossing slightly off-centre", b: "The diary itself is lovely. The name was a few millimetres off-centre on one of the two I ordered. Support offered a replacement which was fair." },
+    { r: 5, t: "Reordered for the whole team", b: "Bought one for myself, then ten for the team. Consistent quality across all of them. The pen loop and back pocket are handy." },
+  ],
   "home-decor": [
     { r: 5, t: "Acrylic print is stunning", b: "The colours are glossy and deep, and the floating mount makes it look like a gallery piece. Visitors always ask about it." },
     { r: 5, t: "Canvas texture is lovely", b: "Gallery-wrapped properly, no visible staples, edges are clean. The matte canvas hides phone-photo noise nicely." },

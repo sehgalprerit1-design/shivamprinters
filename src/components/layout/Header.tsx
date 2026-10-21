@@ -36,8 +36,8 @@ export function Header() {
         </div>
       </div>
       <nav className="hidden md:block border-t border-line relative">
-        <ul className="container-x flex items-center gap-6 h-11 text-sm font-medium">
-          {categories.slice(0, 8).map((c) => (
+        <ul className="container-x flex items-center gap-5 h-11 text-sm font-medium">
+          {categories.slice(0, 9).map((c) => (
             <li key={c.slug} className="nav-item static">
               <Link href={`/c/${c.slug}`} className="py-3 inline-block hover:text-brand">{c.name}</Link>
               <div className="mega">

@@ -80,7 +80,20 @@ const BORDER: OptionGroup = {
   choices: [{ id: "none", label: "No border" }, { id: "white", label: "White border" }],
 };
 
+const DIARY_COLOUR: OptionGroup = { key: "colour", label: "Cover colour", choices: [{ id: "black", label: "Black" }, { id: "brown", label: "Brown" }, { id: "tan", label: "Tan" }, { id: "navy", label: "Navy" }, { id: "green", label: "Forest green", delta: 0 }, { id: "burgundy", label: "Burgundy" }] };
+const EMBOSS: OptionGroup = { key: "emboss", label: "Name finish", choices: [{ id: "blind", label: "Blind deboss", hint: "Pressed into the leather, no colour" }, { id: "gold", label: "Gold foil", delta: 100 }, { id: "silver", label: "Silver foil", delta: 100 }] };
+const PAPER_DIARY: OptionGroup = { key: "paper", label: "Pages", choices: [{ id: "ruled", label: "Ruled" }, { id: "dotted", label: "Dotted" }, { id: "plain", label: "Plain" }] };
+const PLANNER_LAYOUT: OptionGroup = { key: "layout", label: "Layout", choices: [{ id: "day", label: "Day per page" }, { id: "week", label: "Week to view" }] };
+const PEN_FINISH: OptionGroup = { key: "pen", label: "Pen finish", choices: [{ id: "black", label: "Matte black" }, { id: "gold", label: "Gold", delta: 100 }, { id: "rose", label: "Rose gold", delta: 100 }] };
+const LOGO_METHOD: OptionGroup = { key: "logo", label: "Logo method", choices: [{ id: "emboss", label: "Blind emboss" }, { id: "foil", label: "Foil (gold/silver)", delta: 30 }, { id: "print", label: "Full-colour print", delta: 20 }] };
+const INSIDE_PAGE: OptionGroup = { key: "inside", label: "Branded inside page", choices: [{ id: "none", label: "None" }, { id: "welcome", label: "Welcome message page", delta: 15 }, { id: "calendar", label: "Company calendar page", delta: 15 }] };
+
 export function optionsFor(slug: string, category: string): OptionGroup[] {
+  if (slug === "daily-planner") return [DIARY_COLOUR, PLANNER_LAYOUT, EMBOSS];
+  if (slug === "executive-leather-diary") return [DIARY_COLOUR, EMBOSS, PAPER_DIARY];
+  if (slug === "five-year-diary") return [DIARY_COLOUR, EMBOSS];
+  if (slug === "combo-gift-set") return [DIARY_COLOUR, EMBOSS, PEN_FINISH];
+  if (slug === "custom-corporate-printing") return [DIARY_COLOUR, LOGO_METHOD, INSIDE_PAGE, PAPER_DIARY];
   if (slug === "canvas-print") return [CANVAS_EDGE, ORIENTATION];
   if (slug === "acrylic-print") return [ACRYLIC_THICK, ORIENTATION];
   if (slug === "large-photo-print" || slug === "fine-art-print" || slug === "photo-print-12x18") return [FINISH_PRINT, ORIENTATION];
