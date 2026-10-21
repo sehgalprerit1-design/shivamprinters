@@ -27,7 +27,7 @@ export default async function Admin() {
             {orders.map((o) => { const a = o.shippingJson as Record<string, string>; const items = o.items as { name: string; qty: number }[]; return (
               <tr key={String(o.id)} className="border-t border-line hover:bg-surface-2">
                 <td className="p-3 font-semibold"><Link href={`/admin/orders/${o.id}`} className="text-brand">#{String(o.number)}</Link></td>
-                <td className="p-3 text-ink-3 whitespace-nowrap">{new Date(String(o.createdAt)).toLocaleString("en-IN", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}</td>
+                <td className="p-3 text-ink-3 whitespace-nowrap">{new Date(String(o.createdAt)).toLocaleString("en-IN", { timeZone: "Asia/Kolkata", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}</td>
                 <td className="p-3">{a.name}<div className="text-xs text-ink-3">{a.city} · {a.phone}</div></td>
                 <td className="p-3 text-ink-2">{items.map((i) => `${i.qty}× ${i.name}`).join(", ")}</td>
                 <td className="p-3 font-semibold">{inr(Number(o.total))}</td>

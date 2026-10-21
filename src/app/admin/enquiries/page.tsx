@@ -22,7 +22,7 @@ export default async function Enquiries() {
           {rows.map((e, i) => (
             <div key={String(e.id)} className="card p-4 grid md:grid-cols-[1fr_2fr_auto] gap-4 text-sm">
               <div>
-                <div className="flex items-center gap-2"><span className={`chip text-[11px] ${COLOR[String(e.status)] ?? ""}`}>{String(e.status)}</span><span className="text-ink-3 text-xs">{new Date(String(e.createdAt)).toLocaleString("en-IN", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}</span></div>
+                <div className="flex items-center gap-2"><span className={`chip text-[11px] ${COLOR[String(e.status)] ?? ""}`}>{String(e.status)}</span><span className="text-ink-3 text-xs">{new Date(String(e.createdAt)).toLocaleString("en-IN", { timeZone: "Asia/Kolkata", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}</span></div>
                 <div className="font-semibold mt-1">{String(e.name)}{e.company ? <span className="text-ink-3 font-normal"> · {String(e.company)}</span> : null}</div>
                 <div className="mt-1 flex flex-wrap gap-x-3"><a className="text-brand" href={`tel:+91${e.phone}`}>{String(e.phone)}</a><a className="text-[#128C7E]" href={`https://wa.me/91${e.phone}`} target="_blank" rel="noopener noreferrer">WhatsApp</a>{e.email ? <a className="text-brand" href={`mailto:${e.email}`}>{String(e.email)}</a> : null}</div>
               </div>
