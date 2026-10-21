@@ -3,7 +3,10 @@ export const storageEnabled = Boolean(process.env.S3_BUCKET);
 
 async function client() {
   const { S3Client } = await import("@aws-sdk/client-s3");
-  return new S3Client({ region: process.env.S3_REGION ?? "auto", endpoint: process.env.S3_ENDPOINT, forcePathStyle: !!process.env.S3_ENDPOINT, credentials: { accessKeyId: process.env.S3_ACCESS_KEY_ID!, secretAccessKey: process.env.S3_SECRET_ACCESS_KEY! } });
+  return new S3Client({
+    region: process.env.S3_REGION ?? "auto", endpoint: process.env.S3_ENDPOINT, forcePathStyle: !!process.env.S3_ENDPOINT,
+    // R2 does not accept the SDK's default CRC32 checksum on presigned browser PUTs.
+    requestChecksumCalculation: "WHEN_REQUIRED", responseChecksumValidation: "WHEN_REQUIRED", credentials: { accessKeyId: process.env.S3_ACCESS_KEY_ID!, secretAccessKey: process.env.S3_SECRET_ACCESS_KEY! } });
 }
 export async function presignPut(key: string, mime: string) {
   const { PutObjectCommand } = await import("@aws-sdk/client-s3");
