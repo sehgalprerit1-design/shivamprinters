@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 import { categories, products } from "@/data/catalog";
 import { giftPages } from "@/data/gifts";
 import { posts } from "@/data/blog";
-const base = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.zoomin.com";
+const base = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.shivamprinters.com";
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
   return [

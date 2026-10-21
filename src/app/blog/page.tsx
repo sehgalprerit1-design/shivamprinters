@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { posts } from "@/data/blog";
-export const metadata: Metadata = { title: "Ideas & Inspiration — Blog", description: "Gift ideas, print sizes, photobook titles and how-tos from Zoomin." };
+export const metadata: Metadata = { title: "Ideas & Inspiration — Blog", description: "Gift ideas, print sizes, photobook titles and how-tos from Shivam Printers." };
 export default function Blog() {
   return (
     <div className="container-x pt-10">

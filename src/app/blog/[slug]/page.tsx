@@ -13,7 +13,7 @@ export default async function Post({ params }: { params: Promise<{ slug: string 
       <h1 className="text-3xl md:text-5xl font-bold leading-tight">{p.title}</h1>
       <div className="text-sm text-ink-3 mt-3">{new Date(p.date).toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" })}</div>
       <div className="mt-8 space-y-5 text-lg text-ink-2 leading-relaxed">{p.body.map((b, i) => <p key={i}>{b}</p>)}</div>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({ "@context": "https://schema.org", "@type": "BlogPosting", headline: p.title, datePublished: p.date, description: p.excerpt, author: { "@type": "Organization", name: "Zoomin" } }) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({ "@context": "https://schema.org", "@type": "BlogPosting", headline: p.title, datePublished: p.date, description: p.excerpt, author: { "@type": "Organization", name: "Shivam Printers" } }) }} />
     </article>
   );
 }

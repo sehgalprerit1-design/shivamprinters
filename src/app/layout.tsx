@@ -8,11 +8,11 @@ import { CartDrawer } from "@/components/cart/CartDrawer";
 
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.zoomin.com"),
-  title: { default: "Zoomin — Photobooks, Frames, Prints & Personalised Gifts", template: "%s | Zoomin" },
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.shivamprinters.com"),
+  title: { default: "Shivam Printers — Photobooks, Frames, Prints & Personalised Gifts", template: "%s | Shivam Printers" },
   description:
     "India's online store for photo printing and personalised gifts. Photobooks, framed prints, calendars, mugs, cushions and kids' essentials, made from your photos. Free design tools, pan-India delivery, COD available.",
-  openGraph: { type: "website", siteName: "Zoomin", locale: "en_IN" },
+  openGraph: { type: "website", siteName: "Shivam Printers", locale: "en_IN" },
   robots: { index: true, follow: true },
 };
 

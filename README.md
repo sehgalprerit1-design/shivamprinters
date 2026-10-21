@@ -1,6 +1,6 @@
-# Zoomin — storefront rebuild
+# Shivam Printers — storefront rebuild
 
-Custom Next.js 16 storefront for zoomin.com: photobooks, frames, calendars, kids (Zooboo), décor, gifts, prints, bags & stationery, accessories. Fully static catalog pages, client-side personalisation editor, Razorpay + COD checkout, Postgres via Prisma.
+Custom Next.js 16 storefront for shivamprinters.com: photobooks, frames, calendars, kids (Shivam Printers), décor, gifts, prints, bags & stationery, accessories. Fully static catalog pages, client-side personalisation editor, Razorpay + COD checkout, Postgres via Prisma.
 
 ## Stack
 
@@ -46,7 +46,7 @@ Deploy target: Vercel or any Node host. Set `NEXT_PUBLIC_SITE_URL`, `DATABASE_UR
 src/data/catalog.ts      9 categories, 90 products, 120+ variants, tags  (seed source)
 src/data/gifts.ts        111 gift landing pages (occasion/recipient/festival/collection)
 src/data/blog.ts         Blog posts (migrate the rest from the old CMS)
-src/lib/redirects.ts     Every old zoomin.com URL → new URL (301), wired into next.config.ts
+src/lib/redirects.ts     Every old shivamprinters.com URL → new URL (301), wired into next.config.ts
 src/components/editor/   Canvas personalisation editor (upload, pan/zoom/rotate, text, preview)
 src/lib/orders.ts        Server-side pricing (never trusts client prices), order creation
 src/app/api/             orders, orders/[id]/confirm (Razorpay signature), upload (presign)
@@ -67,7 +67,7 @@ Thirteen per-finish premium-frame URLs collapse into `/p/premium-frame` with var
 
 ## What's intentionally not finished
 
-- **Legal copy** (`/privacy`, `/terms`, `/returns`): placeholders — paste Zoomin's actual text.
+- **Legal copy** (`/privacy`, `/terms`, `/returns`): placeholders — paste Shivam Printers' actual text.
 - **Auth**: `/account` is an OTP UI stub; wire MSG91/Twilio and a session cookie.
 - **Print pipeline**: the editor saves `design` JSON (slot crops, rotation, text) + a preview. A render worker should regenerate at full resolution from the originals in S3 and write `OrderItem.printFileKey`. The canvas code in `Editor.tsx` is the reference implementation.
 - **Reviews**: ratings are static numbers from the current site; connect to the review provider.

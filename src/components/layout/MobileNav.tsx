@@ -15,7 +15,7 @@ export function MobileNav({ categories, occasions, recipients }: { categories: C
         <div className="fixed inset-0 z-50 bg-black/40" onClick={() => setOpen(false)}>
           <div className="absolute inset-y-0 left-0 w-[86%] max-w-sm bg-surface p-5 overflow-y-auto" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-4">
-              <span className="display text-xl font-bold">zoom<span className="text-brand">in</span></span>
+              <span className="display text-xl font-bold">Shivam <span className="text-brand">Printers</span></span>
               <button aria-label="Close" onClick={() => setOpen(false)} className="p-2"><X /></button>
             </div>
             <SearchBox />

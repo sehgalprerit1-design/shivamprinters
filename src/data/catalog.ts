@@ -22,7 +22,7 @@ export type Variant = {
 
 export type Product = {
   slug: string;
-  legacyPath?: string; // old zoomin.com URL (for 301 redirect map)
+  legacyPath?: string; // old shivamprinters.com URL (for 301 redirect map)
   category: string; // category slug
   name: string;
   shortName?: string;
@@ -47,7 +47,7 @@ export const categories: Category[] = [
   { slug: "photobooks", name: "Photobooks", tagline: "Your story, bound beautifully", description: "Hardcover, softcover and layflat photo books in sizes from 5.5\" to 10x8\". Choose a theme, drop in your photos and we handle the rest.", image: "/images/cat-photobooks.jpg", order: 1 },
   { slug: "framed-prints", name: "Framed Prints", tagline: "Ready to hang, ready to gift", description: "Designer, classic, coloured and premium frames with your photo printed and mounted. Delivered ready to hang.", image: "/images/cat-frames.jpg", order: 2 },
   { slug: "calendars", name: "Calendars", tagline: "Twelve months of favourites", description: "Desktop, wall, magnet and poster calendars for 2027. Start on any month.", image: "/images/cat-calendars.jpg", order: 3 },
-  { slug: "kids", name: "Kids", tagline: "Name it, label it, love it", description: "Personalised bottles, lunch boxes, labels, storybooks and stationery for school and play. From our Zooboo range.", image: "/images/cat-kids.jpg", order: 4 },
+  { slug: "kids", name: "Kids", tagline: "Name it, label it, love it", description: "Personalised bottles, lunch boxes, labels, storybooks and stationery for school and play.", image: "/images/cat-kids.jpg", order: 4 },
   { slug: "home-decor", name: "Décor", tagline: "Walls that tell your story", description: "Acrylic, canvas, fine-art and large-format prints plus designer wall clocks.", image: "/images/cat-decor.jpg", order: 5 },
   { slug: "gifts", name: "Gifts", tagline: "Small things, big smiles", description: "Mugs, cushions, magnets, puzzles and bag tags printed with your photos.", image: "/images/cat-gifts.jpg", order: 6 },
   { slug: "prints", name: "Photo Prints", tagline: "Print the ones you love", description: "Glossy photo prints, card-stock prints, retro and square formats in packs.", image: "/images/cat-prints.jpg", order: 7 },
@@ -109,7 +109,7 @@ export const products: Product[] = [
   { slug: "poster-calendar", legacyPath: "/calendars/poster-calendar-12x18", category: "calendars", name: "Poster Calendar 2027", description: "One big 12x18 poster with the full year below your favourite photo.", image: "/images/p/poster-calendar.jpg", personalisation: "photo", template: { aspect: 0.67, photoSlots: 1, textFields: [text("title", "Title", 30)] }, variants: [{ sku: "CAL-POS-1218", name: "12x18\" poster", price: 299, compareAt: 499 }], tags: ["new-year", "under-499", "corporate"], rating: 4.5, reviews: 1100 },
   { slug: "desktop-calendar-4-5x10", legacyPath: "/calendars/calendar-4.5x10", category: "calendars", name: "4.5x10 Desktop Calendar 2027", description: "Slim panoramic desktop calendar for landscape photos.", image: "/images/p/desktop-calendar-4-5x10.jpg", personalisation: "multi-photo", template: { aspect: 2.2, photoSlots: 13, textFields: [] }, variants: [{ sku: "CAL-DT-4510", name: "4.5x10\" panoramic", price: 299, compareAt: 479 }], tags: ["new-year", "corporate"], rating: 4.6, reviews: 900 },
 
-  // ---------- Kids (Zooboo) ----------
+  // ---------- Kids ----------
   { slug: "insulated-water-bottle", legacyPath: "/kids/insulated-water-bottle", category: "kids", name: "Insulated Water Bottle", description: "Double-wall steel bottle with your child's name and a theme of their choice. Keeps cold 12 hours.", image: "/images/p/insulated-water-bottle.jpg", badges: ["Bestseller"], personalisation: "text", template: { aspect: 0.4, photoSlots: 0, textFields: [text("name", "Child's name", 16)] }, variants: [{ sku: "KD-BTL-500", name: "500 ml", price: 949, compareAt: 1149 }], tags: ["kids", "back-to-school", "birthday", "son", "daughter", "under-999"], rating: 4.8, reviews: 6400, featured: true },
   { slug: "hydro-water-bottle-600", legacyPath: "/kids/hydro-insulated-water-bottle-600ml", category: "kids", name: "Water Bottle (Hydro) 600 ML", description: "Lightweight 600 ml hydro bottle with flip straw and name print.", image: "/images/p/hydro-water-bottle-600.jpg", badges: ["New"], personalisation: "text", template: { aspect: 0.4, photoSlots: 0, textFields: [text("name", "Child's name", 16)] }, variants: [{ sku: "KD-HYD-600", name: "600 ml", price: 799, compareAt: 999 }], tags: ["kids", "back-to-school", "under-999"], rating: 4.7, reviews: 310 },
   { slug: "lunch-box", legacyPath: "/kids/lunch-box", category: "kids", name: "Lunch Box", description: "Leak-proof steel lunch box with a personalised lid.", image: "/images/p/lunch-box.jpg", personalisation: "text", template: { aspect: 1.3, photoSlots: 0, textFields: [text("name", "Child's name", 16)] }, variants: [{ sku: "KD-LB", name: "Lunch box", price: 849, compareAt: 1049 }], tags: ["kids", "back-to-school", "under-999"], rating: 4.7, reviews: 2100 },

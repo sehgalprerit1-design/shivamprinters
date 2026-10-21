@@ -55,7 +55,7 @@ export const useCart = create<CartState>()(
       },
       removeCoupon: () => set({ coupon: undefined }),
     }),
-    { name: "zoomin-cart", partialize: (s) => ({ lines: s.lines, coupon: s.coupon }) },
+    { name: "shivam-cart", partialize: (s) => ({ lines: s.lines, coupon: s.coupon }) },
   ),
 );
 

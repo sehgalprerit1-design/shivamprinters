@@ -69,7 +69,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
         <ProductGrid products={related} />
       </div>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
-        "@context": "https://schema.org", "@type": "Product", name: p.name, description: p.description, image: p.image, brand: { "@type": "Brand", name: "Zoomin" }, sku: p.variants[0].sku,
+        "@context": "https://schema.org", "@type": "Product", name: p.name, description: p.description, image: p.image, brand: { "@type": "Brand", name: "Shivam Printers" }, sku: p.variants[0].sku,
         aggregateRating: { "@type": "AggregateRating", ratingValue: p.rating, reviewCount: p.reviews },
         offers: { "@type": "AggregateOffer", priceCurrency: "INR", lowPrice: minPrice(p), highPrice: Math.max(...p.variants.map((v) => v.price)), offerCount: p.variants.length, availability: "https://schema.org/InStock" },
       }) }} />

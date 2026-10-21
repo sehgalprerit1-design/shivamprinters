@@ -29,7 +29,7 @@ export default function Home() {
           <img src="/images/hero.jpg" alt="" className="absolute inset-0 w-full h-full object-cover opacity-90" fetchPriority="high" />
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
           <div className="relative p-6 md:p-12 max-w-2xl fade-up">
-            <span className="chip bg-white/15 backdrop-blur text-white mb-4">15+ years · 55 lakh customers · 2 crore smiles</span>
+            <span className="chip bg-white/15 backdrop-blur text-white mb-4">Made in our own print centre · Pan-India delivery</span>
             <h1 className="text-4xl md:text-6xl font-bold leading-[1.05]">Your photos, <em className="not-italic text-brand">printed properly.</em></h1>
             <p className="text-white/85 text-lg mt-4 max-w-lg">Photobooks, frames, calendars and gifts made from the pictures on your phone. Upload, personalise in minutes, delivered anywhere in India.</p>
             <div className="flex flex-wrap gap-3 mt-6">
@@ -90,9 +90,9 @@ export default function Home() {
       <section className="container-x">
         <div className="rounded-3xl overflow-hidden grid md:grid-cols-2 bg-[#fff4c7]">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/images/cat-kids.jpg" alt="Zooboo kids range" className="w-full h-64 md:h-full object-cover" loading="lazy" />
+          <img src="/images/cat-kids.jpg" alt="Shivam Printers kids range" className="w-full h-64 md:h-full object-cover" loading="lazy" />
           <div className="p-8 md:p-12 flex flex-col justify-center">
-            <div className="text-xs font-semibold uppercase tracking-wide text-ink-2">Zooboo by Zoomin</div>
+            <div className="text-xs font-semibold uppercase tracking-wide text-ink-2">Shivam Printers Kids</div>
             <h2 className="text-3xl md:text-4xl font-bold mt-2">Name it. Label it. Never lose it.</h2>
             <p className="text-ink-2 mt-3">Bottles, lunch boxes, labels, pencils and storybooks with your child&apos;s name on. School-proof and dishwasher-safe.</p>
             <Link href="/c/kids" className="btn btn-secondary mt-6 self-start">Shop kids</Link>
@@ -100,7 +100,7 @@ export default function Home() {
         </div>
       </section>
 
-      <Section title="What customers say" subtitle="3 lakh+ five-star ratings.">
+      <Section title="What customers say" subtitle="Rated by real customers.">
         <div className="grid md:grid-cols-3 gap-4">
           {[
             ["Priya S., Pune", "The layflat album for our wedding came out better than the photographer's own. Pages are thick and the colours are exact."],
@@ -118,8 +118,8 @@ export default function Home() {
 
       <section className="container-x pb-6">
         <div className="max-w-3xl text-ink-2 text-sm leading-relaxed">
-          <h2 className="text-xl font-bold text-ink mb-2">Print photos online and make personalised gifts at Zoomin</h2>
-          <p>Zoomin has printed photos for Indian families since 2009. Everything on this site — photobooks, framed prints, acrylic and canvas wall art, calendars, mugs, cushions and the Zooboo kids&apos; range — is printed and assembled in our own production centre and shipped anywhere in India, with cash on delivery on most orders. Upload from your phone, personalise in the browser and preview before you pay.</p>
+          <h2 className="text-xl font-bold text-ink mb-2">Print photos online and make personalised gifts at Shivam Printers</h2>
+          <p>Shivam Printers prints photos and personalised gifts for Indian families. Everything on this site — photobooks, framed prints, acrylic and canvas wall art, calendars, mugs, cushions and the Shivam Printers kids&apos; range — is printed and assembled in our own production centre and shipped anywhere in India, with cash on delivery on most orders. Upload from your phone, personalise in the browser and preview before you pay.</p>
         </div>
       </section>
     </>

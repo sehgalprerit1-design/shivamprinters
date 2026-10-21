@@ -23,8 +23,8 @@ export function Header() {
       </div>
       <div className="container-x flex items-center gap-4 h-16">
         <MobileNav categories={categories} occasions={occasions} recipients={recipients} />
-        <Link href="/" className="display text-2xl font-bold tracking-tight text-ink shrink-0">
-          zoom<span className="text-brand">in</span>
+        <Link href="/" className="display text-xl md:text-2xl font-bold tracking-tight text-ink shrink-0 whitespace-nowrap">
+          Shivam <span className="text-brand">Printers</span>
         </Link>
         <div className="hidden md:block flex-1 max-w-xl">
           <SearchBox />

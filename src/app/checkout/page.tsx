@@ -38,7 +38,7 @@ export default function Checkout() {
       // Razorpay checkout (script loaded lazily)
       if (!window.Razorpay) await new Promise<void>((ok, bad) => { const s = document.createElement("script"); s.src = "https://checkout.razorpay.com/v1/checkout.js"; s.onload = () => ok(); s.onerror = () => bad(new Error("Payment script failed")); document.body.appendChild(s); });
       const rz = new window.Razorpay!({
-        key: data.razorpay.key, amount: data.razorpay.amount, currency: "INR", name: "Zoomin", description: `Order #${data.number}`, order_id: data.razorpay.orderId,
+        key: data.razorpay.key, amount: data.razorpay.amount, currency: "INR", name: "Shivam Printers", description: `Order #${data.number}`, order_id: data.razorpay.orderId,
         prefill: { name: a.name, email: a.email, contact: a.phone }, theme: { color: "#e2573f" },
         handler: async (resp: Record<string, string>) => {
           await fetch(`/api/orders/${data.orderId}/confirm`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(resp) });
