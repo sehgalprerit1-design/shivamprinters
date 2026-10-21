@@ -1,1 +1,692 @@
-{ "variants": {}, "options": {} }
+{
+  "variants": {
+    "PB-HC-55-20": {
+      "price": 599,
+      "compareAt": 799
+    },
+    "PB-HC-8-20": {
+      "price": 1049,
+      "compareAt": 1249
+    },
+    "PB-HC-810-20": {
+      "price": 1299,
+      "compareAt": 1599
+    },
+    "PB-HC-108-20": {
+      "price": 1299,
+      "compareAt": 1599
+    },
+    "PB-SC-55-20": {
+      "price": 359,
+      "compareAt": 499
+    },
+    "PB-SC-8-20": {
+      "price": 699,
+      "compareAt": 899
+    },
+    "PB-SC-810-20": {
+      "price": 849,
+      "compareAt": 1049
+    },
+    "PB-LF-108-20": {
+      "price": 2499,
+      "compareAt": 2999
+    },
+    "PB-DS-8": {
+      "price": 1699,
+      "compareAt": 1999
+    },
+    "FR-DES-46": {
+      "price": 499,
+      "compareAt": 699
+    },
+    "FR-DES-MAT-810": {
+      "price": 649,
+      "compareAt": 849
+    },
+    "FR-COL-64": {
+      "price": 209,
+      "compareAt": 409
+    },
+    "FR-COL-44": {
+      "price": 189,
+      "compareAt": 349
+    },
+    "FR-CLS-64": {
+      "price": 249,
+      "compareAt": 399
+    },
+    "FR-PRM-URBAN": {
+      "price": 1094,
+      "compareAt": 1459
+    },
+    "FR-PRM-CHESTNUT": {
+      "price": 1094,
+      "compareAt": 1459
+    },
+    "FR-PRM-LUSTRE": {
+      "price": 1194,
+      "compareAt": 1559
+    },
+    "FR-PRM-RUSTIC": {
+      "price": 1094,
+      "compareAt": 1459
+    },
+    "FR-PRM-NATWOOD": {
+      "price": 1094,
+      "compareAt": 1459
+    },
+    "CAL-DT-68": {
+      "price": 279,
+      "compareAt": 479
+    },
+    "CAL-DT-66": {
+      "price": 249,
+      "compareAt": 449
+    },
+    "CAL-DT-46": {
+      "price": 199,
+      "compareAt": 349
+    },
+    "CAL-WL-P": {
+      "price": 449,
+      "compareAt": 649
+    },
+    "CAL-WL-L": {
+      "price": 449,
+      "compareAt": 649
+    },
+    "CAL-MAG-68": {
+      "price": 229,
+      "compareAt": 379
+    },
+    "CAL-POS-1218": {
+      "price": 299,
+      "compareAt": 499
+    },
+    "CAL-DT-4510": {
+      "price": 299,
+      "compareAt": 479
+    },
+    "DP-A5": {
+      "price": 649,
+      "compareAt": 849
+    },
+    "DP-B5": {
+      "price": 849,
+      "compareAt": 1099
+    },
+    "DP-A5-UND": {
+      "price": 599,
+      "compareAt": 799
+    },
+    "EX-PU-A5": {
+      "price": 899,
+      "compareAt": 1199
+    },
+    "EX-GEN-A5": {
+      "price": 1899,
+      "compareAt": 2399
+    },
+    "EX-GEN-B5": {
+      "price": 2399,
+      "compareAt": 2999
+    },
+    "FY-LINEN": {
+      "price": 1199,
+      "compareAt": 1499
+    },
+    "FY-LEATHER": {
+      "price": 1799,
+      "compareAt": 2199
+    },
+    "CG-CLASSIC": {
+      "price": 1499,
+      "compareAt": 1899
+    },
+    "CG-PREMIUM": {
+      "price": 2799,
+      "compareAt": 3499
+    },
+    "CG-BULK10": {
+      "price": 12999,
+      "compareAt": 18990
+    },
+    "CP-50": {
+      "price": 549,
+      "compareAt": 699
+    },
+    "CP-100": {
+      "price": 449,
+      "compareAt": 599
+    },
+    "CP-250": {
+      "price": 379,
+      "compareAt": 499
+    },
+    "BP-BC-100": {
+      "price": 299,
+      "compareAt": 399
+    },
+    "BP-BC-250": {
+      "price": 499,
+      "compareAt": 699
+    },
+    "BP-BC-500": {
+      "price": 799,
+      "compareAt": 1099
+    },
+    "BP-BC-1000": {
+      "price": 1299,
+      "compareAt": 1799
+    },
+    "BP-ST-2-50": {
+      "price": 199,
+      "compareAt": 299
+    },
+    "BP-ST-2-100": {
+      "price": 299,
+      "compareAt": 449
+    },
+    "BP-ST-3-100": {
+      "price": 449,
+      "compareAt": 649
+    },
+    "BP-ST-4-100": {
+      "price": 649,
+      "compareAt": 899
+    },
+    "BP-ST-A4-10": {
+      "price": 349,
+      "compareAt": 499
+    },
+    "BP-FL-A5-100": {
+      "price": 499,
+      "compareAt": 699
+    },
+    "BP-FL-A4-100": {
+      "price": 799,
+      "compareAt": 1099
+    },
+    "BP-BR-BI-100": {
+      "price": 1199,
+      "compareAt": 1599
+    },
+    "BP-BR-TRI-100": {
+      "price": 1299,
+      "compareAt": 1699
+    },
+    "BP-BR-TRI-500": {
+      "price": 4499,
+      "compareAt": 5999
+    },
+    "BP-PC-A6-10": {
+      "price": 199,
+      "compareAt": 299
+    },
+    "BP-PC-A6-25": {
+      "price": 399,
+      "compareAt": 549
+    },
+    "BP-PC-A6-50": {
+      "price": 649,
+      "compareAt": 899
+    },
+    "BP-PC-57-25": {
+      "price": 499,
+      "compareAt": 699
+    },
+    "BP-BN-3x2": {
+      "price": 349,
+      "compareAt": 499
+    },
+    "BP-BN-4x3": {
+      "price": 599,
+      "compareAt": 799
+    },
+    "BP-BN-6x3": {
+      "price": 899,
+      "compareAt": 1199
+    },
+    "BP-BN-8x4": {
+      "price": 1499,
+      "compareAt": 1999
+    },
+    "BP-SD-ROLL": {
+      "price": 1899,
+      "compareAt": 2499
+    },
+    "KD-BTL-500": {
+      "price": 949,
+      "compareAt": 1149
+    },
+    "KD-HYD-600": {
+      "price": 799,
+      "compareAt": 999
+    },
+    "KD-LB": {
+      "price": 849,
+      "compareAt": 1049
+    },
+    "KD-SB": {
+      "price": 499,
+      "compareAt": 649
+    },
+    "KD-STK-40": {
+      "price": 249,
+      "compareAt": 349
+    },
+    "KD-IRON": {
+      "price": 299,
+      "compareAt": 399
+    },
+    "KD-SLIP": {
+      "price": 149,
+      "compareAt": 249
+    },
+    "KD-TAG": {
+      "price": 199,
+      "compareAt": 299
+    },
+    "KD-CHARM": {
+      "price": 149,
+      "compareAt": 249
+    },
+    "KD-DSB": {
+      "price": 399,
+      "compareAt": 549
+    },
+    "KD-POUCH": {
+      "price": 299,
+      "compareAt": 399
+    },
+    "KD-PENC": {
+      "price": 199,
+      "compareAt": 299
+    },
+    "KD-CRAY": {
+      "price": 349,
+      "compareAt": 449
+    },
+    "KD-STORY-55": {
+      "price": 499,
+      "compareAt": 699
+    },
+    "KD-NB": {
+      "price": 249,
+      "compareAt": 349
+    },
+    "KD-EXAM": {
+      "price": 299,
+      "compareAt": 399
+    },
+    "KD-PLAN": {
+      "price": 399,
+      "compareAt": 549
+    },
+    "KD-DESK": {
+      "price": 1299,
+      "compareAt": 1599
+    },
+    "KD-BOARD": {
+      "price": 699,
+      "compareAt": 899
+    },
+    "KD-ART": {
+      "price": 799,
+      "compareAt": 999
+    },
+    "KD-PZL-12": {
+      "price": 349,
+      "compareAt": 499
+    },
+    "KD-PZL-48": {
+      "price": 399,
+      "compareAt": 549
+    },
+    "KD-CLK": {
+      "price": 899,
+      "compareAt": 1199
+    },
+    "KD-RAKHI": {
+      "price": 199,
+      "compareAt": 299
+    },
+    "KD-ENV": {
+      "price": 299,
+      "compareAt": 399
+    },
+    "KD-GTAG": {
+      "price": 199,
+      "compareAt": 299
+    },
+    "KD-CAKE": {
+      "price": 349,
+      "compareAt": 449
+    },
+    "DC-ACR-44": {
+      "price": 259,
+      "compareAt": 459
+    },
+    "DC-ACR-88": {
+      "price": 749,
+      "compareAt": 999
+    },
+    "DC-ACR-1216": {
+      "price": 1899,
+      "compareAt": 2499
+    },
+    "DC-CNV-88": {
+      "price": 699,
+      "compareAt": 999
+    },
+    "DC-CNV-1216": {
+      "price": 1499,
+      "compareAt": 1999
+    },
+    "DC-CNV-1620": {
+      "price": 2199,
+      "compareAt": 2899
+    },
+    "DC-ENL-1218": {
+      "price": 299,
+      "compareAt": 449
+    },
+    "DC-ENL-1620": {
+      "price": 499,
+      "compareAt": 699
+    },
+    "DC-FA-810": {
+      "price": 499,
+      "compareAt": 699
+    },
+    "DC-COL-1218": {
+      "price": 349,
+      "compareAt": 549
+    },
+    "DC-CLK-12": {
+      "price": 999,
+      "compareAt": 1299
+    },
+    "GF-MUG-W": {
+      "price": 249,
+      "compareAt": 399
+    },
+    "GF-MUG-B": {
+      "price": 299,
+      "compareAt": 449
+    },
+    "GF-MUG-CI": {
+      "price": 299,
+      "compareAt": 449
+    },
+    "GF-MUG-MAGIC": {
+      "price": 349,
+      "compareAt": 499
+    },
+    "GF-MUG-MOD": {
+      "price": 349,
+      "compareAt": 499
+    },
+    "GF-CUSH-12": {
+      "price": 449,
+      "compareAt": 649
+    },
+    "GF-CUSH-FUR": {
+      "price": 599,
+      "compareAt": 799
+    },
+    "GF-MAG-2": {
+      "price": 149,
+      "compareAt": 249
+    },
+    "GF-MAG-46": {
+      "price": 129,
+      "compareAt": 199
+    },
+    "GF-BTAG": {
+      "price": 199,
+      "compareAt": 299
+    },
+    "PR-46-24": {
+      "price": 199,
+      "compareAt": 299
+    },
+    "PR-57-24": {
+      "price": 299,
+      "compareAt": 449
+    },
+    "PR-68-15": {
+      "price": 299,
+      "compareAt": 449
+    },
+    "PR-88-5": {
+      "price": 249,
+      "compareAt": 349
+    },
+    "PR-810-2": {
+      "price": 149,
+      "compareAt": 249
+    },
+    "PR-1218-1": {
+      "price": 199,
+      "compareAt": 299
+    },
+    "PR-RETRO-24": {
+      "price": 219,
+      "compareAt": 419
+    },
+    "PR-SQ-24": {
+      "price": 219,
+      "compareAt": 419
+    },
+    "PR-MINI-24": {
+      "price": 179,
+      "compareAt": 299
+    },
+    "PR-CARD-46": {
+      "price": 249,
+      "compareAt": 449
+    },
+    "PR-CARD-57": {
+      "price": 349,
+      "compareAt": 549
+    },
+    "BG-TOTE": {
+      "price": 399,
+      "compareAt": 599
+    },
+    "BG-POUCH": {
+      "price": 299,
+      "compareAt": 449
+    },
+    "ST-A5": {
+      "price": 349,
+      "compareAt": 499
+    },
+    "ST-A6-3": {
+      "price": 249,
+      "compareAt": 349
+    },
+    "ST-PLAN-26": {
+      "price": 499,
+      "compareAt": 699
+    },
+    "ST-PENC": {
+      "price": 199,
+      "compareAt": 299
+    },
+    "AC-PET": {
+      "price": 249,
+      "compareAt": 349
+    },
+    "AC-DESK": {
+      "price": 799,
+      "compareAt": 999
+    },
+    "AC-STK-10": {
+      "price": 199,
+      "compareAt": 299
+    },
+    "AC-KEY-NAME": {
+      "price": 149,
+      "compareAt": 249
+    },
+    "AC-KEY-Q": {
+      "price": 199,
+      "compareAt": 299
+    },
+    "AC-CLIP": {
+      "price": 149,
+      "compareAt": 199
+    },
+    "AC-ROPE": {
+      "price": 299,
+      "compareAt": 399
+    },
+    "AC-WASHI": {
+      "price": 199,
+      "compareAt": 299
+    },
+    "AC-MOB": {
+      "price": 299,
+      "compareAt": 449
+    },
+    "AC-LAP": {
+      "price": 499,
+      "compareAt": 699
+    },
+    "AC-BTL-750": {
+      "price": 899,
+      "compareAt": 1099
+    },
+    "AC-SKEL": {
+      "price": 200,
+      "compareAt": 299
+    }
+  },
+  "options": {
+    "finish-print:glossy": 0,
+    "finish-print:matte": 20,
+    "finish-print:pearl": 40,
+    "finish-frame:glossy": 0,
+    "finish-frame:matte": 20,
+    "frame-colour:black": 0,
+    "frame-colour:white": 0,
+    "frame-colour:oak": 0,
+    "frame-colour:walnut": 50,
+    "frame-colour-fun:red": 0,
+    "frame-colour-fun:yellow": 0,
+    "frame-colour-fun:blue": 0,
+    "frame-colour-fun:green": 0,
+    "frame-colour-fun:pink": 0,
+    "frame-colour-fun:teal": 0,
+    "frame-colour-fun:white": 0,
+    "frame-colour-fun:black": 0,
+    "paper-book:matte": 0,
+    "paper-book:glossy": 100,
+    "paper-book:premium": 300,
+    "cover-book:glossy": 0,
+    "cover-book:matte": 50,
+    "cover-book:linen": 400,
+    "orientation:landscape": 0,
+    "orientation:portrait": 0,
+    "canvas-edge:wrap": 0,
+    "canvas-edge:white": 0,
+    "canvas-edge:black": 0,
+    "acrylic-thick:5": 0,
+    "acrylic-thick:8": 300,
+    "mug-handle:right": 0,
+    "mug-handle:left": 0,
+    "mug-handle:wrap": 0,
+    "cushion-back:pattern": 0,
+    "cushion-back:photo": 50,
+    "cushion-back:message": 0,
+    "cal-start:jan": 0,
+    "cal-start:feb": 0,
+    "cal-start:mar": 0,
+    "cal-start:apr": 0,
+    "cal-start:may": 0,
+    "cal-start:jun": 0,
+    "cal-start:jul": 0,
+    "cal-start:aug": 0,
+    "cal-start:sep": 0,
+    "cal-start:oct": 0,
+    "cal-start:nov": 0,
+    "cal-start:dec": 0,
+    "bottle-colour:sky-blue": 0,
+    "bottle-colour:mint": 0,
+    "bottle-colour:lilac": 0,
+    "bottle-colour:coral": 0,
+    "bottle-colour:steel": 0,
+    "theme-kids:dinosaurs": 0,
+    "theme-kids:space": 0,
+    "theme-kids:unicorns": 0,
+    "theme-kids:jungle": 0,
+    "theme-kids:cars": 0,
+    "theme-kids:ocean": 0,
+    "theme-kids:princess": 0,
+    "theme-kids:superhero": 0,
+    "border:none": 0,
+    "border:white": 0,
+    "diary-colour:black": 0,
+    "diary-colour:brown": 0,
+    "diary-colour:tan": 0,
+    "diary-colour:navy": 0,
+    "diary-colour:green": 0,
+    "diary-colour:burgundy": 0,
+    "emboss:blind": 0,
+    "emboss:gold": 100,
+    "emboss:silver": 100,
+    "paper-diary:ruled": 0,
+    "paper-diary:dotted": 0,
+    "paper-diary:plain": 0,
+    "planner-layout:day": 0,
+    "planner-layout:week": 0,
+    "pen-finish:black": 0,
+    "pen-finish:gold": 100,
+    "pen-finish:rose": 100,
+    "logo-method:emboss": 0,
+    "logo-method:foil": 30,
+    "logo-method:print": 20,
+    "inside-page:none": 0,
+    "inside-page:welcome": 15,
+    "inside-page:calendar": 15,
+    "card-paper:300": 0,
+    "card-paper:350t": 100,
+    "card-paper:600": 300,
+    "card-finish:matte": 0,
+    "card-finish:gloss": 0,
+    "card-finish:spotuv": 150,
+    "card-finish:velvet": 200,
+    "card-corners:square": 0,
+    "card-corners:rounded": 50,
+    "sticker-shape:round": 0,
+    "sticker-shape:square": 0,
+    "sticker-shape:diecut": 50,
+    "sticker-material:vinyl": 0,
+    "sticker-material:paper": -30,
+    "sticker-material:clear": 50,
+    "sticker-finish:glossy": 0,
+    "sticker-finish:matte": 0,
+    "flyer-paper:130": 0,
+    "flyer-paper:170": 200,
+    "flyer-paper:250": 500,
+    "flyer-finish:gloss": 0,
+    "flyer-finish:matte": 0,
+    "flyer-sides:double": 0,
+    "flyer-sides:single": -100,
+    "postcard-paper:matte": 0,
+    "postcard-paper:glossy": 0,
+    "postcard-paper:textured": 50,
+    "postcard-back:postcard": 0,
+    "postcard-back:blank": 0,
+    "postcard-back:message": 0,
+    "banner-material:flex": 0,
+    "banner-material:starflex": 200,
+    "banner-material:vinyl": 400,
+    "banner-finish:eyelets": 0,
+    "banner-finish:pockets": 0,
+    "banner-finish:none": 0
+  }
+}
