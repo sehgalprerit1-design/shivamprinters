@@ -12,7 +12,7 @@ git push -u origin main
 ```
 
 ## 2. Neon — Postgres (5 min)
-neon.tech → New project (region: **AWS ap-south-1 Mumbai**) → copy the connection string.
+neon.tech → New project (region: **AWS Asia Pacific (Singapore)** — closest Neon region to India; Vercel functions are pinned to Singapore too) → copy the connection string.
 That's `DATABASE_URL`.
 
 ## 3. Cloudflare R2 — photo storage (10 min)
