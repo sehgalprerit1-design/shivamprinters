@@ -127,6 +127,7 @@ export function Editor({ product, variant: initialVariant, initialOptions = {}, 
   const onUp = () => { drag.current = null; };
 
   const [uploading, setUploading] = useState<string | null>(null);
+  const [uploadError, setUploadError] = useState<string | null>(null);
   const addToCart = async () => {
     const preview = canvasRef.current!.toDataURL("image/jpeg", 0.7);
     const label = optionLabel(groups, opts);
@@ -140,11 +141,16 @@ export function Editor({ product, variant: initialVariant, initialOptions = {}, 
         const r = await fetch("/api/upload", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ filename: s.file!.name, mime: s.file!.type || "image/jpeg", bytes: s.file!.size }) });
         const j = (await r.json()) as { key: string; url: string | null; error?: string };
         if (!r.ok) throw new Error(j.error ?? "Upload failed");
-        if (j.url) { const put = await fetch(j.url, { method: "PUT", body: s.file, headers: { "content-type": s.file!.type || "image/jpeg" } }); if (!put.ok) throw new Error("Upload failed"); }
+        if (j.url) {
+          let put: Response;
+          try { put = await fetch(j.url, { method: "PUT", body: s.file, headers: { "content-type": s.file!.type || "image/jpeg" } }); }
+          catch { throw new Error("Photo upload was blocked by the browser (storage CORS). Please call us and we'll sort it out."); }
+          if (!put.ok) throw new Error(`Photo upload failed (storage replied ${put.status}).`);
+        }
         slots[i].key = j.key;
       }
-    } catch (e) { setUploading(null); alert((e as Error).message + ". Please try again."); return; }
-    setUploading(null);
+    } catch (e) { setUploading(null); setUploadError((e as Error).message); return; }
+    setUploading(null); setUploadError(null);
     slots.forEach((s) => slotDesign.push({ key: s.key, zoom: s.zoom, dx: s.dx, dy: s.dy, rot: s.rot, w: s.w, h: s.h }));
     add({ productSlug: product.slug, productName: product.name, variantSku: variant.sku, variantName: label ? `${variant.name} · ${label}` : variant.name, unitPrice, qty, image: product.image, design: { preview, text, photoCount: filled, options: opts, slots: slotDesign, canvas: { w: W, h: H, aspect } } });
     router.push("/cart");
@@ -252,6 +258,7 @@ export function Editor({ product, variant: initialVariant, initialOptions = {}, 
               <li className="flex gap-2"><Check size={16} className="text-accent" />{variant.name}{optionLabel(groups, opts) ? ` · ${optionLabel(groups, opts)}` : ""} × {qty}</li>
               <li className="flex gap-2"><Check size={16} className="text-accent" />Preview checked — what you see is what prints</li>
             </ul>
+            {uploadError && <div className="flex items-start gap-2 text-sm bg-brand-soft border border-brand/30 text-brand-ink rounded-xl p-3"><AlertTriangle size={16} className="mt-0.5 shrink-0" /><span>{uploadError} <button type="button" className="underline" onClick={addToCart}>Try again</button> · <CallUs compact /></span></div>}
             <button disabled={!canReview || !!uploading} onClick={addToCart} className="btn btn-primary w-full text-base !py-3.5">{uploading ?? <>Add {qty > 1 ? `${qty} ` : ""}to cart · {inr(unitPrice * qty)}</>}</button>
             <p className="text-xs text-ink-3">Your design is saved with the order. Reorders print the same file.</p>
             <CallUs compact />
