@@ -1,17 +1,23 @@
 #!/usr/bin/env bash
-# Downloads the Nano Banana-generated site imagery (Higgsfield CDN) into public/images,
-# resizing to web sizes. Requires curl; uses sips (macOS) or ImageMagick if present.
+# Downloads all site imagery generated with Nano Banana (via Higgsfield) into
+# public/images, resized for the web. Run once after cloning:  bash scripts/fetch-images.sh
+# Requires curl; uses ImageMagick (magick/convert) or macOS sips for resizing.
 set -e
-cd "$(dirname "$0")/../public/images"
+cd "$(dirname "$0")/.." && cd public/images
+mkdir -p p
 B=https://d8j0ntlcm91z4.cloudfront.net/user_3AgmoO1kEvlZmppIBOozz4803o0
-while read -r name id; do
-  echo "→ $name"; curl -sSfL -o "$name.png" "$B/$id.png"
-  w=1400; [ "$name" = hero ] && w=1800
-  if command -v magick >/dev/null; then magick "$name.png" -resize "${w}x${w}>" -strip -quality 74 "$name.jpg"
-  elif command -v convert >/dev/null; then convert "$name.png" -resize "${w}x${w}>" -strip -quality 74 "$name.jpg"
-  else sips -s format jpeg -s formatOptions 74 -Z $w "$name.png" --out "$name.jpg" >/dev/null; fi
-  rm -f "$name.png"
-done <<'LIST'
+resize() { # $1=png $2=jpg $3=maxpx
+  if command -v magick >/dev/null; then magick "$1" -resize "$3x$3>" -strip -quality 74 "$2"
+  elif command -v convert >/dev/null; then convert "$1" -resize "$3x$3>" -strip -quality 74 "$2"
+  else sips -s format jpeg -s formatOptions 74 -Z "$3" "$1" --out "$2" >/dev/null; fi
+  rm -f "$1"
+}
+fetch() { # $1=name $2=id $3=maxpx
+  [ -f "$1.jpg" ] && [ "${FORCE:-0}" = 0 ] && { echo "· $1 (exists)"; return; }
+  echo "→ $1"; curl -sSfL -o "$1.png" "$B/$2.png"; resize "$1.png" "$1.jpg" "$3"
+}
+# Hero, category and occasion imagery
+while read -r name id; do fetch "$name" "$id" $([ "$name" = hero ] && echo 1800 || echo 1400); done <<'LIST'
 hero hf_20261021_042031_d491c102-b12d-4de7-bae1-1b5aba7de0d1
 cat-photobooks hf_20261021_043435_d2a1bff1-d1df-4f3b-a7af-f3d1269aedab
 cat-frames hf_20261021_042031_2bd734dd-8558-49d5-b119-47a9068e9a35
@@ -25,4 +31,6 @@ diwali hf_20261021_042031_0c8b947e-bad0-47ee-b823-35f3d96e6e82
 wedding hf_20261021_042031_bdfc4612-f7cf-42a4-aa9c-5af7eeec4ec9
 birthday hf_20261021_042031_0f418d1d-3f33-4815-800f-4eeae3ef20de
 LIST
-echo "Done. 12 images in public/images."
+# One hero image per product (87), listed in scripts/product-images.txt
+while read -r name id; do fetch "$name" "$id" 1200; done < "$OLDPWD/scripts/product-images.txt"
+echo "Done: $(ls *.jpg p/*.jpg | wc -l | tr -d ' ') images in public/images."
