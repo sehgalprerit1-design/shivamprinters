@@ -18,3 +18,20 @@ export async function presignGet(key: string) {
   const { getSignedUrl } = await import("@aws-sdk/s3-request-presigner");
   return getSignedUrl(await client(), new GetObjectCommand({ Bucket: process.env.S3_BUCKET, Key: key }), { expiresIn: 3600 });
 }
+
+/** Server-side round-trip: put a tiny object, read it back, delete it. For /api/health?storage=1. */
+export async function storageSelfTest() {
+  if (!storageEnabled) return { configured: false };
+  const { PutObjectCommand, GetObjectCommand, DeleteObjectCommand } = await import("@aws-sdk/client-s3");
+  const c = await client(); const Key = `health/${Date.now()}.txt`; const Bucket = process.env.S3_BUCKET!;
+  try {
+    await c.send(new PutObjectCommand({ Bucket, Key, Body: "ok", ContentType: "text/plain" }));
+    const g = await c.send(new GetObjectCommand({ Bucket, Key }));
+    const body = await g.Body?.transformToString();
+    await c.send(new DeleteObjectCommand({ Bucket, Key }));
+    const presigned = await presignPut(`health/presign-${Date.now()}.txt`, "text/plain");
+    // Exercise the presigned URL from the server (no CORS involved) to isolate signature problems.
+    const put = await fetch(presigned, { method: "PUT", body: "ok", headers: { "content-type": "text/plain" } });
+    return { configured: true, endpoint: process.env.S3_ENDPOINT, bucket: Bucket, sdkPut: "ok", readBack: body, presignedPutStatus: put.status, presignedPutBody: put.ok ? undefined : (await put.text()).slice(0, 300) };
+  } catch (e) { return { configured: true, endpoint: process.env.S3_ENDPOINT, bucket: Bucket, error: (e as Error).message }; }
+}

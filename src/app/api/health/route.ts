@@ -2,13 +2,15 @@
 // Touching the database once a day keeps a free-tier Supabase/Neon project from pausing.
 import { NextResponse } from "next/server";
 import { getPrisma } from "@/lib/db";
+import { storageSelfTest } from "@/lib/storage";
 export const dynamic = "force-dynamic";
 
-export async function GET() {
+export async function GET(req: Request) {
   const out: Record<string, unknown> = { ok: true, time: new Date().toISOString(), db: "not configured" };
   try {
     const prisma = await getPrisma();
     if (prisma) { const n = await prisma.product.count(); out.db = "ok"; out.products = n; }
   } catch (e) { out.ok = false; out.db = (e as Error).message; }
+  if (new URL(req.url).searchParams.get("storage")) out.storage = await storageSelfTest();
   return NextResponse.json(out, { status: out.ok ? 200 : 500 });
 }
