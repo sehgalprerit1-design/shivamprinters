@@ -22,7 +22,7 @@ export default async function AdminOrder({ params }: { params: Promise<{ id: str
   return (
     <div>
       <Link href="/admin" className="text-sm text-ink-3">← All orders</Link>
-      <div className="flex flex-wrap items-center gap-4 mt-2 mb-6"><h1 className="text-3xl font-bold">Order #{String(o.number)}</h1><span className="chip bg-surface-2">{String(o.status).replace(/_/g, " ")}</span><span className="text-ink-3 text-sm">{new Date(String(o.createdAt)).toLocaleString("en-IN")}</span></div>
+      <div className="flex flex-wrap items-center gap-4 mt-2 mb-6"><h1 className="text-3xl font-bold">Order #{String(o.number)}</h1><span className="chip bg-surface-2">{String(o.status).replace(/_/g, " ")}</span><span className="text-ink-3 text-sm">{new Date(String(o.createdAt)).toLocaleString("en-IN", { timeZone: "Asia/Kolkata" })}</span></div>
       <div className="grid lg:grid-cols-[1fr_340px] gap-6">
         <div className="space-y-4">
           {items.map((it, k) => (
