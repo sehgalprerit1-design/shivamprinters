@@ -2,10 +2,12 @@
 import { z } from "zod";
 import { getPrisma, memStore } from "./db";
 import { getProduct } from "@/data/catalog";
+import { optionsFor, optionDelta } from "@/data/options";
+import { sendOrderEmails, sendShippedEmail } from "./email";
 
 export const OrderInput = z.object({
   address: z.object({ name: z.string(), phone: z.string(), email: z.string().email(), line1: z.string(), line2: z.string().optional(), city: z.string(), state: z.string(), pincode: z.string() }),
-  lines: z.array(z.object({ productSlug: z.string(), variantSku: z.string(), qty: z.number().int().min(1).max(99), design: z.any().optional() })).min(1),
+  lines: z.array(z.object({ productSlug: z.string(), variantSku: z.string(), variantName: z.string().optional(), qty: z.number().int().min(1).max(99), design: z.any().optional() })).min(1),
   coupon: z.string().optional(),
   shipMethod: z.enum(["economy", "express"]),
   paymentMethod: z.enum(["RAZORPAY", "COD"]),
@@ -20,7 +22,8 @@ export function priceOrder(input: OrderInputT) {
   const items = input.lines.map((l) => {
     const p = getProduct(l.productSlug); const v = p?.variants.find((x) => x.sku === l.variantSku);
     if (!p || !v) throw new Error(`Unknown item ${l.productSlug}/${l.variantSku}`);
-    return { product: p, variant: v, qty: l.qty, unitPrice: v.price, design: l.design };
+    const extra = (l.design?.options && Object.keys(l.design.options).length) ? optionDelta(optionsFor(p.slug, p.category), l.design.options) : 0;
+    return { product: p, variant: v, variantLabel: l.variantName ?? v.name, qty: l.qty, unitPrice: v.price + extra, design: l.design };
   });
   const subtotal = items.reduce((a, i) => a + i.unitPrice * i.qty, 0);
   const c = input.coupon ? COUPONS[input.coupon.toUpperCase()] : undefined;
@@ -45,14 +48,16 @@ export async function createOrder(input: OrderInputT) {
         ...base, status: base.status as "COD_CONFIRMED" | "PENDING_PAYMENT",
         items: { create: await Promise.all(priced.items.map(async (i) => ({
           product: { connect: { slug: i.product.slug } }, variant: { connect: { sku: i.variant.sku } }, qty: i.qty, unitPrice: i.unitPrice,
-          project: i.design ? { create: { productSlug: i.product.slug, variantSku: i.variant.sku, design: i.design } } : undefined,
+          project: i.design ? { create: { productSlug: i.product.slug, variantSku: i.variant.sku, design: { ...i.design, variantLabel: i.variantLabel } } } : undefined,
         }))) },
       },
     });
+    const full = await getOrder(order.id); if (full) await sendOrderEmails(full as any);
     return { id: order.id, number: order.number, total: order.total };
   }
   const id = `ord_${Date.now().toString(36)}`; const number = 100000 + memStore().orders.size + 1;
-  memStore().orders.set(id, { id, number, ...base, items: priced.items.map((i) => ({ name: i.product.name, variant: i.variant.name, qty: i.qty, unitPrice: i.unitPrice, preview: i.design?.preview })), createdAt: new Date().toISOString() });
+  memStore().orders.set(id, { id, number, ...base, items: priced.items.map((i) => ({ name: i.product.name, variant: i.variantLabel, qty: i.qty, unitPrice: i.unitPrice, preview: i.design?.preview, design: i.design })), createdAt: new Date().toISOString() });
+  await sendOrderEmails(memStore().orders.get(id) as any);
   return { id, number, total: priced.total };
 }
 
@@ -61,7 +66,7 @@ export async function getOrder(id: string) {
   if (prisma) {
     const o = await prisma.order.findUnique({ where: { id }, include: { items: { include: { product: true, variant: true, project: true } } } });
     if (!o) return null;
-    return { ...o, items: o.items.map((i: any) => ({ name: i.product.name, variant: i.variant.name, qty: i.qty, unitPrice: i.unitPrice, preview: (i.project?.design as { preview?: string } | null)?.preview })) };
+    return { ...o, items: o.items.map((i: any) => ({ name: i.product.name, variant: (i.project?.design as any)?.variantLabel ?? i.variant.name, qty: i.qty, unitPrice: i.unitPrice, preview: (i.project?.design as { preview?: string } | null)?.preview, design: i.project?.design ?? null })) };
   }
   return memStore().orders.get(id) ?? null;
 }
@@ -70,4 +75,20 @@ export async function markPaid(id: string, razorpayPaymentId: string) {
   const prisma = await getPrisma();
   if (prisma) { await prisma.order.update({ where: { id }, data: { status: "PAID", razorpayPaymentId } }); return; }
   const o = memStore().orders.get(id); if (o) { o.status = "PAID"; o.razorpayPaymentId = razorpayPaymentId; }
+}
+
+export async function listOrders(limit = 200) {
+  const prisma = await getPrisma();
+  if (prisma) {
+    const os = await prisma.order.findMany({ orderBy: { createdAt: "desc" }, take: limit, include: { items: { include: { product: true } } } });
+    return os.map((o: any) => ({ ...o, items: o.items.map((i: any) => ({ name: i.product.name, qty: i.qty })) }));
+  }
+  return [...memStore().orders.values()].reverse();
+}
+
+export async function setOrderStatus(id: string, status: string, trackingUrl?: string) {
+  const prisma = await getPrisma();
+  if (prisma) { await prisma.order.update({ where: { id }, data: { status: status as any, trackingUrl: trackingUrl ?? undefined } }); }
+  else { const o = memStore().orders.get(id); if (o) { o.status = status; if (trackingUrl) o.trackingUrl = trackingUrl; } }
+  if (status === "SHIPPED") { const o = await getOrder(id); if (o) await sendShippedEmail(o as any); }
 }

@@ -12,7 +12,7 @@ export type CartLine = {
   qty: number;
   image: string;
   /** Saved personalisation; preview is a data URL rendered by the editor */
-  design?: { preview?: string; text?: Record<string, string>; photoCount: number; options?: Record<string, string> };
+  design?: { preview?: string; text?: Record<string, string>; photoCount: number; options?: Record<string, string>; slots?: { key?: string; zoom: number; dx: number; dy: number; rot: number; w: number; h: number }[]; canvas?: { w: number; h: number; aspect: number } };
 };
 
 type CartState = {

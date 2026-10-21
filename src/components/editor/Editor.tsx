@@ -16,7 +16,7 @@ import { useCart } from "@/lib/cart";
 import { inr } from "@/lib/format";
 import { CallUs } from "@/components/ui/CallUs";
 
-type Slot = { img?: HTMLImageElement; src?: string; zoom: number; dx: number; dy: number; rot: 0 | 90 | 180 | 270; w: number; h: number };
+type Slot = { img?: HTMLImageElement; src?: string; file?: File; key?: string; zoom: number; dx: number; dy: number; rot: 0 | 90 | 180 | 270; w: number; h: number };
 
 const MIN_PX_PER_INCH = 150; // warn below this at print size
 
@@ -99,7 +99,7 @@ export function Editor({ product, variant: initialVariant, initialOptions = {}, 
       const url = URL.createObjectURL(f);
       const img = new Image();
       img.onload = () => {
-        setSlots((prev) => { const next = [...prev]; const i = next.findIndex((s) => !s.img); const t = i < 0 ? active : i; next[t] = { img, src: url, zoom: 1, dx: 0, dy: 0, rot: 0, w: img.width, h: img.height }; return next; });
+        setSlots((prev) => { const next = [...prev]; const i = next.findIndex((s) => !s.img); const t = i < 0 ? active : i; next[t] = { img, src: url, file: f, zoom: 1, dx: 0, dy: 0, rot: 0, w: img.width, h: img.height }; return next; });
       };
       img.src = url;
     });
@@ -126,10 +126,27 @@ export function Editor({ product, variant: initialVariant, initialOptions = {}, 
   };
   const onUp = () => { drag.current = null; };
 
-  const addToCart = () => {
+  const [uploading, setUploading] = useState<string | null>(null);
+  const addToCart = async () => {
     const preview = canvasRef.current!.toDataURL("image/jpeg", 0.7);
     const label = optionLabel(groups, opts);
-    add({ productSlug: product.slug, productName: product.name, variantSku: variant.sku, variantName: label ? `${variant.name} · ${label}` : variant.name, unitPrice, qty, image: product.image, design: { preview, text, photoCount: filled, options: opts } });
+    // Upload original files to object storage (presigned PUT), keep only the keys.
+    const slotDesign: { key?: string; zoom: number; dx: number; dy: number; rot: number; w: number; h: number }[] = [];
+    const toUpload = slots.map((s, i) => ({ s, i })).filter(({ s }) => s.file && !s.key);
+    try {
+      for (let k = 0; k < toUpload.length; k++) {
+        const { s, i } = toUpload[k];
+        setUploading(`Uploading photo ${k + 1} of ${toUpload.length}…`);
+        const r = await fetch("/api/upload", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ filename: s.file!.name, mime: s.file!.type || "image/jpeg", bytes: s.file!.size }) });
+        const j = (await r.json()) as { key: string; url: string | null; error?: string };
+        if (!r.ok) throw new Error(j.error ?? "Upload failed");
+        if (j.url) { const put = await fetch(j.url, { method: "PUT", body: s.file, headers: { "content-type": s.file!.type || "image/jpeg" } }); if (!put.ok) throw new Error("Upload failed"); }
+        slots[i].key = j.key;
+      }
+    } catch (e) { setUploading(null); alert((e as Error).message + ". Please try again."); return; }
+    setUploading(null);
+    slots.forEach((s) => slotDesign.push({ key: s.key, zoom: s.zoom, dx: s.dx, dy: s.dy, rot: s.rot, w: s.w, h: s.h }));
+    add({ productSlug: product.slug, productName: product.name, variantSku: variant.sku, variantName: label ? `${variant.name} · ${label}` : variant.name, unitPrice, qty, image: product.image, design: { preview, text, photoCount: filled, options: opts, slots: slotDesign, canvas: { w: W, h: H, aspect } } });
     router.push("/cart");
   };
 
@@ -235,7 +252,7 @@ export function Editor({ product, variant: initialVariant, initialOptions = {}, 
               <li className="flex gap-2"><Check size={16} className="text-accent" />{variant.name}{optionLabel(groups, opts) ? ` · ${optionLabel(groups, opts)}` : ""} × {qty}</li>
               <li className="flex gap-2"><Check size={16} className="text-accent" />Preview checked — what you see is what prints</li>
             </ul>
-            <button disabled={!canReview} onClick={addToCart} className="btn btn-primary w-full text-base !py-3.5">Add {qty > 1 ? `${qty} ` : ""}to cart · {inr(unitPrice * qty)}</button>
+            <button disabled={!canReview || !!uploading} onClick={addToCart} className="btn btn-primary w-full text-base !py-3.5">{uploading ?? <>Add {qty > 1 ? `${qty} ` : ""}to cart · {inr(unitPrice * qty)}</>}</button>
             <p className="text-xs text-ink-3">Your design is saved with the order. Reorders print the same file.</p>
             <CallUs compact />
           </div>

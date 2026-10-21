@@ -14,6 +14,8 @@ export const metadata: Metadata = {
     "India's online store for photo printing and personalised gifts. Photobooks, framed prints, calendars, mugs, cushions and kids' essentials, made from your photos. Free design tools, pan-India delivery, COD available.",
   openGraph: { type: "website", siteName: "Shivam Printers", locale: "en_IN" },
   robots: { index: true, follow: true },
+  alternates: { languages: { "en-IN": "/" } },
+  other: { "geo.region": "IN", "geo.placename": "India" },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

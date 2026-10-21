@@ -10,6 +10,7 @@ const Address = z.object({
   line1: z.string().min(4, "Address"), line2: z.string().optional(), city: z.string().min(2, "City"), state: z.string().min(2, "State"), pincode: z.string().regex(/^\d{6}$/, "6-digit PIN"),
 });
 type AddressT = z.infer<typeof Address>;
+const STATES = ["Andhra Pradesh","Arunachal Pradesh","Assam","Bihar","Chhattisgarh","Goa","Gujarat","Haryana","Himachal Pradesh","Jharkhand","Karnataka","Kerala","Madhya Pradesh","Maharashtra","Manipur","Meghalaya","Mizoram","Nagaland","Odisha","Punjab","Rajasthan","Sikkim","Tamil Nadu","Telangana","Tripura","Uttar Pradesh","Uttarakhand","West Bengal","Andaman and Nicobar Islands","Chandigarh","Dadra and Nagar Haveli and Daman and Diu","Delhi","Jammu and Kashmir","Ladakh","Lakshadweep","Puducherry"];
 
 declare global { interface Window { Razorpay?: new (o: Record<string, unknown>) => { open: () => void } } }
 
@@ -33,7 +34,7 @@ export default function Checkout() {
     if (!r.success) { setErrs(Object.fromEntries(r.error.issues.map((i) => [i.path[0], i.message]))); return; }
     setErrs({}); setBusy(true);
     try {
-      const res = await fetch("/api/orders", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ address: r.data, lines, coupon: coupon?.code, shipMethod: ship, paymentMethod: pay, giftMessage: isGift ? gift : undefined }) });
+      const res = await fetch("/api/orders", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ address: r.data, lines: lines.map((l) => ({ productSlug: l.productSlug, variantSku: l.variantSku, variantName: l.variantName, qty: l.qty, design: l.design })), coupon: coupon?.code, shipMethod: ship, paymentMethod: pay, giftMessage: isGift ? gift : undefined }) });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "Could not place order");
       if (pay === "COD" || !data.razorpay) { clear(); router.push(`/orders/${data.orderId}?placed=1`); return; }
@@ -57,16 +58,16 @@ export default function Checkout() {
       <form onSubmit={submit} className="grid lg:grid-cols-[1fr_380px] gap-8">
         <div className="space-y-8">
           <section className="card p-5">
-            <h2 className="font-bold text-lg mb-4">Delivery address</h2>
+            <h2 className="font-bold text-lg mb-1">Delivery address</h2><p className="text-xs text-ink-3 mb-4">We currently deliver within India only.</p>
             <div className="grid sm:grid-cols-2 gap-3">
               <input placeholder="Full name" {...f("name")} />
-              <input placeholder="Mobile number" inputMode="numeric" {...f("phone")} />
+              <div className="flex"><span className="inline-flex items-center px-3 border border-r-0 border-line rounded-l-[10px] bg-surface-2 text-sm text-ink-2">+91</span><input placeholder="10-digit mobile" inputMode="numeric" maxLength={10} {...f("phone")} className={`input !rounded-l-none ${errs.phone ? "!border-brand" : ""}`} /></div>
               <input placeholder="Email (for order updates)" type="email" className="sm:col-span-2 input" value={a.email} onChange={(e) => setA({ ...a, email: e.target.value })} />
               <input placeholder="Flat / house no., building, street" className="sm:col-span-2 input" value={a.line1} onChange={(e) => setA({ ...a, line1: e.target.value })} />
               <input placeholder="Landmark (optional)" className="sm:col-span-2 input" value={a.line2} onChange={(e) => setA({ ...a, line2: e.target.value })} />
               <input placeholder="PIN code" inputMode="numeric" {...f("pincode")} />
               <input placeholder="City" {...f("city")} />
-              <input placeholder="State" {...f("state")} />
+              <select className={`input ${errs.state ? "!border-brand" : ""}`} value={a.state} onChange={(e) => setA({ ...a, state: e.target.value })}><option value="">State</option>{STATES.map((st) => <option key={st}>{st}</option>)}</select>
             </div>
             {Object.keys(errs).filter((k) => k !== "form").length > 0 && <div className="text-brand text-sm mt-2">Please check: {Object.values(errs).join(", ")}</div>}
           </section>
