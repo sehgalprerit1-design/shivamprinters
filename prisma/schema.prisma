@@ -1,0 +1,190 @@
+// Zoomin rebuild — data model.
+// Catalog is seeded from src/data; orders, uploads and users are live data.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Category {
+  id          String    @id @default(cuid())
+  slug        String    @unique
+  name        String
+  tagline     String
+  description String
+  image       String
+  order       Int
+  products    Product[]
+}
+
+model Product {
+  id              String      @id @default(cuid())
+  slug            String      @unique
+  legacyPath      String?     @unique
+  name            String
+  description     String
+  image           String
+  badges          String[]
+  personalisation String // photo | text | photo+text | multi-photo
+  templateAspect  Float
+  photoSlots      Int
+  textFields      Json // [{key,label,max}]
+  tags            String[]
+  rating          Float       @default(0)
+  reviews         Int         @default(0)
+  featured        Boolean     @default(false)
+  active          Boolean     @default(true)
+  category        Category    @relation(fields: [categoryId], references: [id])
+  categoryId      String
+  variants        Variant[]
+  orderItems      OrderItem[]
+
+  @@index([categoryId])
+  @@index([tags])
+}
+
+model Variant {
+  id        String      @id @default(cuid())
+  sku       String      @unique
+  name      String
+  price     Int // paise-free INR, whole rupees
+  compareAt Int?
+  product   Product     @relation(fields: [productId], references: [id])
+  productId String
+  items     OrderItem[]
+}
+
+model User {
+  id        String    @id @default(cuid())
+  email     String    @unique
+  phone     String?   @unique
+  name      String?
+  createdAt DateTime  @default(now())
+  addresses Address[]
+  orders    Order[]
+  uploads   Upload[]
+  projects  Project[]
+}
+
+model Address {
+  id       String  @id @default(cuid())
+  user     User    @relation(fields: [userId], references: [id])
+  userId   String
+  name     String
+  phone    String
+  line1    String
+  line2    String?
+  city     String
+  state    String
+  pincode  String
+  isDefault Boolean @default(false)
+  orders   Order[]
+}
+
+/// A customer photo, stored in object storage (S3/R2). Only the key is kept.
+model Upload {
+  id        String   @id @default(cuid())
+  user      User?    @relation(fields: [userId], references: [id])
+  userId    String?
+  sessionId String? // for guest carts
+  key       String   @unique
+  width     Int
+  height    Int
+  bytes     Int
+  mime      String
+  createdAt DateTime @default(now())
+
+  @@index([sessionId])
+}
+
+/// A saved personalisation: which photos go in which slots, crops, text.
+/// This is what the print pipeline renders from.
+model Project {
+  id        String      @id @default(cuid())
+  user      User?       @relation(fields: [userId], references: [id])
+  userId    String?
+  sessionId String?
+  productSlug String
+  variantSku  String
+  design    Json // { slots: [{uploadId, crop:{x,y,w,h}, rotate}], text: {key: value} }
+  previewKey String? // rendered preview image
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  items     OrderItem[]
+}
+
+enum OrderStatus {
+  PENDING_PAYMENT
+  PAID
+  COD_CONFIRMED
+  IN_PRODUCTION
+  SHIPPED
+  DELIVERED
+  CANCELLED
+  REFUNDED
+}
+
+enum PaymentMethod {
+  RAZORPAY
+  COD
+}
+
+model Order {
+  id            String        @id @default(cuid())
+  number        Int           @unique @default(autoincrement())
+  user          User?         @relation(fields: [userId], references: [id])
+  userId        String?
+  email         String
+  phone         String
+  address       Address?      @relation(fields: [addressId], references: [id])
+  addressId     String?
+  shippingJson  Json // snapshot of address at order time
+  status        OrderStatus   @default(PENDING_PAYMENT)
+  paymentMethod PaymentMethod
+  subtotal      Int
+  discount      Int           @default(0)
+  shipping      Int           @default(0)
+  total         Int
+  couponCode    String?
+  razorpayOrderId   String?   @unique
+  razorpayPaymentId String?
+  shipMethod    String // express | economy
+  trackingUrl   String?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  items         OrderItem[]
+
+  @@index([status])
+  @@index([createdAt])
+}
+
+model OrderItem {
+  id        String   @id @default(cuid())
+  order     Order    @relation(fields: [orderId], references: [id])
+  orderId   String
+  product   Product  @relation(fields: [productId], references: [id])
+  productId String
+  variant   Variant  @relation(fields: [variantId], references: [id])
+  variantId String
+  project   Project? @relation(fields: [projectId], references: [id])
+  projectId String?
+  qty       Int
+  unitPrice Int
+  /// Print-ready output, filled by the render worker
+  printFileKey String?
+}
+
+model Coupon {
+  id         String   @id @default(cuid())
+  code       String   @unique
+  percentOff Int?
+  flatOff    Int?
+  maxOff     Int?
+  minOrder   Int      @default(0)
+  expiresAt  DateTime?
+  active     Boolean  @default(true)
+}
