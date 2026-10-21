@@ -3,6 +3,7 @@
 import { NextResponse } from "next/server";
 import { getPrisma } from "@/lib/db";
 import { storageSelfTest } from "@/lib/storage";
+import { emailSelfTest } from "@/lib/email";
 export const dynamic = "force-dynamic";
 
 export async function GET(req: Request) {
@@ -11,6 +12,8 @@ export async function GET(req: Request) {
     const prisma = await getPrisma();
     if (prisma) { const n = await prisma.product.count(); out.db = "ok"; out.products = n; }
   } catch (e) { out.ok = false; out.db = (e as Error).message; }
-  if (new URL(req.url).searchParams.get("storage")) out.storage = await storageSelfTest();
+  const q = new URL(req.url).searchParams;
+  if (q.get("storage")) out.storage = await storageSelfTest();
+  if (q.get("email")) out.email = await emailSelfTest();
   return NextResponse.json(out, { status: out.ok ? 200 : 500 });
 }
