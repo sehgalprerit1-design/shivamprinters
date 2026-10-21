@@ -14,6 +14,14 @@ Custom Next.js 16 storefront for zoomin.com: photobooks, frames, calendars, kids
 | Uploads | Presigned PUT to S3/R2 (`/api/upload`) | Originals never pass through the app server |
 | Images | Generated with Nano Banana (Google) via Higgsfield; `public/images/*.jpg` | Replace with real product photography at will |
 
+## Images
+
+The shipped `public/images/*.jpg` are flat placeholders. The real imagery (generated with Nano Banana via Higgsfield) is one command away:
+
+```bash
+bash scripts/fetch-images.sh
+```
+
 ## Run
 
 ```bash
