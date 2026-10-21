@@ -257,6 +257,13 @@ export const products: Product[] = [
   { slug: "skeleton-clips", legacyPath: "/accessories/skeleton-clips", category: "accessories", name: "Skeleton Clips (Set of 2)", description: "Metal stand clips for displaying prints on a desk.", image: "/images/p/skeleton-clips.jpg", personalisation: "text", template: { aspect: 1, photoSlots: 0, textFields: [] }, variants: [{ sku: "AC-SKEL", name: "Set of 2", price: 199, compareAt: 299 }], tags: ["under-499", "corporate"], rating: 4.4, reviews: 200 },
 ];
 
+// Price overrides edited in /admin/pricing (committed to src/data/prices.json).
+import prices from "./prices.json";
+{
+  const V = (prices as { variants?: Record<string, { price?: number; compareAt?: number | null }> }).variants ?? {};
+  for (const p of products) for (const v of p.variants) { const o = V[v.sku]; if (!o) continue; if (typeof o.price === "number") v.price = o.price; if (o.compareAt === null) delete v.compareAt; else if (typeof o.compareAt === "number") v.compareAt = o.compareAt; }
+}
+
 export const getCategory = (slug: string) => categories.find((c) => c.slug === slug);
 export const getProduct = (slug: string) => products.find((p) => p.slug === slug);
 export const productsInCategory = (slug: string) => products.filter((p) => p.category === slug);
