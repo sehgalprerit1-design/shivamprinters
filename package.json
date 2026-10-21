@@ -7,10 +7,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "postinstall": "prisma generate || true",
+    "postinstall": "node -e \"process.env.DATABASE_URL ? require('child_process').execSync('npx prisma generate',{stdio:'inherit'}) : console.log('skip prisma generate')\"",
     "db:push": "prisma db push",
     "db:seed": "tsx prisma/seed.ts",
-    "vercel-build": "prisma generate && prisma db push --accept-data-loss && next build"
+    "vercel-build": "node scripts/vercel-build.mjs"
   },
   "dependencies": {
     "@fontsource-variable/fraunces": "^5.3.0",
