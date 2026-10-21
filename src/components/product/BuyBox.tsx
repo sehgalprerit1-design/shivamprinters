@@ -1,34 +1,88 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
+import { Heart, Share2, MapPin } from "lucide-react";
 import type { Product } from "@/data/catalog";
+import { optionsFor, optionDelta, defaultOptions } from "@/data/options";
 import { inr } from "@/lib/format";
+import { useWishlist } from "@/lib/wishlist";
 
 export function BuyBox({ product }: { product: Product }) {
   const [v, setV] = useState(product.variants[0]);
-  const pct = v.compareAt ? Math.round(((v.compareAt - v.price) / v.compareAt) * 100) : 0;
+  const groups = optionsFor(product.slug, product.category);
+  const [opts, setOpts] = useState<Record<string, string>>(defaultOptions(groups));
+  const [qty, setQty] = useState(1);
+  const [pin, setPin] = useState(""); const [eta, setEta] = useState<string | null>(null);
+  const wish = useWishlist(); const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  const unit = v.price + optionDelta(groups, opts);
+  const pct = v.compareAt ? Math.round(((v.compareAt - unit) / v.compareAt) * 100) : 0;
+  const q = new URLSearchParams({ v: v.sku, qty: String(qty), ...opts }).toString();
+  const wished = mounted && wish.has(product.slug);
+
+  const checkPin = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!/^\d{6}$/.test(pin)) { setEta("Enter a 6-digit PIN code"); return; }
+    const metro = /^(1[01]|40|41|56|60|70|50|38|30)/.test(pin);
+    setEta(metro ? "Express by 4–5 days · Economy by 8–10 days · COD available" : "Express by 5–6 days · Economy by 10–12 days · COD available");
+  };
+
   return (
     <div className="mt-6">
       {product.variants.length > 1 && (
         <div>
-          <div className="text-sm font-semibold mb-2">Choose a size / finish</div>
+          <div className="text-sm font-semibold mb-2">Size</div>
           <div className="flex flex-wrap gap-2">
             {product.variants.map((x) => (
               <button key={x.sku} onClick={() => setV(x)} className={`rounded-xl border px-3 py-2 text-sm text-left ${x.sku === v.sku ? "border-brand bg-brand-soft" : "border-line hover:border-ink-3"}`}>
-                <div className="font-medium">{x.name}</div>
-                <div className="text-xs text-ink-3">{inr(x.price)}</div>
+                <div className="font-medium">{x.name}</div><div className="text-xs text-ink-3">{inr(x.price)}</div>
               </button>
             ))}
           </div>
         </div>
       )}
-      <div className="flex items-baseline gap-3 mt-6">
-        <span className="text-3xl font-bold">{inr(v.price)}</span>
-        {v.compareAt && <><span className="price-strike">{inr(v.compareAt)}</span><span className="chip bg-brand text-white">{pct}% off</span></>}
+      {groups.map((g) => (
+        <div key={g.key} className="mt-4">
+          <div className="text-sm font-semibold mb-2">{g.label}</div>
+          <div className="flex flex-wrap gap-2">
+            {g.choices.map((c) => (
+              <button key={c.id} onClick={() => setOpts({ ...opts, [g.key]: c.id })} title={c.hint} className={`rounded-full border px-3 py-1.5 text-sm ${opts[g.key] === c.id ? "border-brand bg-brand-soft" : "border-line hover:border-ink-3"}`}>
+                {c.label}{c.delta ? <span className="text-ink-3 text-xs"> +{inr(c.delta)}</span> : null}
+              </button>
+            ))}
+          </div>
+          {g.choices.find((c) => c.id === opts[g.key])?.hint && <div className="text-xs text-ink-3 mt-1">{g.choices.find((c) => c.id === opts[g.key])!.hint}</div>}
+        </div>
+      ))}
+
+      <div className="flex items-end gap-4 mt-6">
+        <div>
+          <div className="flex items-baseline gap-3">
+            <span className="text-3xl font-bold">{inr(unit)}</span>
+            {v.compareAt && pct > 0 && <><span className="price-strike">{inr(v.compareAt)}</span><span className="chip bg-brand text-white">{pct}% off</span></>}
+          </div>
+          <div className="text-xs text-ink-3 mt-1">Inclusive of GST · <b>PATAKA25</b> for 25% off at checkout</div>
+        </div>
+        <div className="ml-auto">
+          <div className="text-xs font-semibold mb-1">Qty</div>
+          <div className="inline-flex border border-line rounded-full"><button className="px-3 py-1.5" onClick={() => setQty(Math.max(1, qty - 1))}>−</button><span className="px-1 py-1.5 text-sm w-6 text-center">{qty}</span><button className="px-3 py-1.5" onClick={() => setQty(Math.min(99, qty + 1))}>+</button></div>
+        </div>
       </div>
-      <div className="text-xs text-ink-3 mt-1">Inclusive of GST. Use <b>PATAKA25</b> for 25% off at checkout.</div>
-      <Link href={`/design/${product.slug}?v=${encodeURIComponent(v.sku)}`} className="btn btn-primary w-full mt-5 text-base !py-3.5">Personalise this →</Link>
-      <p className="text-xs text-ink-3 text-center mt-2">Upload photos, preview the real thing, then add to cart. Takes about two minutes.</p>
+      {qty >= 10 && <div className="text-xs text-accent mt-2">Ordering {qty}? <Link href="/bulk-orders" className="underline">Bulk pricing</Link> starts at 25 units.</div>}
+
+      <div className="flex gap-2 mt-5">
+        <Link href={`/design/${product.slug}?${q}`} className="btn btn-primary flex-1 text-base !py-3.5">Personalise this →</Link>
+        <button onClick={() => wish.toggle(product.slug)} aria-label="Save" className={`btn btn-ghost !px-4 ${wished ? "text-brand border-brand" : ""}`}><Heart size={18} className={wished ? "fill-brand" : ""} /></button>
+        <button onClick={() => { if (navigator.share) navigator.share({ title: product.name, url: location.href }); else { navigator.clipboard.writeText(location.href); alert("Link copied"); } }} aria-label="Share" className="btn btn-ghost !px-4"><Share2 size={18} /></button>
+      </div>
+      <p className="text-xs text-ink-3 text-center mt-2">You can still change size, finish and quantity while personalising.</p>
+
+      <form onSubmit={checkPin} className="mt-5 flex gap-2 items-center">
+        <MapPin size={16} className="text-ink-3" />
+        <input className="input !py-2 !w-40" placeholder="PIN code" inputMode="numeric" maxLength={6} value={pin} onChange={(e) => setPin(e.target.value)} />
+        <button className="btn btn-ghost !py-2 text-sm">Check delivery</button>
+      </form>
+      {eta && <div className="text-xs text-ink-2 mt-2">{eta}</div>}
     </div>
   );
 }

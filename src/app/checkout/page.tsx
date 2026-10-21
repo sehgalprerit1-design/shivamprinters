@@ -20,6 +20,7 @@ export default function Checkout() {
   const [a, setA] = useState<AddressT>({ name: "", phone: "", email: "", line1: "", line2: "", city: "", state: "", pincode: "" });
   const [errs, setErrs] = useState<Record<string, string>>({});
   const [busy, setBusy] = useState(false);
+  const [gift, setGift] = useState(""); const [isGift, setIsGift] = useState(false);
   const t = cartTotals(lines, coupon, ship);
   const f = (k: keyof AddressT) => ({ value: a[k] ?? "", onChange: (e: React.ChangeEvent<HTMLInputElement>) => setA({ ...a, [k]: e.target.value }), className: `input ${errs[k] ? "!border-brand" : ""}` });
 
@@ -31,7 +32,7 @@ export default function Checkout() {
     if (!r.success) { setErrs(Object.fromEntries(r.error.issues.map((i) => [i.path[0], i.message]))); return; }
     setErrs({}); setBusy(true);
     try {
-      const res = await fetch("/api/orders", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ address: r.data, lines, coupon: coupon?.code, shipMethod: ship, paymentMethod: pay }) });
+      const res = await fetch("/api/orders", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ address: r.data, lines, coupon: coupon?.code, shipMethod: ship, paymentMethod: pay, giftMessage: isGift ? gift : undefined }) });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "Could not place order");
       if (pay === "COD" || !data.razorpay) { clear(); router.push(`/orders/${data.orderId}?placed=1`); return; }
@@ -75,6 +76,10 @@ export default function Checkout() {
                 <input type="radio" name="ship" checked={ship === k} onChange={() => setShip(k)} /><div className="flex-1"><div className="font-semibold">{l}</div><div className="text-xs text-ink-3">{d}</div></div><div className="font-semibold">{p}</div>
               </label>
             ))}
+          </section>
+          <section className="card p-5">
+            <label className="flex items-center gap-3 cursor-pointer"><input type="checkbox" checked={isGift} onChange={(e) => setIsGift(e.target.checked)} /><div><div className="font-bold">This is a gift</div><div className="text-xs text-ink-3">We leave the invoice out of the box and add a printed card with your message.</div></div></label>
+            {isGift && <textarea className="input mt-3" rows={3} maxLength={200} placeholder="Your message (up to 200 characters)" value={gift} onChange={(e) => setGift(e.target.value)} />}
           </section>
           <section className="card p-5">
             <h2 className="font-bold text-lg mb-4">Payment</h2>

@@ -30,6 +30,7 @@ export function Header() {
           <SearchBox />
         </div>
         <div className="ml-auto flex items-center gap-1">
+          <Link href="/wishlist" className="btn btn-ghost !px-3 hidden sm:inline-flex text-sm">Saved</Link>
           <Link href="/account" className="btn btn-ghost !px-3 hidden sm:inline-flex text-sm">Account</Link>
           <CartButton />
         </div>

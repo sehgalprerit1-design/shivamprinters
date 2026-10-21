@@ -9,6 +9,7 @@ export const OrderInput = z.object({
   coupon: z.string().optional(),
   shipMethod: z.enum(["economy", "express"]),
   paymentMethod: z.enum(["RAZORPAY", "COD"]),
+  giftMessage: z.string().max(200).optional(),
 });
 export type OrderInputT = z.infer<typeof OrderInput>;
 
@@ -36,6 +37,7 @@ export async function createOrder(input: OrderInputT) {
     email: input.address.email, phone: input.address.phone, shippingJson: input.address, paymentMethod: input.paymentMethod,
     subtotal: priced.subtotal, discount: priced.discount, shipping: priced.shipping, total: priced.total, couponCode: input.coupon ?? null, shipMethod: input.shipMethod,
     status: input.paymentMethod === "COD" ? "COD_CONFIRMED" : "PENDING_PAYMENT",
+    giftMessage: input.giftMessage ?? null,
   };
   if (prisma) {
     const order = await prisma.order.create({

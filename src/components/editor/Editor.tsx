@@ -11,7 +11,9 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Upload, ZoomIn, ZoomOut, RotateCw, Trash2, AlertTriangle, Check } from "lucide-react";
 import type { Product, Variant } from "@/data/catalog";
-import { useCart, inr } from "@/lib/cart";
+import { optionsFor, optionDelta, defaultOptions, optionLabel } from "@/data/options";
+import { useCart } from "@/lib/cart";
+import { inr } from "@/lib/format";
 
 type Slot = { img?: HTMLImageElement; src?: string; zoom: number; dx: number; dy: number; rot: 0 | 90 | 180 | 270; w: number; h: number };
 
@@ -29,9 +31,14 @@ function slotLayout(n: number, aspect: number): { x: number; y: number; w: numbe
   return Array.from({ length: n }, (_, i) => ({ x: gap + (i % cols) * (w + gap), y: gap + Math.floor(i / cols) * (h + gap), w, h }));
 }
 
-export function Editor({ product, variant }: { product: Product; variant: Variant }) {
+export function Editor({ product, variant: initialVariant, initialOptions = {}, initialQty = 1 }: { product: Product; variant: Variant; initialOptions?: Record<string, string>; initialQty?: number }) {
   const router = useRouter();
   const add = useCart((s) => s.add);
+  const [variant, setVariant] = useState<Variant>(initialVariant);
+  const groups = useMemo(() => optionsFor(product.slug, product.category), [product.slug, product.category]);
+  const [opts, setOpts] = useState<Record<string, string>>({ ...defaultOptions(groups), ...initialOptions });
+  const [qty, setQty] = useState(initialQty);
+  const unitPrice = variant.price + optionDelta(groups, opts);
   const n = product.template.photoSlots;
   const aspect = product.template.aspect;
   const [slots, setSlots] = useState<Slot[]>(() => Array.from({ length: Math.max(n, 0) }, () => ({ zoom: 1, dx: 0, dy: 0, rot: 0, w: 0, h: 0 })));
@@ -120,7 +127,8 @@ export function Editor({ product, variant }: { product: Product; variant: Varian
 
   const addToCart = () => {
     const preview = canvasRef.current!.toDataURL("image/jpeg", 0.7);
-    add({ productSlug: product.slug, productName: product.name, variantSku: variant.sku, variantName: variant.name, unitPrice: variant.price, qty: 1, image: product.image, design: { preview, text, photoCount: filled } });
+    const label = optionLabel(groups, opts);
+    add({ productSlug: product.slug, productName: product.name, variantSku: variant.sku, variantName: label ? `${variant.name} · ${label}` : variant.name, unitPrice, qty, image: product.image, design: { preview, text, photoCount: filled, options: opts } });
     router.push("/cart");
   };
 
@@ -145,12 +153,37 @@ export function Editor({ product, variant }: { product: Product; variant: Varian
         {lowRes && <div className="mt-3 flex items-start gap-2 text-sm bg-amber-50 border border-amber-200 text-amber-900 rounded-xl p-3"><AlertTriangle size={16} className="mt-0.5 shrink-0" />This photo is on the small side for a {printInches}&quot; print at this zoom. It will print, but may look soft. A larger original or less zoom fixes it.</div>}
       </div>
 
-      <aside className="space-y-5">
+      <aside className="space-y-5 lg:sticky lg:top-32 self-start max-h-[calc(100vh-9rem)] overflow-y-auto no-scrollbar">
         <div>
           <div className="text-xs font-semibold uppercase tracking-wide text-ink-3">Personalising</div>
           <div className="font-bold text-lg">{product.name}</div>
-          <div className="text-sm text-ink-2">{variant.name} · {inr(variant.price)}</div>
+          <div className="text-sm text-ink-2">{inr(unitPrice)} each{qty > 1 ? ` · ${inr(unitPrice * qty)} for ${qty}` : ""}</div>
         </div>
+        <details className="card p-3 text-sm group" open={product.variants.length > 1 || groups.length > 0}>
+          <summary className="cursor-pointer list-none flex justify-between font-semibold">Size, finish & quantity<span className="text-ink-3 group-open:rotate-45 transition-transform">+</span></summary>
+          {product.variants.length > 1 && (
+            <div className="mt-3">
+              <div className="text-xs font-semibold text-ink-3 mb-1">Size</div>
+              <select className="input !py-2" value={variant.sku} onChange={(e) => setVariant(product.variants.find((x) => x.sku === e.target.value)!)}>
+                {product.variants.map((x) => <option key={x.sku} value={x.sku}>{x.name} — {inr(x.price)}</option>)}
+              </select>
+            </div>
+          )}
+          {groups.map((g) => (
+            <div key={g.key} className="mt-3">
+              <div className="text-xs font-semibold text-ink-3 mb-1">{g.label}</div>
+              <div className="flex flex-wrap gap-1.5">
+                {g.choices.map((c) => (
+                  <button key={c.id} type="button" title={c.hint} onClick={() => setOpts({ ...opts, [g.key]: c.id })} className={`rounded-full border px-2.5 py-1 text-xs ${opts[g.key] === c.id ? "border-brand bg-brand-soft" : "border-line"}`}>{c.label}{c.delta ? ` +₹${c.delta}` : ""}</button>
+                ))}
+              </div>
+            </div>
+          ))}
+          <div className="mt-3 flex items-center justify-between">
+            <div className="text-xs font-semibold text-ink-3">Quantity</div>
+            <div className="inline-flex border border-line rounded-full"><button type="button" className="px-3" onClick={() => setQty(Math.max(1, qty - 1))}>−</button><span className="px-1 py-1 w-6 text-center">{qty}</span><button type="button" className="px-3" onClick={() => setQty(Math.min(99, qty + 1))}>+</button></div>
+          </div>
+        </details>
         <ol className="flex gap-2 text-xs">
           {(["photos", "text", "review"] as const).filter((s) => s !== "photos" || n > 0).filter((s) => s !== "text" || product.template.textFields.length > 0).map((s, i) => (
             <li key={s}><button onClick={() => setStep(s)} className={`chip ${step === s ? "bg-ink text-white" : "bg-surface-2"}`}>{i + 1}. {s === "photos" ? "Photos" : s === "text" ? "Text" : "Review"}</button></li>
@@ -197,9 +230,10 @@ export function Editor({ product, variant }: { product: Product; variant: Varian
             <ul className="text-sm space-y-1.5">
               {n > 0 && <li className="flex gap-2"><Check size={16} className="text-accent" />{filled} photo{filled !== 1 ? "s" : ""} placed</li>}
               {product.template.textFields.map((f) => <li key={f.key} className="flex gap-2"><Check size={16} className={text[f.key] ? "text-accent" : "text-ink-3"} />{f.label}: {text[f.key] || <span className="text-ink-3">blank</span>}</li>)}
+              <li className="flex gap-2"><Check size={16} className="text-accent" />{variant.name}{optionLabel(groups, opts) ? ` · ${optionLabel(groups, opts)}` : ""} × {qty}</li>
               <li className="flex gap-2"><Check size={16} className="text-accent" />Preview checked — what you see is what prints</li>
             </ul>
-            <button disabled={!canReview} onClick={addToCart} className="btn btn-primary w-full text-base !py-3.5">Add to cart · {inr(variant.price)}</button>
+            <button disabled={!canReview} onClick={addToCart} className="btn btn-primary w-full text-base !py-3.5">Add {qty > 1 ? `${qty} ` : ""}to cart · {inr(unitPrice * qty)}</button>
             <p className="text-xs text-ink-3">Your design is saved with the order. Reorders print the same file.</p>
           </div>
         )}

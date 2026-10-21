@@ -153,6 +153,7 @@ model Order {
   razorpayOrderId   String?   @unique
   razorpayPaymentId String?
   shipMethod    String // express | economy
+  giftMessage   String?
   trackingUrl   String?
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt

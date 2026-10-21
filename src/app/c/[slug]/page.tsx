@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { categories, getCategory, productsInCategory } from "@/data/catalog";
-import { ProductGrid } from "@/components/product/ProductGrid";
+import { CategoryBrowser } from "@/components/product/CategoryBrowser";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 
 export const dynamicParams = false;
@@ -28,8 +28,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={c.image} alt="" className="rounded-2xl aspect-[4/3] object-cover w-full hidden md:block" />
       </div>
-      <div className="flex items-center justify-between text-sm text-ink-3 mb-4"><span>{items.length} products</span><span>Sorted by popularity</span></div>
-      <ProductGrid products={items} />
+      <CategoryBrowser products={items} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
         "@context": "https://schema.org", "@type": "CollectionPage", name: c.name, description: c.description,
         mainEntity: { "@type": "ItemList", itemListElement: items.map((p, i) => ({ "@type": "ListItem", position: i + 1, url: `/p/${p.slug}`, name: p.name })) },
