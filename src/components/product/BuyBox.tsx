@@ -77,7 +77,7 @@ export function BuyBox({ product }: { product: Product }) {
         <button onClick={() => { if (navigator.share) navigator.share({ title: product.name, url: location.href }); else { navigator.clipboard.writeText(location.href); alert("Link copied"); } }} aria-label="Share" className="btn btn-ghost !px-4"><Share2 size={18} /></button>
       </div>
       <p className="text-xs text-ink-3 text-center mt-2">You can still change size, finish and quantity while personalising.</p>
-      <div className="text-center mt-2"><CallUs /></div>
+      <div className="text-center mt-2"><CallUs whatsapp={`Hi Shivam Printers, I have a question about "${product.name}".`} /></div>
 
       <form onSubmit={checkPin} className="mt-5 flex gap-2 items-center">
         <MapPin size={16} className="text-ink-3" />

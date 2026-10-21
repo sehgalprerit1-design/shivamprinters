@@ -19,7 +19,7 @@ export function Header() {
   return (
     <header className="sticky top-0 z-40 bg-surface/95 backdrop-blur border-b border-line">
       <div className="bg-ink text-white text-xs text-center py-1.5 px-4">
-        <span className="font-semibold">25% off up to ₹1,000</span> with code <span className="font-mono bg-white/15 px-1.5 py-0.5 rounded">PATAKA25</span> · Free shipping over ₹999 · COD available · <a href="tel:+919910888217" className="underline underline-offset-2">Questions? Call us 9910888217</a>
+        <span className="font-semibold">25% off up to ₹1,000</span> with code <span className="font-mono bg-white/15 px-1.5 py-0.5 rounded">PATAKA25</span> · Free shipping over ₹999 · COD available · <a href="tel:+919910888217" className="underline underline-offset-2">Questions? Call us 9910888217</a> · <a href="https://wa.me/919910888217?text=Hi%20Shivam%20Printers%2C%20I%20have%20a%20question." target="_blank" rel="noopener noreferrer" className="underline underline-offset-2">WhatsApp</a>
       </div>
       <div className="container-x flex items-center gap-4 h-16">
         <MobileNav categories={categories} occasions={occasions} recipients={recipients} />

@@ -72,19 +72,19 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
               {(SPECS[p.category] ?? []).map(([k, v]) => <div key={k} className="contents"><dt className="text-ink-3">{k}</dt><dd className="text-ink-2">{v}</dd></div>)}
               {groups.length > 0 && <div className="contents"><dt className="text-ink-3">Options</dt><dd className="text-ink-2">{groups.map((g) => g.label).join(", ")}</dd></div>}
             </dl>
-            <div className="mt-3"><CallUs /></div>
+            <div className="mt-3"><CallUs whatsapp={`Hi Shivam Printers, I have a question about "${p.name}".`} /></div>
           </div>
           <details className="mt-3 border-t border-line pt-4 group">
             <summary className="font-semibold cursor-pointer list-none flex justify-between">Delivery & returns<span className="text-ink-3 group-open:rotate-45 transition-transform">+</span></summary>
             <div className="text-sm text-ink-2 mt-3 space-y-2">
               <p>Express delivery takes 4–6 working days; economy takes 10–12. Free economy shipping on orders over ₹999. Cash on delivery is available on most pincodes.</p>
               <p>Personalised products can&apos;t be returned, but if there&apos;s a print defect or damage in transit we reprint or refund — send a photo to the help desk within 7 days.</p>
-              <CallUs />
+              <CallUs whatsapp={`Hi Shivam Printers, I have a question about "${p.name}".`} />
             </div>
           </details>
           <details className="mt-3 border-t border-line pt-4 group">
             <summary className="font-semibold cursor-pointer list-none flex justify-between">Photo requirements<span className="text-ink-3 group-open:rotate-45 transition-transform">+</span></summary>
-            <div className="text-sm text-ink-2 mt-3"><p>JPG, PNG or HEIC. Phone photos are fine for everything up to 8x10&quot;; for larger wall art we recommend 2,000px on the long edge or more. The editor warns you if a photo is too small for the size chosen.</p><div className="mt-2"><CallUs /></div></div>
+            <div className="text-sm text-ink-2 mt-3"><p>JPG, PNG or HEIC. Phone photos are fine for everything up to 8x10&quot;; for larger wall art we recommend 2,000px on the long edge or more. The editor warns you if a photo is too small for the size chosen.</p><div className="mt-2"><CallUs whatsapp={`Hi Shivam Printers, I have a question about "${p.name}".`} /></div></div>
           </details>
           <details className="mt-3 border-t border-line pt-4 group">
             <summary className="font-semibold cursor-pointer list-none flex justify-between">Frequently asked<span className="text-ink-3 group-open:rotate-45 transition-transform">+</span></summary>
@@ -92,7 +92,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
               <p><b>Can I see a proof before it prints?</b> Yes — the preview in the editor is the exact file we print. For the designer service we email a proof.</p>
               <p><b>Can I ship it directly as a gift?</b> Yes. Enter their address at checkout and add a gift message; no invoice goes in the box.</p>
               <p><b>Can I reorder the same design?</b> Yes, from your orders page — the design is saved with the order.</p>
-              <CallUs />
+              <CallUs whatsapp={`Hi Shivam Printers, I have a question about "${p.name}".`} />
             </div>
           </details>
         </div>
