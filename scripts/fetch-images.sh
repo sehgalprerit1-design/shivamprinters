@@ -13,7 +13,8 @@ resize() { # $1=png $2=jpg $3=maxpx
   rm -f "$1"
 }
 fetch() { # $1=name $2=id $3=maxpx
-  [ -f "$1.jpg" ] && [ "${FORCE:-0}" = 0 ] && { echo "· $1 (exists)"; return; }
+  # skip if a real (non-placeholder) file exists; placeholders are tiny flat gradients
+  if [ -f "$1.jpg" ] && [ "${FORCE:-0}" = 0 ] && [ "$(wc -c < "$1.jpg")" -gt 40000 ]; then echo "· $1 (exists)"; return; fi
   echo "→ $1"; curl -sSfL -o "$1.png" "$B/$2.png"; resize "$1.png" "$1.jpg" "$3"
 }
 # Hero, category and occasion imagery
