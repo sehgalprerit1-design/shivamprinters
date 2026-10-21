@@ -14,6 +14,7 @@ import type { Product, Variant } from "@/data/catalog";
 import { optionsFor, optionDelta, defaultOptions, optionLabel } from "@/data/options";
 import { useCart } from "@/lib/cart";
 import { inr } from "@/lib/format";
+import { CallUs } from "@/components/ui/CallUs";
 
 type Slot = { img?: HTMLImageElement; src?: string; zoom: number; dx: number; dy: number; rot: 0 | 90 | 180 | 270; w: number; h: number };
 
@@ -150,7 +151,7 @@ export function Editor({ product, variant: initialVariant, initialOptions = {}, 
             <span className="text-ink-3 ml-auto">Drag the photo to reposition</span>
           </div>
         )}
-        {lowRes && <div className="mt-3 flex items-start gap-2 text-sm bg-amber-50 border border-amber-200 text-amber-900 rounded-xl p-3"><AlertTriangle size={16} className="mt-0.5 shrink-0" />This photo is on the small side for a {printInches}&quot; print at this zoom. It will print, but may look soft. A larger original or less zoom fixes it.</div>}
+        {lowRes && <div className="mt-3 flex items-start gap-2 text-sm bg-amber-50 border border-amber-200 text-amber-900 rounded-xl p-3"><AlertTriangle size={16} className="mt-0.5 shrink-0" />This photo is on the small side for a {printInches}&quot; print at this zoom. It will print, but may look soft. A larger original or less zoom fixes it. <CallUs compact className="ml-1" /></div>}
       </div>
 
       <aside className="space-y-5 lg:sticky lg:top-32 self-start max-h-[calc(100vh-9rem)] overflow-y-auto no-scrollbar">
@@ -184,6 +185,7 @@ export function Editor({ product, variant: initialVariant, initialOptions = {}, 
             <div className="inline-flex border border-line rounded-full"><button type="button" className="px-3" onClick={() => setQty(Math.max(1, qty - 1))}>−</button><span className="px-1 py-1 w-6 text-center">{qty}</span><button type="button" className="px-3" onClick={() => setQty(Math.min(99, qty + 1))}>+</button></div>
           </div>
         </details>
+        <CallUs compact />
         <ol className="flex gap-2 text-xs">
           {(["photos", "text", "review"] as const).filter((s) => s !== "photos" || n > 0).filter((s) => s !== "text" || product.template.textFields.length > 0).map((s, i) => (
             <li key={s}><button onClick={() => setStep(s)} className={`chip ${step === s ? "bg-ink text-white" : "bg-surface-2"}`}>{i + 1}. {s === "photos" ? "Photos" : s === "text" ? "Text" : "Review"}</button></li>
@@ -235,6 +237,7 @@ export function Editor({ product, variant: initialVariant, initialOptions = {}, 
             </ul>
             <button disabled={!canReview} onClick={addToCart} className="btn btn-primary w-full text-base !py-3.5">Add {qty > 1 ? `${qty} ` : ""}to cart · {inr(unitPrice * qty)}</button>
             <p className="text-xs text-ink-3">Your design is saved with the order. Reorders print the same file.</p>
+            <CallUs compact />
           </div>
         )}
       </aside>

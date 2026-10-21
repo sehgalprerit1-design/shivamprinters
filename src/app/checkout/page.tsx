@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useCart, cartTotals, inr } from "@/lib/cart";
 import { z } from "zod";
+import { CallUs } from "@/components/ui/CallUs";
 
 const Address = z.object({
   name: z.string().min(2, "Name"), phone: z.string().regex(/^[6-9]\d{9}$/, "10-digit mobile"), email: z.string().email("Email"),
@@ -71,6 +72,7 @@ export default function Checkout() {
           </section>
           <section className="card p-5">
             <h2 className="font-bold text-lg mb-4">Delivery speed</h2>
+            <div className="mb-3"><CallUs /></div>
             {([["economy", "Economy", "10–12 working days", t.subtotal - t.discount >= 999 ? "Free" : "₹79"], ["express", "Express", "4–6 working days", "₹149"]] as const).map(([k, l, d, p]) => (
               <label key={k} className={`flex items-center gap-3 p-3 rounded-xl border mb-2 cursor-pointer ${ship === k ? "border-brand bg-brand-soft" : "border-line"}`}>
                 <input type="radio" name="ship" checked={ship === k} onChange={() => setShip(k)} /><div className="flex-1"><div className="font-semibold">{l}</div><div className="text-xs text-ink-3">{d}</div></div><div className="font-semibold">{p}</div>
@@ -100,6 +102,7 @@ export default function Checkout() {
           {errs.form && <div className="text-brand text-xs">{errs.form}</div>}
           <button disabled={busy} className="btn btn-primary w-full !py-3.5 text-base">{busy ? "Placing order…" : pay === "COD" ? `Place order · ${inr(t.total)}` : `Pay ${inr(t.total)}`}</button>
           <p className="text-xs text-ink-3">By placing the order you agree to our terms. Personalised items are made to order and can&apos;t be cancelled once in production.</p>
+          <div className="text-center"><CallUs /></div>
         </aside>
       </form>
     </div>

@@ -6,6 +6,7 @@ import type { Product } from "@/data/catalog";
 import { optionsFor, optionDelta, defaultOptions } from "@/data/options";
 import { inr } from "@/lib/format";
 import { useWishlist } from "@/lib/wishlist";
+import { CallUs } from "@/components/ui/CallUs";
 
 export function BuyBox({ product }: { product: Product }) {
   const [v, setV] = useState(product.variants[0]);
@@ -76,6 +77,7 @@ export function BuyBox({ product }: { product: Product }) {
         <button onClick={() => { if (navigator.share) navigator.share({ title: product.name, url: location.href }); else { navigator.clipboard.writeText(location.href); alert("Link copied"); } }} aria-label="Share" className="btn btn-ghost !px-4"><Share2 size={18} /></button>
       </div>
       <p className="text-xs text-ink-3 text-center mt-2">You can still change size, finish and quantity while personalising.</p>
+      <div className="text-center mt-2"><CallUs /></div>
 
       <form onSubmit={checkPin} className="mt-5 flex gap-2 items-center">
         <MapPin size={16} className="text-ink-3" />

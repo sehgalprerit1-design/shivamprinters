@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { X, Trash2 } from "lucide-react";
 import { useCart, cartTotals, inr } from "@/lib/cart";
+import { CallUs } from "@/components/ui/CallUs";
 
 export function CartDrawer() {
   const { lines, open, setOpen, remove, setQty, coupon } = useCart();
@@ -42,6 +43,7 @@ export function CartDrawer() {
             <div className="text-xs text-ink-3">{t.subtotal - t.discount >= 999 ? "Free economy shipping unlocked." : `Add ${inr(999 - (t.subtotal - t.discount))} more for free shipping.`}</div>
             <Link href="/checkout" onClick={() => setOpen(false)} className="btn btn-primary w-full mt-2">Checkout · {inr(t.subtotal - t.discount)}</Link>
             <Link href="/cart" onClick={() => setOpen(false)} className="block text-center text-ink-2 pt-1">View cart</Link>
+            <div className="text-center pt-1"><CallUs compact /></div>
           </div>
         )}
       </aside>

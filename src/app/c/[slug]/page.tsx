@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { categories, getCategory, productsInCategory } from "@/data/catalog";
 import { CategoryBrowser } from "@/components/product/CategoryBrowser";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
+import { CallUs } from "@/components/ui/CallUs";
 
 export const dynamicParams = false;
 export function generateStaticParams() { return categories.map((c) => ({ slug: c.slug })); }
@@ -24,6 +25,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
         <div>
           <h1 className="text-3xl md:text-5xl font-bold">{c.name}</h1>
           <p className="text-ink-2 mt-3 max-w-xl">{c.description}</p>
+          <div className="mt-3"><CallUs /></div>
         </div>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={c.image} alt="" className="rounded-2xl aspect-[4/3] object-cover w-full hidden md:block" />

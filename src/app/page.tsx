@@ -4,6 +4,7 @@ import { giftPagesByGroup } from "@/data/gifts";
 import { ProductGrid } from "@/components/product/ProductGrid";
 import { Section } from "@/components/ui/Section";
 import { Upload, Palette, Truck, ShieldCheck } from "lucide-react";
+import { CallUs } from "@/components/ui/CallUs";
 
 const month = new Date().getMonth() + 1;
 
@@ -83,6 +84,7 @@ export default function Home() {
         </div>
       </section>
 
+      <div className="container-x -mt-6 mb-2 text-center"><CallUs /></div>
       <Section title="Gifts under ₹499" subtitle="Small, personal, no reason needed." href="/gifts/budget-gifts">
         <ProductGrid products={under499} />
       </Section>

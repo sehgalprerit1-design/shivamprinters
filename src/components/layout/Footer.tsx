@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { categories } from "@/data/catalog";
 import { giftPagesByGroup } from "@/data/gifts";
+import { CallUs } from "@/components/ui/CallUs";
 
 export function Footer() {
   const recipients = giftPagesByGroup("recipient").filter((g) => !g.slug.includes("-gifts-for-")).slice(0, 10);
@@ -12,6 +13,7 @@ export function Footer() {
           <div className="display text-2xl font-bold">Shivam <span className="text-brand">Printers</span></div>
           <p className="text-ink-2 mt-3">Photo printing and personalised gifts, made in our own print centre and delivered across India.</p>
           <div className="mt-4 text-ink-3 text-xs">Personalised kids' essentials too — see our Kids range</div>
+          <div className="mt-4"><CallUs /></div>
         </div>
         <div>
           <div className="font-semibold mb-3">Shop</div>

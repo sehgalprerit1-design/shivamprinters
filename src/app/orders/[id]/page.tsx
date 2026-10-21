@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getOrder } from "@/lib/orders";
 import { inr } from "@/lib/format";
+import { CallUs } from "@/components/ui/CallUs";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Order", robots: { index: false } };
@@ -34,7 +35,8 @@ export default async function OrderPage({ params, searchParams }: { params: Prom
         </div>
       </div>
       <div className="card p-4 mt-4 text-sm"><div className="font-semibold mb-1">Delivering to</div><div className="text-ink-2">{addr.name}, {addr.line1}{addr.line2 ? `, ${addr.line2}` : ""}, {addr.city}, {addr.state} {addr.pincode} · {addr.phone}</div></div>
-      <Link href="/products" className="btn btn-ghost mt-6">Continue shopping</Link>
+      <div className="mt-4"><CallUs /></div>
+      <Link href="/products" className="btn btn-ghost mt-4">Continue shopping</Link>
     </div>
   );
 }

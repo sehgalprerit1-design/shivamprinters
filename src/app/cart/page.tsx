@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { useCart, cartTotals, inr } from "@/lib/cart";
 import { Trash2 } from "lucide-react";
+import { CallUs } from "@/components/ui/CallUs";
 
 export default function CartPage() {
   const { lines, remove, setQty, coupon, applyCoupon, removeCoupon } = useCart();
@@ -48,6 +49,7 @@ export default function CartPage() {
             {msg && <div className="text-xs text-ink-2">{msg}</div>}
             <Link href="/checkout" className="btn btn-primary w-full !py-3.5 text-base">Checkout</Link>
             <div className="text-xs text-ink-3 text-center">Razorpay · UPI · Cards · Cash on delivery</div>
+            <div className="text-center pt-1"><CallUs /></div>
           </aside>
         </div>
       )}

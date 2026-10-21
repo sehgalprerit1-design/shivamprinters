@@ -5,6 +5,7 @@ import { giftPages, getGiftPage, giftPagesByGroup } from "@/data/gifts";
 import { productsByTag } from "@/data/catalog";
 import { ProductGrid } from "@/components/product/ProductGrid";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
+import { CallUs } from "@/components/ui/CallUs";
 
 export const dynamicParams = false;
 export function generateStaticParams() { return giftPages.map((g) => ({ slug: g.slug })); }
@@ -39,6 +40,7 @@ export default async function GiftPage({ params }: { params: Promise<{ slug: str
         </div>
       </div>
       {items.length ? <ProductGrid products={items} /> : <p className="text-ink-3">Nothing tagged yet — check the full range.</p>}
+      <div className="mt-8 card p-4 flex flex-wrap items-center gap-3 justify-between"><span className="text-sm text-ink-2">Not sure what to pick? We&apos;ll help you choose.</span><CallUs /></div>
       {related.length > 0 && (
         <div className="mt-12">
           <h2 className="text-lg font-bold mb-3">More {g.group === "recipient" ? "gifts for" : g.group === "festival" ? "festivals" : "occasions"}</h2>
