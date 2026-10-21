@@ -49,6 +49,7 @@ export const categories: Category[] = [
   { slug: "framed-prints", name: "Framed Prints", tagline: "Ready to hang, ready to gift", description: "Designer, classic, coloured and premium frames with your photo printed and mounted. Delivered ready to hang.", image: "/images/cat-frames.jpg", order: 2 },
   { slug: "calendars", name: "Calendars", tagline: "Twelve months of favourites", description: "Desktop, wall, magnet and poster calendars for 2027. Start on any month.", image: "/images/cat-calendars.jpg", order: 3 },
   { slug: "diaries-planners", name: "Diaries & Planners", tagline: "Plan it, write it, keep it", description: "Dated daily planners, executive and leather diaries with name embossing, five-year memory diaries, boxed gift sets, and custom-printed diaries for your company.", image: "/images/cat-diaries.jpg", order: 4 },
+  { slug: "business-printing", name: "Business Printing", tagline: "Print for your business, delivered", description: "Business cards, custom stickers and labels, brochures and flyers, photo postcards, and flex banners and standees. Upload your design or build one in the editor, pick a quantity, and we print and ship across India.", image: "/images/cat-business.jpg", order: 5 },
   { slug: "kids", name: "Kids", tagline: "Name it, label it, love it", description: "Personalised bottles, lunch boxes, labels, storybooks and stationery for school and play.", image: "/images/cat-kids.jpg", order: 4 },
   { slug: "home-decor", name: "Décor", tagline: "Walls that tell your story", description: "Acrylic, canvas, fine-art and large-format prints plus designer wall clocks.", image: "/images/cat-decor.jpg", order: 5 },
   { slug: "gifts", name: "Gifts", tagline: "Small things, big smiles", description: "Mugs, cushions, magnets, puzzles and bag tags printed with your photos.", image: "/images/cat-gifts.jpg", order: 6 },
@@ -136,6 +137,41 @@ export const products: Product[] = [
     { sku: "CP-100", name: "100 diaries, logo embossed (per unit)", price: 449, compareAt: 599 },
     { sku: "CP-250", name: "250+ diaries, logo foiled (per unit)", price: 379, compareAt: 499 },
   ], tags: ["corporate", "boss", "new-year", "diwali", "festive"], rating: 4.9, reviews: 310 },
+
+  // ---------- Business Printing ----------
+  { slug: "business-cards", category: "business-printing", name: "Business Cards", description: "Standard 3.5x2\" cards on thick 300gsm board, printed both sides in full colour. Add your logo and details in the editor or upload a finished design. Matte or gloss lamination included; spot UV, velvet touch and rounded corners optional.", image: "/images/p/business-cards.jpg", images: ["/images/p/business-cards-2.jpg", "/images/cat-business.jpg"], badges: ["Bestseller"], personalisation: "photo+text", template: { aspect: 1.75, photoSlots: 1, textFields: [text("name", "Name", 30), text("title", "Designation", 30), text("company", "Company", 40), text("phone", "Phone", 16), text("email", "Email / website", 40), text("address", "Address (optional)", 80)] }, variants: [
+    { sku: "BP-BC-100", name: "100 cards", price: 299, compareAt: 399 },
+    { sku: "BP-BC-250", name: "250 cards", price: 499, compareAt: 699 },
+    { sku: "BP-BC-500", name: "500 cards", price: 799, compareAt: 1099 },
+    { sku: "BP-BC-1000", name: "1,000 cards", price: 1299, compareAt: 1799 },
+  ], tags: ["corporate", "business", "boss", "under-999", "new-year"], rating: 4.8, reviews: 2140, featured: true },
+  { slug: "custom-stickers", category: "business-printing", name: "Custom Stickers & Labels", description: "Waterproof vinyl stickers cut to round, square or the exact shape of your logo. Upload a logo, photo or artwork; we add the cut line. Great for packaging, jars, laptops, bottles and return gifts. Also available as kiss-cut A4 sheets.", image: "/images/p/custom-stickers.jpg", images: ["/images/p/custom-stickers-2.jpg", "/images/cat-business.jpg"], badges: ["Popular"], personalisation: "photo+text", template: { aspect: 1, photoSlots: 1, textFields: [text("caption", "Text on sticker (optional)", 30)] }, variants: [
+    { sku: "BP-ST-2-50", name: "2\" stickers × 50", price: 199, compareAt: 299 },
+    { sku: "BP-ST-2-100", name: "2\" stickers × 100", price: 299, compareAt: 449 },
+    { sku: "BP-ST-3-100", name: "3\" stickers × 100", price: 449, compareAt: 649 },
+    { sku: "BP-ST-4-100", name: "4\" stickers × 100", price: 649, compareAt: 899 },
+    { sku: "BP-ST-A4-10", name: "A4 sticker sheets × 10", price: 349, compareAt: 499 },
+  ], tags: ["business", "small-business", "under-499", "kids", "return-gifts", "wedding"], rating: 4.7, reviews: 1860 },
+  { slug: "brochures-flyers", category: "business-printing", name: "Brochures & Flyers", description: "A5 and A4 flyers, and bi-fold or tri-fold A4 brochures on glossy or matte art paper. Upload your front and back artwork as JPG/PNG (one image per side); we check bleed and send a proof before printing. Need a design? Call us and our designer will lay it out from your text and photos.", image: "/images/p/brochures-flyers.jpg", images: ["/images/p/brochures-flyers-2.jpg", "/images/cat-business.jpg"], personalisation: "multi-photo", template: { aspect: 0.707, photoSlots: 2, textFields: [text("notes", "Notes for the printer (folds, bleed, deadline)", 200)] }, variants: [
+    { sku: "BP-FL-A5-100", name: "A5 flyer × 100", price: 499, compareAt: 699 },
+    { sku: "BP-FL-A4-100", name: "A4 flyer × 100", price: 799, compareAt: 1099 },
+    { sku: "BP-BR-BI-100", name: "A4 bi-fold brochure × 100", price: 1199, compareAt: 1599 },
+    { sku: "BP-BR-TRI-100", name: "A4 tri-fold brochure × 100", price: 1299, compareAt: 1699 },
+    { sku: "BP-BR-TRI-500", name: "A4 tri-fold brochure × 500", price: 4499, compareAt: 5999 },
+  ], tags: ["corporate", "business", "small-business"], rating: 4.7, reviews: 920 },
+  { slug: "photo-postcards", category: "business-printing", name: "Photo Postcards", description: "Your photo on the front, a classic postcard back (or your own message) on the reverse, on thick 300gsm card. Lovely for wedding thank-yous, baby announcements, travel memories and small-business inserts.", image: "/images/p/photo-postcards.jpg", images: ["/images/p/photo-postcards-2.jpg", "/images/cat-business.jpg"], personalisation: "photo+text", template: { aspect: 1.5, photoSlots: 1, textFields: [text("caption", "Caption on front (optional)", 40), text("back", "Message printed on back (optional)", 200)] }, variants: [
+    { sku: "BP-PC-A6-10", name: "A6 postcards × 10", price: 199, compareAt: 299 },
+    { sku: "BP-PC-A6-25", name: "A6 postcards × 25", price: 399, compareAt: 549 },
+    { sku: "BP-PC-A6-50", name: "A6 postcards × 50", price: 649, compareAt: 899 },
+    { sku: "BP-PC-57-25", name: "5x7\" postcards × 25", price: 499, compareAt: 699 },
+  ], tags: ["wedding", "travel", "baby", "friends", "under-499", "thank-you", "new-year"], rating: 4.8, reviews: 1320 },
+  { slug: "banners-standees", category: "business-printing", name: "Banners & Standees", description: "Flex banners for shops, birthdays, weddings and events, printed in weather-resistant eco-solvent ink with metal eyelets for hanging. Upload a finished design or add a photo with a headline in the editor. Roll-up standees come with the aluminium stand and carry bag.", image: "/images/p/banners-standees.jpg", images: ["/images/p/banners-standees-2.jpg", "/images/cat-business.jpg"], badges: ["Fast"], personalisation: "photo+text", template: { aspect: 3, photoSlots: 1, textFields: [text("headline", "Headline (optional)", 40), text("subline", "Second line (optional)", 60)] }, variants: [
+    { sku: "BP-BN-3x2", name: "3x2 ft flex banner", price: 349, compareAt: 499 },
+    { sku: "BP-BN-4x3", name: "4x3 ft flex banner", price: 599, compareAt: 799 },
+    { sku: "BP-BN-6x3", name: "6x3 ft flex banner", price: 899, compareAt: 1199 },
+    { sku: "BP-BN-8x4", name: "8x4 ft flex banner", price: 1499, compareAt: 1999 },
+    { sku: "BP-SD-ROLL", name: "Roll-up standee 6x2.5 ft (with stand)", price: 1899, compareAt: 2499 },
+  ], tags: ["birthday", "wedding", "corporate", "business", "diwali", "festive", "events"], rating: 4.6, reviews: 740 },
 
   // ---------- Kids ----------
   { slug: "insulated-water-bottle", legacyPath: "/kids/insulated-water-bottle", category: "kids", name: "Insulated Water Bottle", description: "Double-wall steel bottle with your child's name and a theme of their choice. Keeps cold 12 hours.", image: "/images/p/insulated-water-bottle.jpg", images: ["/images/p/insulated-water-bottle-2.jpg", "/images/p/insulated-water-bottle-3.jpg"], badges: ["Bestseller"], personalisation: "text", template: { aspect: 0.4, photoSlots: 0, textFields: [text("name", "Child's name", 16)] }, variants: [{ sku: "KD-BTL-500", name: "500 ml", price: 949, compareAt: 1149 }], tags: ["kids", "back-to-school", "birthday", "son", "daughter", "under-999"], rating: 4.8, reviews: 6400, featured: true },

@@ -88,7 +88,26 @@ const PEN_FINISH: OptionGroup = { key: "pen", label: "Pen finish", choices: [{ i
 const LOGO_METHOD: OptionGroup = { key: "logo", label: "Logo method", choices: [{ id: "emboss", label: "Blind emboss" }, { id: "foil", label: "Foil (gold/silver)", delta: 30 }, { id: "print", label: "Full-colour print", delta: 20 }] };
 const INSIDE_PAGE: OptionGroup = { key: "inside", label: "Branded inside page", choices: [{ id: "none", label: "None" }, { id: "welcome", label: "Welcome message page", delta: 15 }, { id: "calendar", label: "Company calendar page", delta: 15 }] };
 
+const CARD_PAPER: OptionGroup = { key: "paper", label: "Card stock", choices: [{ id: "300", label: "300gsm standard" }, { id: "350t", label: "350gsm textured", delta: 100 }, { id: "600", label: "600gsm extra thick", hint: "Layered, luxury feel", delta: 300 }] };
+const CARD_FINISH: OptionGroup = { key: "finish", label: "Finish", choices: [{ id: "matte", label: "Matte lamination" }, { id: "gloss", label: "Gloss lamination" }, { id: "spotuv", label: "Spot UV on logo", delta: 150 }, { id: "velvet", label: "Velvet touch", delta: 200 }] };
+const CARD_CORNERS: OptionGroup = { key: "corners", label: "Corners", choices: [{ id: "square", label: "Square" }, { id: "rounded", label: "Rounded", delta: 50 }] };
+const STICKER_SHAPE: OptionGroup = { key: "shape", label: "Shape", choices: [{ id: "round", label: "Round" }, { id: "square", label: "Square / rectangle" }, { id: "diecut", label: "Die-cut to artwork", delta: 50 }] };
+const STICKER_MATERIAL: OptionGroup = { key: "material", label: "Material", choices: [{ id: "vinyl", label: "Waterproof vinyl" }, { id: "paper", label: "Paper (indoor)", delta: -30 }, { id: "clear", label: "Transparent vinyl", delta: 50 }] };
+const STICKER_FINISH: OptionGroup = { key: "finish", label: "Finish", choices: [{ id: "glossy", label: "Glossy" }, { id: "matte", label: "Matte" }] };
+const FLYER_PAPER: OptionGroup = { key: "paper", label: "Paper", choices: [{ id: "130", label: "130gsm art paper" }, { id: "170", label: "170gsm art paper", delta: 200 }, { id: "250", label: "250gsm art card", delta: 500 }] };
+const FLYER_FINISH: OptionGroup = { key: "finish", label: "Finish", choices: [{ id: "gloss", label: "Gloss" }, { id: "matte", label: "Matte" }] };
+const FLYER_SIDES: OptionGroup = { key: "sides", label: "Printing", choices: [{ id: "double", label: "Both sides" }, { id: "single", label: "Single side", delta: -100 }] };
+const POSTCARD_PAPER: OptionGroup = { key: "paper", label: "Card", choices: [{ id: "matte", label: "300gsm matte" }, { id: "glossy", label: "300gsm glossy" }, { id: "textured", label: "Textured linen", delta: 50 }] };
+const POSTCARD_BACK: OptionGroup = { key: "back", label: "Back side", choices: [{ id: "postcard", label: "Postcard back (address lines)" }, { id: "blank", label: "Blank" }, { id: "message", label: "Your printed message" }] };
+const BANNER_MATERIAL: OptionGroup = { key: "material", label: "Material", choices: [{ id: "flex", label: "Flex 280gsm (standard)" }, { id: "starflex", label: "Star flex (brighter, smoother)", delta: 200 }, { id: "vinyl", label: "Vinyl (outdoor, long life)", delta: 400 }] };
+const BANNER_FINISH: OptionGroup = { key: "finishing", label: "Finishing", choices: [{ id: "eyelets", label: "Metal eyelets" }, { id: "pockets", label: "Pole pockets" }, { id: "none", label: "Plain edge" }] };
+
 export function optionsFor(slug: string, category: string): OptionGroup[] {
+  if (slug === "business-cards") return [CARD_PAPER, CARD_FINISH, CARD_CORNERS];
+  if (slug === "custom-stickers") return [STICKER_SHAPE, STICKER_MATERIAL, STICKER_FINISH];
+  if (slug === "brochures-flyers") return [FLYER_PAPER, FLYER_FINISH, FLYER_SIDES];
+  if (slug === "photo-postcards") return [POSTCARD_PAPER, POSTCARD_BACK];
+  if (slug === "banners-standees") return [BANNER_MATERIAL, BANNER_FINISH];
   if (slug === "daily-planner") return [DIARY_COLOUR, PLANNER_LAYOUT, EMBOSS];
   if (slug === "executive-leather-diary") return [DIARY_COLOUR, EMBOSS, PAPER_DIARY];
   if (slug === "five-year-diary") return [DIARY_COLOUR, EMBOSS];

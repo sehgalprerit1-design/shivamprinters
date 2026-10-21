@@ -189,3 +189,18 @@ model Coupon {
   expiresAt  DateTime?
   active     Boolean  @default(true)
 }
+
+model Enquiry {
+  id         String   @id @default(cuid())
+  createdAt  DateTime @default(now())
+  name       String
+  phone      String
+  email      String?
+  company    String?
+  kind       String
+  quantity   String?
+  deadline   String?
+  message    String
+  artworkKey String?
+  status     String   @default("NEW") // NEW | QUOTED | WON | CLOSED
+}

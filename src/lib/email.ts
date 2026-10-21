@@ -18,6 +18,8 @@ async function send(to: string | string[], subject: string, html: string): Promi
   } catch (e) { console.error("email failed", e); return { ok: false, error: (e as Error).message }; }
 }
 
+export { send as sendMail, NOTIFY as NOTIFY_EMAIL };
+
 /** Sends a test email to the order-notification inbox; used by /api/health?email=1. */
 export async function emailSelfTest() {
   const r = await send(NOTIFY, "Shivam Printers — email test", `<p>Email is working. Sent ${new Date().toISOString()} from <b>${FROM}</b> to <b>${NOTIFY}</b>.</p>`);

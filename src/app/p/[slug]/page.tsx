@@ -32,6 +32,7 @@ const SPECS: Record<string, [string, string][]> = {
   gifts: [["Material", "Ceramic / cotton / flexible magnet"], ["Print", "Sublimation, dishwasher-safe"], ["Capacity", "325–350 ml (mugs)"], ["Personalisation", "Photo + caption"]],
   prints: [["Paper", "Fuji glossy / matte / pearl, or 300gsm card stock"], ["Pack", "As listed"], ["Border", "Optional white border"], ["Sleeves", "Each print sleeved"]],
   "bags-stationery": [["Material", "12oz canvas / 100gsm paper"], ["Print", "Full-colour, wash-safe"], ["Personalisation", "Photo or name"], ["Pages", "192 ruled (notebooks)"]],
+  "business-printing": [["Printing", "Full-colour offset / digital, CMYK"], ["Artwork", "JPG or PNG, 300 dpi; we add bleed and send a proof"], ["Turnaround", "Proof within 1 working day, dispatch 2–4 days after approval"], ["Minimums", "As listed per product; bulk pricing on request"], ["Design help", "Call us — our designer can lay it out from your text and photos"]],
   "diaries-planners": [["Cover", "PU leather, full-grain leather or linen hardcover"], ["Paper", "100gsm cream, fountain-pen friendly"], ["Pages", "Dated 2027 (Indian holidays marked) or undated"], ["Personalisation", "Name/initials/logo — deboss or foil"], ["Extras", "Ribbon markers, pen loop, back pocket, gift box on sets"]],
   accessories: [["Material", "Acrylic / steel / vinyl"], ["Print", "UV or engraved"], ["Personalisation", "Name, phone or photo"], ["Fit", "Model-specific (skins)"]],
 };

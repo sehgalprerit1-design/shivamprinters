@@ -42,8 +42,8 @@ export default function Home() {
       </section>
 
       <Section title="What would you like to make?">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-5">
-          {categories.slice(0, 8).map((c) => (
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-3 md:gap-5">
+          {categories.slice(0, 10).map((c) => (
             <Link key={c.slug} href={`/c/${c.slug}`} className="card group relative aspect-[4/3]">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={c.image} alt={c.name} className="absolute inset-0 w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-300" loading="lazy" />

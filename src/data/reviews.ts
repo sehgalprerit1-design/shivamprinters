@@ -83,6 +83,17 @@ const BY_CAT: Record<string, T[]> = {
     { r: 3, t: "Good but pricey for school supplies", b: "Quality is good and the kids love the personalisation. Just a bit more than I'd usually spend on stationery." },
     { r: 5, t: "Return gifts sorted", b: "Ordered 20 personalised pencil boxes for the birthday party. Every parent asked where we got them." },
   ],
+  "business-printing": [
+    { r: 5, t: "Cards look premium", b: "Ordered 500 with the velvet finish and spot UV on the logo. They feel expensive and the colours match my brand exactly. Came in a sturdy box in 4 days." },
+    { r: 5, t: "Stickers survived the dishwasher", b: "Put the vinyl ones on my pickle jars for the shop. Washed, scrubbed, still perfect. Die-cut edge is clean right around the logo." },
+    { r: 4, t: "Good brochures, proof took a day", b: "Tri-fold A4 on 170gsm gloss, folds are crisp and the photos printed sharp. The proof came the next morning which was a bit slower than I hoped, but worth it — they caught a bleed issue." },
+    { r: 5, t: "Wedding thank-you postcards", b: "Our favourite photo on the front and a printed message on the back. Guests loved them. Thick card, matte finish, no fingerprints." },
+    { r: 5, t: "Banner up the same week", b: "6x3 flex for our shop opening. Uploaded the design on Monday, hung it Thursday. Eyelets are solid and the colours are bright even in sun." },
+    { r: 3, t: "Nice stickers, a shade darker than screen", b: "Quality is fine and the cut is accurate, but the red printed slightly darker than on my phone. Support explained screen vs CMYK and offered a reprint." },
+    { r: 5, t: "Reordered twice for the clinic", b: "Business cards and A5 flyers. Same quality both times, which is what I care about. Easy to reorder from my account." },
+    { r: 5, t: "Roll-up standee for our stall", b: "Stand, banner and carry bag all in the box. Took 2 minutes to set up at the exhibition and looked more professional than the printed ones next to us." },
+    { r: 4, t: "Flyers printed well, minimum 100", b: "Wanted 50 but the minimum is 100. Printing itself is excellent on the 250gsm card — more like a mini poster." },
+  ],
   "diaries-planners": [
     { r: 5, t: "Leather feels expensive", b: "Got the genuine leather with gold-foil initials for my father. The leather smells and feels like the real thing and the foil is crisp. He uses it every morning." },
     { r: 5, t: "Corporate order, 120 diaries", b: "Logo embossed on every one, welcome page from our MD inside, delivered to three offices. The proof came in a day and the final matched it exactly." },

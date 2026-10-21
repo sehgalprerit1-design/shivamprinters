@@ -4,6 +4,7 @@ import { categories, getCategory, productsInCategory } from "@/data/catalog";
 import { CategoryBrowser } from "@/components/product/CategoryBrowser";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { CallUs } from "@/components/ui/CallUs";
+import { CustomPrintingSection } from "@/components/business/CustomPrintingSection";
 
 export const dynamicParams = false;
 export function generateStaticParams() { return categories.map((c) => ({ slug: c.slug })); }
@@ -31,6 +32,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
         <img src={c.image} alt="" className="rounded-2xl aspect-[4/3] object-cover w-full hidden md:block" />
       </div>
       <CategoryBrowser products={items} />
+      {c.slug === "business-printing" && <CustomPrintingSection />}
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
         "@context": "https://schema.org", "@type": "CollectionPage", name: c.name, description: c.description,
         mainEntity: { "@type": "ItemList", itemListElement: items.map((p, i) => ({ "@type": "ListItem", position: i + 1, url: `/p/${p.slug}`, name: p.name })) },

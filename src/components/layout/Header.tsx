@@ -37,7 +37,7 @@ export function Header() {
       </div>
       <nav className="hidden md:block border-t border-line relative">
         <ul className="container-x flex items-center gap-5 h-11 text-sm font-medium">
-          {categories.slice(0, 9).map((c) => (
+          {categories.slice(0, 10).map((c) => (
             <li key={c.slug} className="nav-item static">
               <Link href={`/c/${c.slug}`} className="py-3 inline-block hover:text-brand">{c.name}</Link>
               <div className="mega">
@@ -46,6 +46,7 @@ export function Header() {
                     {productsInCategory(c.slug).slice(0, 18).map((p) => (
                       <Link key={p.slug} href={`/p/${p.slug}`} className="py-1.5 text-ink-2 hover:text-brand">{p.name}</Link>
                     ))}
+                    {c.slug === "business-printing" && <Link href="/custom-printing" className="py-1.5 font-semibold text-ink">Custom printing — get a quote</Link>}
                     <Link href={`/c/${c.slug}`} className="py-1.5 font-semibold text-brand">All {c.name} →</Link>
                   </div>
                   <Link href={`/c/${c.slug}`} className="card block">
