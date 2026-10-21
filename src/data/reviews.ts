@@ -160,16 +160,15 @@ function fill(s: string, r: () => number, p: Product, variant?: string) {
 
 export function reviewsFor(p: Product): Review[] {
   const r = rng(p.slug);
-  const n = 15 + Math.floor(r() * 8); // 15–22
   const pool = [...(BY_CAT[p.category] ?? []), ...COMMON];
-  const used = new Set<number>();
+  const n = Math.min(pool.length, 15 + Math.floor(r() * 8)); // 15–22, never more than the pool
+  // Fisher–Yates on the index list so every template is used at most once per product.
+  const order = pool.map((_, i) => i);
+  for (let i = order.length - 1; i > 0; i--) { const j = Math.floor(r() * (i + 1)); [order[i], order[j]] = [order[j], order[i]]; }
   const out: Review[] = [];
   const now = new Date("2026-10-20");
   for (let i = 0; i < n; i++) {
-    let idx = Math.floor(r() * pool.length); let guard = 0;
-    while (used.has(idx) && guard++ < 50) idx = Math.floor(r() * pool.length);
-    used.add(idx);
-    const t = pool[idx];
+    const t = pool[order[i]];
     // nudge ratings toward the product's aggregate (keeps a 4.5–4.9 feel)
     let rating = t.r;
     if (rating <= 3 && r() < 0.5) rating = 4;

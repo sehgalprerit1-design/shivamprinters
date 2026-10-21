@@ -20,6 +20,8 @@ type CartState = {
   open: boolean;
   coupon?: { code: string; percentOff?: number; flatOff?: number; maxOff?: number };
   add: (line: Omit<CartLine, "id">) => void;
+  /** Replace an existing line (edit flow); falls back to add if the id is gone. */
+  replace: (id: string, line: Omit<CartLine, "id">) => void;
   remove: (id: string) => void;
   setQty: (id: string, qty: number) => void;
   clear: () => void;
@@ -42,6 +44,8 @@ export const useCart = create<CartState>()(
         set((s) => ({
           lines: [...s.lines, { ...line, id: `${line.variantSku}-${Date.now().toString(36)}` }],
         })),
+      replace: (id, line) =>
+        set((s) => (s.lines.some((l) => l.id === id) ? { lines: s.lines.map((l) => (l.id === id ? { ...line, id } : l)) } : { lines: [...s.lines, { ...line, id: `${line.variantSku}-${Date.now().toString(36)}` }] })),
       remove: (id) => set((s) => ({ lines: s.lines.filter((l) => l.id !== id) })),
       setQty: (id, qty) =>
         set((s) => ({ lines: s.lines.map((l) => (l.id === id ? { ...l, qty: Math.max(1, Math.min(99, qty)) } : l)) })),

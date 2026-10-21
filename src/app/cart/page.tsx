@@ -24,7 +24,7 @@ export default function CartPage() {
                   <div className="font-semibold">{l.productName}</div>
                   <div className="text-sm text-ink-3">{l.variantName}</div>
                   {l.design?.text && Object.values(l.design.text).filter(Boolean).length > 0 && <div className="text-xs text-ink-2 mt-1">“{Object.values(l.design.text).filter(Boolean).join(" · ")}”</div>}
-                  <Link href={`/design/${l.productSlug}?v=${l.variantSku}`} className="text-xs text-brand font-semibold mt-1 inline-block">Edit design</Link>
+                  <Link href={`/design/${l.productSlug}?edit=${l.id}`} className="text-xs text-brand font-semibold mt-1 inline-block">Edit design</Link>
                   <div className="flex items-center gap-3 mt-3">
                     <div className="inline-flex border border-line rounded-full"><button className="px-3" onClick={() => setQty(l.id, l.qty - 1)}>−</button><span className="px-1 py-1 text-sm">{l.qty}</span><button className="px-3" onClick={() => setQty(l.id, l.qty + 1)}>+</button></div>
                     <span className="font-semibold ml-auto">{inr(l.unitPrice * l.qty)}</span>

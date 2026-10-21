@@ -204,3 +204,16 @@ model Enquiry {
   artworkKey String?
   status     String   @default("NEW") // NEW | QUOTED | WON | CLOSED
 }
+
+model Review {
+  id          String   @id @default(cuid())
+  createdAt   DateTime @default(now())
+  productSlug String
+  author      String
+  city        String?
+  rating      Int
+  title       String
+  body        String
+  approved    Boolean  @default(false)
+  @@index([productSlug, approved])
+}

@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Star, Truck, RotateCcw, ShieldCheck, Printer } from "lucide-react";
 import { products, getProduct, getCategory, productsInCategory, productsByTag, minPrice } from "@/data/catalog";
+import { inr } from "@/lib/format";
 import { reviewsFor, ratingSummary } from "@/data/reviews";
 import { optionsFor } from "@/data/options";
 import { ProductGrid } from "@/components/product/ProductGrid";
@@ -20,7 +21,7 @@ export function generateStaticParams() { return products.map((p) => ({ slug: p.s
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const p = getProduct((await params).slug);
   if (!p) return {};
-  return { title: `${p.name} — From ₹${minPrice(p)}`, description: p.description, alternates: { canonical: `/p/${p.slug}` }, openGraph: { images: [p.image], title: p.name, description: p.description } };
+  return { title: `${p.name} — From ${inr(minPrice(p))}`, description: p.description, alternates: { canonical: `/p/${p.slug}` }, openGraph: { images: [p.image], title: p.name, description: p.description } };
 }
 
 const SPECS: Record<string, [string, string][]> = {
@@ -45,7 +46,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
   const pairs = productsByTag(p.tags.slice(0, 3), 12).filter((x) => x.slug !== p.slug && x.category !== p.category).slice(0, 3);
   const reviews = reviewsFor(p); const sum = ratingSummary(reviews);
   const groups = optionsFor(p.slug, p.category);
-  const kind = { photo: "Add 1 photo", text: "Add a name", "photo+text": "Add a photo and text", "multi-photo": `Add up to ${p.template.photoSlots} photos` }[p.personalisation];
+  const kind = { photo: "Add 1 photo", text: "Add a name", "photo+text": "Add a photo and text", "multi-photo": `Add up to ${p.template.photoSlots} photos`, none: "Ready-made, ships as is" }[p.personalisation];
   const gallery = [{ src: p.image, label: "Product" }, ...(p.images ?? []).map((src, i) => ({ src, label: i === 0 ? "In use" : "Detail" })), ...(p.images ? [] : [{ src: c.image, label: "In context" }])];
 
   return (
@@ -92,7 +93,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
             <div className="text-sm text-ink-2 mt-3 space-y-3">
               <p><b>Can I see a proof before it prints?</b> Yes — the preview in the editor is the exact file we print. For the designer service we email a proof.</p>
               <p><b>Can I ship it directly as a gift?</b> Yes. Enter their address at checkout and add a gift message; no invoice goes in the box.</p>
-              <p><b>Can I reorder the same design?</b> Yes, from your orders page — the design is saved with the order.</p>
+              <p><b>Can I reorder the same design?</b> Yes — the design file is saved with your order. Call or WhatsApp us with the order number and we print it again.</p>
               <CallUs whatsapp={`Hi Shivam Printers, I have a question about "${p.name}".`} />
             </div>
           </details>
@@ -106,14 +107,14 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
         </div>
       )}
 
-      <Reviews reviews={reviews} avg={sum.avg} counts={sum.counts} />
+      <Reviews reviews={reviews} avg={sum.avg} counts={sum.counts} productSlug={p.slug} />
 
       <div className="mt-16">
         <div className="flex items-end justify-between mb-5"><h2 className="text-2xl font-bold">More {c.name.toLowerCase()}</h2><Link href={`/c/${c.slug}`} className="text-brand text-sm font-semibold">View all →</Link></div>
         <ProductGrid products={related} />
       </div>
       <RecentlyViewed current={p.slug} />
-      <StickyBuyBar name={p.name} price={minPrice(p)} href={`/design/${p.slug}`} />
+      <StickyBuyBar name={p.name} price={minPrice(p)} href={p.personalisation === "none" ? "#buy" : `/design/${p.slug}`} label={p.personalisation === "none" ? "Add to cart" : "Personalise"} />
 
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
         "@context": "https://schema.org", "@type": "Product", name: p.name, description: p.description, image: p.image, brand: { "@type": "Brand", name: "Shivam Printers" }, sku: p.variants[0].sku,

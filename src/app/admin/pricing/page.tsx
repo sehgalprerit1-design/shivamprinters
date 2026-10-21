@@ -11,7 +11,7 @@ export default async function Pricing() {
   const rows = pricingRows();
   return (
     <div>
-      <div className="flex items-center justify-between mb-2"><div className="flex items-center gap-4"><h1 className="text-3xl font-bold">Pricing</h1><Link href="/admin" className="text-brand text-sm font-semibold">Orders →</Link><Link href="/admin/enquiries" className="text-brand text-sm font-semibold">Enquiries →</Link></div><SignOut /></div>
+      <div className="flex items-center justify-between mb-2"><div className="flex items-center gap-4"><h1 className="text-3xl font-bold">Pricing</h1><Link href="/admin" className="text-brand text-sm font-semibold">Orders →</Link><Link href="/admin/enquiries" className="text-brand text-sm font-semibold">Enquiries →</Link><Link href="/admin/reviews" className="text-brand text-sm font-semibold">Reviews →</Link></div><SignOut /></div>
       <PricingSheet initial={rows} mode={pricingPublishMode()} />
     </div>
   );

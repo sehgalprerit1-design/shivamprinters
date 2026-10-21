@@ -6,6 +6,7 @@ import type { Product } from "@/data/catalog";
 import { optionsFor, optionDelta, defaultOptions } from "@/data/options";
 import { inr } from "@/lib/format";
 import { useWishlist } from "@/lib/wishlist";
+import { useCart } from "@/lib/cart";
 import { CallUs } from "@/components/ui/CallUs";
 
 export function BuyBox({ product }: { product: Product }) {
@@ -15,6 +16,8 @@ export function BuyBox({ product }: { product: Product }) {
   const [qty, setQty] = useState(1);
   const [pin, setPin] = useState(""); const [eta, setEta] = useState<string | null>(null);
   const wish = useWishlist(); const [mounted, setMounted] = useState(false);
+  const addLine = useCart((s) => s.add); const openCart = useCart((s) => s.setOpen); const [added, setAdded] = useState(false); const [copied, setCopied] = useState(false);
+  const readyMade = product.personalisation === "none";
   useEffect(() => setMounted(true), []);
   const unit = v.price + optionDelta(groups, opts);
   const pct = v.compareAt ? Math.round(((v.compareAt - unit) / v.compareAt) * 100) : 0;
@@ -29,7 +32,7 @@ export function BuyBox({ product }: { product: Product }) {
   };
 
   return (
-    <div className="mt-6">
+    <div className="mt-6" id="buy">
       {product.variants.length > 1 && (
         <div>
           <div className="text-sm font-semibold mb-2">Size</div>
@@ -72,11 +75,13 @@ export function BuyBox({ product }: { product: Product }) {
       {qty >= 10 && <div className="text-xs text-accent mt-2">Ordering {qty}? <Link href="/bulk-orders" className="underline">Bulk pricing</Link> starts at 25 units.</div>}
 
       <div className="flex gap-2 mt-5">
-        <Link href={`/design/${product.slug}?${q}`} className="btn btn-primary flex-1 text-base !py-3.5">Personalise this →</Link>
+        {readyMade
+          ? <button onClick={() => { addLine({ productSlug: product.slug, productName: product.name, variantSku: v.sku, variantName: v.name, unitPrice: unit, qty, image: product.image }); setAdded(true); openCart(true); setTimeout(() => setAdded(false), 2500); }} className="btn btn-primary flex-1 text-base !py-3.5">{added ? "Added ✓" : `Add to cart · ${inr(unit * qty)}`}</button>
+          : <Link href={`/design/${product.slug}?${q}`} className="btn btn-primary flex-1 text-base !py-3.5">Personalise this →</Link>}
         <button onClick={() => wish.toggle(product.slug)} aria-label="Save" className={`btn btn-ghost !px-4 ${wished ? "text-brand border-brand" : ""}`}><Heart size={18} className={wished ? "fill-brand" : ""} /></button>
-        <button onClick={() => { if (navigator.share) navigator.share({ title: product.name, url: location.href }); else { navigator.clipboard.writeText(location.href); alert("Link copied"); } }} aria-label="Share" className="btn btn-ghost !px-4"><Share2 size={18} /></button>
+        <button onClick={() => { if (navigator.share) navigator.share({ title: product.name, url: location.href }).catch(() => {}); else { navigator.clipboard?.writeText(location.href); setCopied(true); setTimeout(() => setCopied(false), 2000); } }} aria-label="Share" title={copied ? "Link copied" : "Share"} className="btn btn-ghost !px-4 relative"><Share2 size={18} />{copied && <span className="absolute -top-8 right-0 text-xs bg-ink text-white rounded-md px-2 py-1 whitespace-nowrap">Link copied</span>}</button>
       </div>
-      <p className="text-xs text-ink-3 text-center mt-2">You can still change size, finish and quantity while personalising.</p>
+      <p className="text-xs text-ink-3 text-center mt-2">{readyMade ? "No personalisation needed — ships as shown." : "You can still change size, finish and quantity while personalising."}</p>
       <div className="text-center mt-2"><CallUs whatsapp={`Hi Shivam Printers, I have a question about "${product.name}".`} /></div>
 
       <form onSubmit={checkPin} className="mt-5 flex gap-2 items-center">

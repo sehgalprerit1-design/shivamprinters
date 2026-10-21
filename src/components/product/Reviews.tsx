@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Star, BadgeCheck, ThumbsUp, Camera } from "lucide-react";
 import type { Review } from "@/data/reviews";
 
@@ -11,7 +11,20 @@ function Stars({ n, size = 14 }: { n: number; size?: number }) {
   );
 }
 
-export function Reviews({ reviews, avg, counts }: { reviews: Review[]; avg: number; counts: number[] }) {
+export function Reviews({ reviews: sample, avg, counts, productSlug }: { reviews: Review[]; avg: number; counts: number[]; productSlug: string }) {
+  // Real, approved customer reviews are fetched client-side and shown above the sample ones.
+  const [live, setLive] = useState<Review[]>([]);
+  useEffect(() => { fetch(`/api/reviews?product=${encodeURIComponent(productSlug)}`).then((r) => r.json()).then((j) => setLive((j.reviews ?? []).map((r: Review) => ({ ...r, helpful: 10_000 })))).catch(() => {}); }, [productSlug]);
+  const reviews = live.length ? [...live, ...sample] : sample;
+  const [form, setForm] = useState({ rating: "", title: "", body: "", author: "", city: "", website: "" });
+  const [formState, setFormState] = useState<"idle" | "sending" | "done" | "error">("idle"); const [formErr, setFormErr] = useState("");
+  const submitReview = async (e: React.FormEvent) => {
+    e.preventDefault(); setFormState("sending"); setFormErr("");
+    const r = await fetch("/api/reviews", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ ...form, rating: Number(form.rating), productSlug }) });
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok) { setFormErr(j.error ?? "Could not send your review"); setFormState("error"); return; }
+    setFormState("done");
+  };
   const [filter, setFilter] = useState<number | "photo" | null>(null);
   const [sort, setSort] = useState<"helpful" | "recent" | "high" | "low">("helpful");
   const [shown, setShown] = useState(6);
@@ -41,13 +54,17 @@ export function Reviews({ reviews, avg, counts }: { reviews: Review[]; avg: numb
           </div>
           <button onClick={() => setFilter(filter === "photo" ? null : "photo")} className={`mt-4 chip w-full justify-center ${filter === "photo" ? "bg-ink text-white" : "bg-surface-2"}`}><Camera size={12} className="mr-1" /> With photos ({reviews.filter((r) => r.photo).length})</button>
           <button onClick={() => setWriting(!writing)} className="btn btn-ghost w-full mt-3 text-sm">Write a review</button>
-          {writing && (
-            <form onSubmit={(e) => { e.preventDefault(); setWriting(false); alert("Thanks! Your review will appear after moderation."); }} className="mt-3 space-y-2 text-sm">
-              <select className="input" required defaultValue=""><option value="" disabled>Your rating</option>{[5, 4, 3, 2, 1].map((s) => <option key={s} value={s}>{s} stars</option>)}</select>
-              <input className="input" placeholder="Title" required />
-              <textarea className="input" rows={3} placeholder="What did you think?" required />
-              <input className="input" placeholder="Your name" required />
-              <button className="btn btn-primary w-full !py-2">Submit</button>
+          {writing && formState === "done" && <div className="mt-3 text-sm bg-accent-soft text-accent rounded-xl p-3">Thanks, {form.author.split(" ")[0]}! Your review will appear once we&apos;ve checked it (usually within a day).</div>}
+          {writing && formState !== "done" && (
+            <form onSubmit={submitReview} className="mt-3 space-y-2 text-sm">
+              <select className="input" required value={form.rating} onChange={(e) => setForm({ ...form, rating: e.target.value })}><option value="" disabled>Your rating</option>{[5, 4, 3, 2, 1].map((s) => <option key={s} value={s}>{s} stars</option>)}</select>
+              <input className="input" placeholder="Title" required maxLength={120} value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} />
+              <textarea className="input" rows={3} placeholder="What did you think? (10+ characters)" required minLength={10} maxLength={2000} value={form.body} onChange={(e) => setForm({ ...form, body: e.target.value })} />
+              <input className="input" placeholder="Your name" required maxLength={60} value={form.author} onChange={(e) => setForm({ ...form, author: e.target.value })} />
+              <input className="input" placeholder="City (optional)" maxLength={60} value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })} />
+              <input className="hidden" tabIndex={-1} autoComplete="off" value={form.website} onChange={(e) => setForm({ ...form, website: e.target.value })} aria-hidden />
+              {formErr && <div className="text-brand text-xs">{formErr}</div>}
+              <button disabled={formState === "sending"} className="btn btn-primary w-full !py-2">{formState === "sending" ? "Sending…" : "Submit review"}</button>
             </form>
           )}
         </aside>

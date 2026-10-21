@@ -10,7 +10,11 @@
     "postinstall": "node -e \"process.env.DATABASE_URL ? require('child_process').execSync('npx prisma generate',{stdio:'inherit'}) : console.log('skip prisma generate')\"",
     "db:push": "prisma db push",
     "db:seed": "tsx prisma/seed.ts",
-    "vercel-build": "node scripts/vercel-build.mjs"
+    "vercel-build": "node scripts/vercel-build.mjs",
+    "qa:audit": "tsx scripts/qa/audit-data.ts",
+    "qa:crawl": "tsx scripts/qa/crawl.ts http://localhost:3000",
+    "qa:site": "tsx scripts/qa/e2e-site.ts http://localhost:3000",
+    "qa:products": "tsx scripts/qa/e2e-products.ts http://localhost:3000"
   },
   "dependencies": {
     "@fontsource-variable/fraunces": "^5.3.0",
@@ -36,6 +40,7 @@
     "prisma": "^6.19.3",
     "tailwindcss": "^4",
     "tsx": "^4.23.15",
-    "typescript": "^5"
+    "typescript": "^5",
+    "playwright": "^1.56.1"
   }
 }

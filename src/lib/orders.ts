@@ -52,13 +52,20 @@ export async function createOrder(input: OrderInputT) {
         }))) },
       },
     });
-    const full = await getOrder(order.id); if (full) await sendOrderEmails(full as any);
+    // Confirmation emails go out now for COD; for online payment they are sent once the payment is verified (markPaid).
+    if (input.paymentMethod === "COD") { const full = await getOrder(order.id); if (full) await sendOrderEmails(full as any); }
     return { id: order.id, number: order.number, total: order.total };
   }
   const id = `ord_${Date.now().toString(36)}`; const number = 100000 + memStore().orders.size + 1;
   memStore().orders.set(id, { id, number, ...base, items: priced.items.map((i) => ({ name: i.product.name, variant: i.variantLabel, qty: i.qty, unitPrice: i.unitPrice, preview: i.design?.preview, design: i.design })), createdAt: new Date().toISOString() });
-  await sendOrderEmails(memStore().orders.get(id) as any);
+  if (input.paymentMethod === "COD") await sendOrderEmails(memStore().orders.get(id) as any);
   return { id, number, total: priced.total };
+}
+
+export async function findOrderByNumber(number: number): Promise<{ id: string; phone: string } | null> {
+  const prisma = await getPrisma();
+  if (prisma) { const o = await prisma.order.findUnique({ where: { number }, select: { id: true, phone: true } }); return o ?? null; }
+  const o = [...memStore().orders.values()].find((x) => Number(x.number) === number); return o ? { id: String(o.id), phone: String(o.phone) } : null;
 }
 
 export async function getOrder(id: string) {
@@ -73,8 +80,9 @@ export async function getOrder(id: string) {
 
 export async function markPaid(id: string, razorpayPaymentId: string) {
   const prisma = await getPrisma();
-  if (prisma) { await prisma.order.update({ where: { id }, data: { status: "PAID", razorpayPaymentId } }); return; }
-  const o = memStore().orders.get(id); if (o) { o.status = "PAID"; o.razorpayPaymentId = razorpayPaymentId; }
+  if (prisma) { await prisma.order.update({ where: { id }, data: { status: "PAID", razorpayPaymentId } }); }
+  else { const o = memStore().orders.get(id); if (o) { o.status = "PAID"; o.razorpayPaymentId = razorpayPaymentId; } }
+  const full = await getOrder(id); if (full) await sendOrderEmails(full as any);
 }
 
 export async function listOrders(limit = 200) {

@@ -14,7 +14,7 @@ export function CategoryBrowser({ products }: { products: Product[] }) {
     l = [...l].sort((a, b) => sort === "low" ? minPrice(a) - minPrice(b) : sort === "high" ? minPrice(b) - minPrice(a) : sort === "rating" ? b.rating - a.rating : b.reviews - a.reviews);
     return l;
   }, [products, sort, max, kind]);
-  const KIND: Record<string, string> = { photo: "1 photo", "multi-photo": "Many photos", text: "Name only", "photo+text": "Photo + text" };
+  const KIND: Record<string, string> = { photo: "1 photo", "multi-photo": "Many photos", text: "Name only", "photo+text": "Photo + text", none: "Ready-made" };
   return (
     <div>
       <div className="flex flex-wrap items-center gap-2 mb-5 text-sm">

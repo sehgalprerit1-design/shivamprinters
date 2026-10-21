@@ -5,10 +5,21 @@ import { ProductGrid } from "@/components/product/ProductGrid";
 import { Section } from "@/components/ui/Section";
 import { Upload, Palette, Truck, ShieldCheck } from "lucide-react";
 import { CallUs } from "@/components/ui/CallUs";
+import { latestApprovedReviews } from "@/lib/reviews-db";
 
-const month = new Date().getMonth() + 1;
+// Re-rendered hourly so seasonal tiles and real customer reviews stay fresh without a redeploy.
+export const revalidate = 3600;
 
-export default function Home() {
+const SAMPLE_QUOTES: [string, string][] = [
+  ["Priya S., Pune", "The layflat album for our wedding came out better than the photographer's own. Pages are thick and the colours are exact."],
+  ["Arjun M., Bengaluru", "Ordered 40 desktop calendars for the team on a Monday, had them by Friday. Printing is sharp and the stand is solid."],
+  ["Neha K., Delhi", "The name stickers survived a whole term of washing. Lunch box lid print still looks new."],
+];
+
+export default async function Home() {
+  const month = new Date().getMonth() + 1;
+  const real = await latestApprovedReviews(3).catch(() => []);
+  const quotes: [string, string][] = real.length >= 3 ? real.map((r) => [`${r.author}${r.city ? `, ${r.city}` : ""}`, r.body] as [string, string]) : SAMPLE_QUOTES;
   const featured = products.filter((p) => p.featured);
   const seasonal = [...giftPagesByGroup("festival"), ...giftPagesByGroup("occasion")].filter(
     (g) => g.season && month >= g.season.startMonth && month <= g.season.endMonth,
@@ -16,7 +27,7 @@ export default function Home() {
   const occasionTiles = [...seasonal, ...giftPagesByGroup("occasion").filter((g) => ["birthday-gifts", "anniversary-gifts", "wedding-gifts", "corporate-gifts"].includes(g.slug))].slice(0, 4);
   const under499 = productsByTag(["under-499"], 8);
   const steps = [
-    { Icon: Upload, t: "Upload", d: "From your phone, Google Photos or Instagram. Any size, we handle the rest." },
+    { Icon: Upload, t: "Upload", d: "Straight from your phone or computer. Any size, we handle the rest." },
     { Icon: Palette, t: "Personalise", d: "Pick a layout, drop in photos, add names and captions. Preview before you pay." },
     { Icon: Truck, t: "We print & ship", d: "Made in our own print centre. Express in 4–6 days, economy in 10–12." },
     { Icon: ShieldCheck, t: "100% happiness", d: "Not right? We reprint or refund. No forms, no fuss." },
@@ -102,13 +113,9 @@ export default function Home() {
         </div>
       </section>
 
-      <Section title="What customers say" subtitle="Rated by real customers.">
+      <Section title="What customers say" subtitle={real.length >= 3 ? "Recent reviews from customers." : "What people love about printing with us."}>
         <div className="grid md:grid-cols-3 gap-4">
-          {[
-            ["Priya S., Pune", "The layflat album for our wedding came out better than the photographer's own. Pages are thick and the colours are exact."],
-            ["Arjun M., Bengaluru", "Ordered 40 desktop calendars for the team on a Monday, had them by Friday. Printing is sharp and the stand is solid."],
-            ["Neha K., Delhi", "The name stickers survived a whole term of washing. Lunch box lid print still looks new."],
-          ].map(([who, text]) => (
+          {quotes.map(([who, text]) => (
             <figure key={who} className="card p-5">
               <div className="text-gold text-sm">★★★★★</div>
               <blockquote className="mt-2 text-ink-2">{text}</blockquote>

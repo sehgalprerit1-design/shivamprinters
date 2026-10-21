@@ -32,22 +32,37 @@ function slotLayout(n: number, aspect: number): { x: number; y: number; w: numbe
   return Array.from({ length: n }, (_, i) => ({ x: gap + (i % cols) * (w + gap), y: gap + Math.floor(i / cols) * (h + gap), w, h }));
 }
 
-export function Editor({ product, variant: initialVariant, initialOptions = {}, initialQty = 1 }: { product: Product; variant: Variant; initialOptions?: Record<string, string>; initialQty?: number }) {
+/** Text fields that are instructions for us, not printed on the product. */
+const NON_PRINT_KEYS = new Set(["notes", "brief", "back", "message", "start", "tagline", "address", "email", "phone"]);
+const FRAME_COLOURS: Record<string, string> = { black: "#1c1a18", white: "#f5f2ec", oak: "#c9a06a", walnut: "#5a3a28", red: "#d7352b", yellow: "#f2c230", blue: "#2f6fd6", green: "#2e9e5b", pink: "#ef6fa0", teal: "#1f9c9c" };
+
+export function Editor({ product, variant: initialVariant, initialOptions = {}, initialQty = 1, editLineId }: { product: Product; variant: Variant; initialOptions?: Record<string, string>; initialQty?: number; editLineId?: string }) {
   const router = useRouter();
-  const add = useCart((s) => s.add);
+  const add = useCart((s) => s.add); const replace = useCart((s) => s.replace);
   const [variant, setVariant] = useState<Variant>(initialVariant);
   const groups = useMemo(() => optionsFor(product.slug, product.category), [product.slug, product.category]);
   const [opts, setOpts] = useState<Record<string, string>>({ ...defaultOptions(groups), ...initialOptions });
   const [qty, setQty] = useState(initialQty);
   const unitPrice = variant.price + optionDelta(groups, opts);
   const n = product.template.photoSlots;
-  const aspect = product.template.aspect;
+  const baseAspect = product.template.aspect;
+  // Orientation option flips the canvas (landscape templates become portrait and vice versa).
+  const aspect = opts.orientation === "portrait" && baseAspect > 1 ? 1 / baseAspect : opts.orientation === "landscape" && baseAspect < 1 ? 1 / baseAspect : baseAspect;
+  const framed = product.category === "framed-prints";
+  const frameColour = framed ? FRAME_COLOURS[opts.colour ?? ""] ?? (product.slug === "premium-frame" ? "#5a3a28" : "#1c1a18") : undefined;
+  const matted = framed && /designer|premium|art/.test(product.slug);
+  const printableField = product.template.textFields.find((f) => !NON_PRINT_KEYS.has(f.key));
+  const titleBand = n > 1 && !!printableField; // multi-photo products keep a cover-title strip above the grid
   const [slots, setSlots] = useState<Slot[]>(() => Array.from({ length: Math.max(n, 0) }, () => ({ zoom: 1, dx: 0, dy: 0, rot: 0, w: 0, h: 0 })));
   const [active, setActive] = useState(0);
   const [text, setText] = useState<Record<string, string>>({});
   const [step, setStep] = useState<"photos" | "text" | "review">(n > 0 ? "photos" : "text");
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const layout = useMemo(() => slotLayout(n, aspect), [n, aspect]);
+  const layout = useMemo(() => {
+    const inset = framed ? (matted ? 0.16 : 0.08) : 0;
+    const top = titleBand ? 0.14 : 0;
+    return slotLayout(n, aspect).map((r) => ({ x: inset + r.x * (1 - 2 * inset), y: inset + top + r.y * (1 - 2 * inset - top), w: r.w * (1 - 2 * inset), h: r.h * (1 - 2 * inset - top) }));
+  }, [n, aspect, framed, matted, titleBand]);
   const W = 900, H = Math.round(W / aspect);
   const filled = slots.filter((s) => s.img).length;
 
@@ -61,6 +76,15 @@ export function Editor({ product, variant: initialVariant, initialOptions = {}, 
     const cv = canvasRef.current; if (!cv) return;
     const ctx = cv.getContext("2d")!;
     ctx.fillStyle = "#f3eee6"; ctx.fillRect(0, 0, W, H);
+    if (framed) {
+      // Frame moulding, then mat (if any), then the print area.
+      const fw = Math.round(Math.min(W, H) * 0.08);
+      ctx.fillStyle = frameColour!; ctx.fillRect(0, 0, W, H);
+      ctx.fillStyle = "rgba(0,0,0,.18)"; ctx.fillRect(fw * 0.8, fw * 0.8, W - fw * 1.6, H - fw * 1.6);
+      ctx.fillStyle = matted ? "#fbfaf7" : "#e9e2d8"; ctx.fillRect(fw, fw, W - 2 * fw, H - 2 * fw);
+      if (matted) { ctx.strokeStyle = "rgba(0,0,0,.12)"; ctx.lineWidth = 2; const m = Math.round(Math.min(W, H) * 0.16); ctx.strokeRect(m - 1, m - 1, W - 2 * m + 2, H - 2 * m + 2); }
+    }
+    if (titleBand) { ctx.fillStyle = "#2a2622"; ctx.fillRect(0, 0, W, H * 0.14); }
     layout.forEach((r, i) => {
       const s = slots[i];
       const x = r.x * W, y = r.y * H, w = r.w * W, h = r.h * H;
@@ -78,17 +102,28 @@ export function Editor({ product, variant: initialVariant, initialOptions = {}, 
       ctx.restore();
       if (i === active && n > 1) { ctx.strokeStyle = "#e2573f"; ctx.lineWidth = 4; ctx.strokeRect(x + 2, y + 2, w - 4, h - 4); }
     });
-    // Text overlay (title/caption/name) along the bottom
-    const first = product.template.textFields[0];
-    const val = first ? text[first.key] : "";
-    if (val) {
+    // Text overlay: the first *printable* field (title/caption/name). Notes and instructions are never drawn.
+    const val = printableField ? (text[printableField.key] ?? "").trim() : "";
+    if (titleBand) {
+      ctx.save(); ctx.font = `600 ${Math.round(H * 0.07)}px Georgia, serif`; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+      ctx.fillStyle = val ? "#fff" : "rgba(255,255,255,.45)"; ctx.fillText(val || `${printableField!.label} (cover)`, W / 2, H * 0.07, W * 0.9); ctx.restore();
+    } else if (n === 0) {
+      // Text-only products (names, initials): big centred text on a product-coloured face.
       ctx.save();
-      ctx.font = `600 ${Math.round(H / 12)}px Georgia, serif`; ctx.textAlign = "center"; ctx.textBaseline = "alphabetic";
-      ctx.fillStyle = "rgba(0,0,0,.45)"; ctx.fillRect(0, H - H / 6, W, H / 6);
-      ctx.fillStyle = "#fff"; ctx.fillText(val, W / 2, H - H / 16);
+      ctx.fillStyle = "#e9e2d8"; ctx.fillRect(0, 0, W, H);
+      ctx.font = `600 ${Math.round(Math.min(H * 0.42, W / Math.max(6, (val || "Your name").length) * 1.5))}px Georgia, serif`; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+      ctx.fillStyle = val ? "#1d1a17" : "#9a938a"; ctx.fillText(val || (printableField ? printableField.label : ""), W / 2, H / 2, W * 0.9);
+      ctx.restore();
+    } else if (val) {
+      ctx.save();
+      const inset = framed ? Math.round(Math.min(W, H) * (matted ? 0.16 : 0.08)) : 0;
+      const bandH = Math.max(28, Math.min(H / 6, 120));
+      ctx.font = `600 ${Math.round(bandH * 0.5)}px Georgia, serif`; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+      ctx.fillStyle = "rgba(0,0,0,.45)"; ctx.fillRect(inset, H - inset - bandH, W - 2 * inset, bandH);
+      ctx.fillStyle = "#fff"; ctx.fillText(val, W / 2, H - inset - bandH / 2, W - 2 * inset - 20);
       ctx.restore();
     }
-  }, [slots, layout, active, text, product.template.textFields, n, W, H]);
+  }, [slots, layout, active, text, n, W, H, framed, matted, frameColour, titleBand, printableField]);
   useEffect(() => { draw(); }, [draw]);
 
   const loadFiles = (files: FileList | null) => {
@@ -128,6 +163,36 @@ export function Editor({ product, variant: initialVariant, initialOptions = {}, 
 
   const [uploading, setUploading] = useState<string | null>(null);
   const [uploadError, setUploadError] = useState<string | null>(null);
+  const [restoreNote, setRestoreNote] = useState<string | null>(null);
+
+  // Editing an existing cart line: restore its variant, options, quantity, text and (when stored) photos.
+  useEffect(() => {
+    if (!editLineId) return;
+    const line = useCart.getState().lines.find((l) => l.id === editLineId);
+    if (!line) { setRestoreNote("That cart item no longer exists — starting a fresh design."); return; }
+    const v = product.variants.find((x) => x.sku === line.variantSku); if (v) setVariant(v);
+    setQty(line.qty);
+    if (line.design?.options) setOpts((o) => ({ ...o, ...line.design!.options }));
+    if (line.design?.text) setText(line.design.text);
+    const saved = line.design?.slots ?? [];
+    const withKeys = saved.map((sl, i) => ({ sl, i })).filter(({ sl }) => sl.key);
+    if (withKeys.length === 0) { if ((line.design?.photoCount ?? 0) > 0) setRestoreNote("Your earlier photos weren't stored, so please add them again."); return; }
+    let cancelled = false;
+    (async () => {
+      let ok = 0;
+      for (const { sl, i } of withKeys) {
+        try {
+          const r = await fetch(`/api/upload/url?key=${encodeURIComponent(sl.key!)}`); const j = (await r.json()) as { url: string | null };
+          if (!j.url) continue;
+          await new Promise<void>((res) => { const img = new Image(); img.crossOrigin = "anonymous"; img.onload = () => { if (!cancelled) setSlots((prev) => prev.map((s0, k) => (k === i ? { ...s0, img, src: img.src, key: sl.key, zoom: sl.zoom, dx: sl.dx, dy: sl.dy, rot: sl.rot as Slot["rot"], w: img.width, h: img.height } : s0))); ok++; res(); }; img.onerror = () => res(); img.src = j.url!; });
+        } catch { /* skip */ }
+      }
+      if (!cancelled) { setRestoreNote(ok === withKeys.length ? null : `Restored ${ok} of ${withKeys.length} photos — please re-add the rest.`); setStep("review"); }
+    })();
+    return () => { cancelled = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [editLineId]);
+
   const addToCart = async () => {
     const preview = canvasRef.current!.toDataURL("image/jpeg", 0.7);
     const label = optionLabel(groups, opts);
@@ -152,7 +217,8 @@ export function Editor({ product, variant: initialVariant, initialOptions = {}, 
     } catch (e) { setUploading(null); setUploadError((e as Error).message); return; }
     setUploading(null); setUploadError(null);
     slots.forEach((s) => slotDesign.push({ key: s.key, zoom: s.zoom, dx: s.dx, dy: s.dy, rot: s.rot, w: s.w, h: s.h }));
-    add({ productSlug: product.slug, productName: product.name, variantSku: variant.sku, variantName: label ? `${variant.name} · ${label}` : variant.name, unitPrice, qty, image: product.image, design: { preview, text, photoCount: filled, options: opts, slots: slotDesign, canvas: { w: W, h: H, aspect } } });
+    const line = { productSlug: product.slug, productName: product.name, variantSku: variant.sku, variantName: label ? `${variant.name} · ${label}` : variant.name, unitPrice, qty, image: product.image, design: { preview, text, photoCount: filled, options: opts, slots: slotDesign, canvas: { w: W, h: H, aspect } } };
+    if (editLineId) replace(editLineId, line); else add(line);
     router.push("/cart");
   };
 
@@ -208,6 +274,7 @@ export function Editor({ product, variant: initialVariant, initialOptions = {}, 
             <div className="inline-flex border border-line rounded-full"><button type="button" className="px-3" onClick={() => setQty(Math.max(1, qty - 1))}>−</button><span className="px-1 py-1 w-6 text-center">{qty}</span><button type="button" className="px-3" onClick={() => setQty(Math.min(99, qty + 1))}>+</button></div>
           </div>
         </details>
+        {restoreNote && <div className="flex items-start gap-2 text-sm bg-amber-50 border border-amber-200 text-amber-900 rounded-xl p-3"><AlertTriangle size={16} className="mt-0.5 shrink-0" />{restoreNote}</div>}
         <CallUs compact />
         <ol className="flex gap-2 text-xs">
           {(["photos", "text", "review"] as const).filter((s) => s !== "photos" || n > 0).filter((s) => s !== "text" || product.template.textFields.length > 0).map((s, i) => (
@@ -259,7 +326,7 @@ export function Editor({ product, variant: initialVariant, initialOptions = {}, 
               <li className="flex gap-2"><Check size={16} className="text-accent" />Preview checked — what you see is what prints</li>
             </ul>
             {uploadError && <div className="flex items-start gap-2 text-sm bg-brand-soft border border-brand/30 text-brand-ink rounded-xl p-3"><AlertTriangle size={16} className="mt-0.5 shrink-0" /><span>{uploadError} <button type="button" className="underline" onClick={addToCart}>Try again</button> · <CallUs compact /></span></div>}
-            <button disabled={!canReview || !!uploading} onClick={addToCart} className="btn btn-primary w-full text-base !py-3.5">{uploading ?? <>Add {qty > 1 ? `${qty} ` : ""}to cart · {inr(unitPrice * qty)}</>}</button>
+            <button disabled={!canReview || !!uploading} onClick={addToCart} className="btn btn-primary w-full text-base !py-3.5">{uploading ?? <>{editLineId ? "Update cart" : `Add ${qty > 1 ? `${qty} ` : ""}to cart`} · {inr(unitPrice * qty)}</>}</button>
             <p className="text-xs text-ink-3">Your design is saved with the order. Reorders print the same file.</p>
             <CallUs compact />
           </div>

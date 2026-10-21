@@ -25,6 +25,7 @@ const G = (
 
 export const giftPages: GiftPage[] = [
   // --- Occasions
+  G("occasion", "thank-you-gifts", "Thank You Gifts", "A photo and a few words say it better than a message. Postcards, mugs, frames and prints to thank the people who showed up.", ["thank-you", "friends", "teacher"]),
   G("occasion", "birthday-gifts", "Birthday Gifts", "Mugs, cushions, frames and books that put their face on the party.", ["birthday"], { image: "/images/birthday.jpg" }),
   G("occasion", "anniversary-gifts", "Anniversary Gifts", "Relive the year — or all of them — in a photobook, a frame or a print for the wall.", ["anniversary", "couples"]),
   G("occasion", "wedding-gifts", "Wedding Gifts", "Layflat albums, premium frames and canvas prints for the couple.", ["wedding"], { image: "/images/wedding.jpg" }),
@@ -70,6 +71,7 @@ export const giftPages: GiftPage[] = [
   G("festival", "festive-gifts", "Festive Gifts", "Everything we make for the festive season.", ["festive", "diwali", "premium"]),
 
   // --- Recipients
+  G("recipient", "gifts-for-pet-lovers", "Gifts for Pet Lovers", "Put the good boy on a mug, a cushion or the wall — and get a proper engraved tag for his collar.", ["pets"]),
   G("recipient", "gifts-for-mom", "Gifts for Mom", "", ["mom", "parents", "women"]),
   G("recipient", "gifts-for-dad", "Gifts for Dad", "", ["dad", "parents", "men"]),
   G("recipient", "gifts-for-parents", "Gifts for Parents", "", ["parents", "grandparents"]),
@@ -132,6 +134,7 @@ export const giftPages: GiftPage[] = [
   ].map(([slug, title, tags]) => G("recipient", slug as string, title as string, "", tags as string[])),
 
   // --- Collections
+  G("collection", "small-business-essentials", "Small Business Essentials", "Business cards, stickers for your packaging, flyers, postcards for orders and a banner for the shop front — printed in our own unit.", ["business", "small-business", "corporate"], { image: "/images/cat-business.jpg" }),
   G("collection", "gifts-under-999", "Gifts Under ₹999", "Good gifts that don't need a reason.", ["under-999", "under-499"]),
   G("collection", "budget-gifts", "Gifts Under ₹499", "Small, personal, under five hundred.", ["under-499"], { legacySlug: "budget-gifts" }),
   G("collection", "premium-gifts", "Premium Gifts", "Layflat albums, solid-wood frames and acrylic wall art.", ["premium"]),

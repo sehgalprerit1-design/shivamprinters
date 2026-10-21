@@ -31,7 +31,7 @@ export function MobileNav({ categories, occasions, recipients }: { categories: C
             {recipients.map((g) => (
               <Link key={g.slug} href={`/gifts/${g.slug}`} onClick={() => setOpen(false)} className="block py-2 text-ink-2">{g.title.replace("Gifts for ", "")}</Link>
             ))}
-            <Link href="/account" onClick={() => setOpen(false)} className="btn btn-ghost w-full mt-6">Account & orders</Link>
+            <Link href="/account" onClick={() => setOpen(false)} className="btn btn-ghost w-full mt-6">Track your order</Link>
           </div>
         </div>
       )}

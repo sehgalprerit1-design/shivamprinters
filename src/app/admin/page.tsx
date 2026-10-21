@@ -16,7 +16,7 @@ export default async function Admin() {
   const open = orders.filter((o) => ["PAID", "COD_CONFIRMED", "IN_PRODUCTION"].includes(String(o.status)));
   return (
     <div>
-      <div className="flex items-center justify-between mb-6"><div className="flex items-center gap-4"><h1 className="text-3xl font-bold">Orders</h1><Link href="/admin/enquiries" className="text-brand text-sm font-semibold">Enquiries →</Link><Link href="/admin/pricing" className="text-brand text-sm font-semibold">Pricing →</Link></div><SignOut /></div>
+      <div className="flex items-center justify-between mb-6"><div className="flex items-center gap-4"><h1 className="text-3xl font-bold">Orders</h1><Link href="/admin/enquiries" className="text-brand text-sm font-semibold">Enquiries →</Link><Link href="/admin/pricing" className="text-brand text-sm font-semibold">Pricing →</Link><Link href="/admin/reviews" className="text-brand text-sm font-semibold">Reviews →</Link></div><SignOut /></div>
       <div className="grid grid-cols-3 gap-4 mb-6">
         {[["Today", todays.length, inr(todays.reduce((a, o) => a + Number(o.total), 0))], ["To produce / ship", open.length, ""], ["All orders", orders.length, inr(orders.reduce((a, o) => a + Number(o.total), 0))]].map(([t, n, v]) => <div key={String(t)} className="card p-4"><div className="text-xs text-ink-3">{t}</div><div className="text-2xl font-bold">{n}</div><div className="text-sm text-ink-2">{v}</div></div>)}
       </div>

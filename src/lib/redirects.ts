@@ -51,4 +51,5 @@ const productRedirects: R[] = products
 
 const giftRedirects: R[] = giftPages.map((g) => r(`/pages/${g.legacySlug ?? g.slug}`, `/gifts/${g.slug}`));
 
-export const redirects: R[] = [...staticRedirects, ...categoryRedirects, ...productRedirects, ...giftRedirects];
+const seen = new Set<string>();
+export const redirects: R[] = [...staticRedirects, ...categoryRedirects, ...productRedirects, ...giftRedirects].filter((x) => (seen.has(x.source) ? false : (seen.add(x.source), true)));
