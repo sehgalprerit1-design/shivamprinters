@@ -5,61 +5,181 @@
       "images": [
         "/images/p/hardcover-photobook-2.jpg",
         "/images/p/hardcover-photobook-3.jpg",
-        "/api/img?key=uploads%2F2026-10-22%2F778476e2-a838-4dae-8be8-b790d127b342-gloss_matt_pearl.png"
+        "/api/img?key=uploads%2F2026-10-22%2F778476e2-a838-4dae-8be8-b790d127b342-gloss_matt_pearl.png",
+        "/api/img?key=uploads%2F2026-10-22%2F178c9b5a-b4e7-481a-a62c-c8933d56ea5c-image.png"
       ]
     },
     "softcover-photobook": {
       "images": [
-        "/api/img?key=uploads%2F2026-10-22%2Fc4218349-982f-4a09-8a55-bb3c2643e744-gloss_matt_pearl.png"
+        "/api/img?key=uploads%2F2026-10-22%2Fc4218349-982f-4a09-8a55-bb3c2643e744-gloss_matt_pearl.png",
+        "/api/img?key=uploads%2F2026-10-22%2F01696c9f-0618-4bf1-b667-49ebae8af6b1-image.png"
       ]
     },
     "layflat-photobook": {
       "images": [
         "/images/p/layflat-photobook-2.jpg",
         "/images/p/layflat-photobook-3.jpg",
-        "/api/img?key=uploads%2F2026-10-22%2F59ad0434-0db1-4729-aa8d-aa964b927097-gloss_matt_pearl.png"
+        "/api/img?key=uploads%2F2026-10-22%2F59ad0434-0db1-4729-aa8d-aa964b927097-gloss_matt_pearl.png",
+        "/api/img?key=uploads%2F2026-10-22%2F1fa6d800-8c9f-4381-b1cf-ca471437bf67-image.png"
+      ]
+    },
+    "book-designing-service": {
+      "images": [
+        "/api/img?key=uploads%2F2026-10-22%2F5cad0b20-515e-4e50-bfd8-cf927f0e006f-gloss_matt_pearl.png",
+        "/api/img?key=uploads%2F2026-10-22%2F7ca1d335-352a-447e-bcaa-6579cfd732ac-image.png"
+      ]
+    },
+    "designer-frame": {
+      "images": [
+        "/images/p/designer-frame-2.jpg",
+        "/images/p/designer-frame-3.jpg",
+        "/api/img?key=uploads%2F2026-10-22%2F8d8b92bd-e63e-4e77-85bc-84368d6d8173-gloss_matt_pearl.png",
+        "/api/img?key=uploads%2F2026-10-22%2F55e0aa3b-287c-48d4-8d78-df0aa996cbbc-image.png"
+      ]
+    },
+    "coloured-frame": {
+      "images": [
+        "/api/img?key=uploads%2F2026-10-22%2F9e0184c6-62df-4c45-914d-9aa6da4fd215-gloss_matt_pearl.png",
+        "/api/img?key=uploads%2F2026-10-22%2Ff9506d8b-ef9d-4c41-9fc1-60541db5dcd5-image.png"
+      ]
+    },
+    "classic-frame": {
+      "images": [
+        "/api/img?key=uploads%2F2026-10-22%2Fe772c9dd-41bd-4fc6-af3a-a062fd4362be-gloss_matt_pearl.png",
+        "/api/img?key=uploads%2F2026-10-22%2Fa1ba347e-dd51-47b6-80fc-7cc37b63dd10-image.png"
+      ]
+    },
+    "premium-frame": {
+      "images": [
+        "/images/p/premium-frame-2.jpg",
+        "/images/p/premium-frame-3.jpg",
+        "/api/img?key=uploads%2F2026-10-22%2F38b77dbc-5ebe-4784-ae0a-0fe11dd563d7-gloss_matt_pearl.png",
+        "/api/img?key=uploads%2F2026-10-22%2Fe78606d4-3403-4de1-aef7-616bc9dd141e-image.png"
       ]
     },
     "desktop-calendar-6x8": {
       "images": [
         "/images/p/desktop-calendar-6x8-2.jpg",
         "/images/p/desktop-calendar-6x8-3.jpg",
-        "/api/img?key=uploads%2F2026-10-22%2F2b8ed157-cf09-464f-9350-84990b792e16-gloss_matt_pearl.png"
+        "/api/img?key=uploads%2F2026-10-22%2F1f9ff3de-09f0-481a-9045-15f8dfddb34b-gloss_matt_pearl.png",
+        "/api/img?key=uploads%2F2026-10-22%2Fd0c509c8-59b8-45a5-bdef-8a11628c3a55-image.png"
       ]
     },
     "desktop-calendar-6x6": {
       "images": [
-        "/api/img?key=uploads%2F2026-10-22%2Fc40f2d4c-2c1b-4c7a-bd37-8fb2b5936889-gloss_matt_pearl.png"
+        "/api/img?key=uploads%2F2026-10-22%2F01e8f7b5-efc1-41b4-b64e-ce571916cfe2-gloss_matt_pearl.png",
+        "/api/img?key=uploads%2F2026-10-22%2F9412607b-2d4b-4a75-a3f8-415079bb118e-image.png"
       ]
     },
     "mini-desktop-calendar": {
       "images": [
-        "/api/img?key=uploads%2F2026-10-22%2Fbcdb2598-5554-444a-8c2b-d15d9e177029-gloss_matt_pearl.png"
+        "/api/img?key=uploads%2F2026-10-22%2Fef383c1c-a232-4bc4-b8d3-5c841be84339-gloss_matt_pearl.png",
+        "/api/img?key=uploads%2F2026-10-22%2F4ead49c1-10d8-4e7c-8dc9-b1354025b28c-image.png"
       ]
     },
     "wall-calendar-portrait": {
       "images": [
-        "/api/img?key=uploads%2F2026-10-22%2Fd486e5dd-9ab9-4679-b0f7-b8b357e630ad-gloss_matt_pearl.png"
+        "/api/img?key=uploads%2F2026-10-22%2Fe353b280-e9bc-4284-a0af-97ed28b0153e-gloss_matt_pearl.png",
+        "/api/img?key=uploads%2F2026-10-22%2Fd2221925-e420-4931-b092-6d48e1e1edf4-image.png"
       ]
     },
     "wall-calendar-landscape": {
       "images": [
-        "/api/img?key=uploads%2F2026-10-22%2F2e25adf0-6a24-4485-a340-076aa88689fa-gloss_matt_pearl.png"
+        "/api/img?key=uploads%2F2026-10-22%2F2eea5ee0-7c25-473c-b552-36b5db0686e8-gloss_matt_pearl.png",
+        "/api/img?key=uploads%2F2026-10-22%2Fc308029e-140b-4e89-b641-40ab639eac5a-image.png"
       ]
     },
     "magnet-calendar": {
       "images": [
-        "/api/img?key=uploads%2F2026-10-22%2F74034b07-4c21-47fe-bf5c-59924cad15d2-gloss_matt_pearl.png"
+        "/api/img?key=uploads%2F2026-10-22%2Fe327b9ee-aeae-4ccf-86dc-728860e29c7b-gloss_matt_pearl.png",
+        "/api/img?key=uploads%2F2026-10-22%2F46b7c4d5-a6c0-4ace-91cc-8a518e4135fa-image.png"
       ]
     },
     "poster-calendar": {
       "images": [
-        "/api/img?key=uploads%2F2026-10-22%2Fbd79f709-ea67-42aa-a9ff-deaae7c8307f-gloss_matt_pearl.png"
+        "/api/img?key=uploads%2F2026-10-22%2Fa1505fb8-6419-4111-a23e-f48960f8f264-gloss_matt_pearl.png",
+        "/api/img?key=uploads%2F2026-10-22%2F8dc28c0e-4955-4c2f-b384-c44d85ff128a-image.png"
       ]
     },
     "desktop-calendar-4-5x10": {
       "images": [
-        "/api/img?key=uploads%2F2026-10-22%2Fc35242ee-7a0b-4d25-baf1-23141b972c60-gloss_matt_pearl.png"
+        "/api/img?key=uploads%2F2026-10-22%2Ff5936ede-ae8c-4300-902d-99e1c19ed140-gloss_matt_pearl.png",
+        "/api/img?key=uploads%2F2026-10-22%2F40b831c9-e9e2-4fa7-b750-025aa76d9477-image.png"
+      ]
+    },
+    "business-cards": {
+      "images": [
+        "/images/p/business-cards-2.jpg",
+        "/images/cat-business.jpg",
+        "/api/img?key=uploads%2F2026-10-22%2F1b285117-abd4-4016-86b2-66160657a0d4-gloss_matt_pearl.png",
+        "/api/img?key=uploads%2F2026-10-22%2F4fae0c3f-348a-4a9a-a10a-2876c8374d2a-image.png"
+      ]
+    },
+    "custom-stickers": {
+      "images": [
+        "/images/p/custom-stickers-2.jpg",
+        "/images/cat-business.jpg",
+        "/api/img?key=uploads%2F2026-10-22%2F9e8ec19e-5a8e-450d-8ebd-79bfd7e50c25-gloss_matt_pearl.png",
+        "/api/img?key=uploads%2F2026-10-22%2Fe5232104-fdb5-498f-97ce-cb891287b2ce-image.png"
+      ]
+    },
+    "brochures-flyers": {
+      "images": [
+        "/images/p/brochures-flyers-2.jpg",
+        "/images/cat-business.jpg",
+        "/api/img?key=uploads%2F2026-10-22%2Fca00008d-cbcc-4c71-aec0-cfb7c590fc71-gloss_matt_pearl.png",
+        "/api/img?key=uploads%2F2026-10-22%2Fa49fb16f-630b-4558-984e-acb0513a38b3-image.png"
+      ]
+    },
+    "photo-postcards": {
+      "images": [
+        "/images/p/photo-postcards-2.jpg",
+        "/images/cat-business.jpg",
+        "/api/img?key=uploads%2F2026-10-22%2F71a0cbd5-0608-400f-96f8-804f23e014ed-gloss_matt_pearl.png",
+        "/api/img?key=uploads%2F2026-10-22%2Fd85ee7ec-8997-495e-8d80-581d97c814ae-image.png"
+      ]
+    },
+    "banners-standees": {
+      "images": [
+        "/images/p/banners-standees-2.jpg",
+        "/images/cat-business.jpg",
+        "/api/img?key=uploads%2F2026-10-22%2Ff4d2fc8f-ffa4-40d5-b887-99300747f71a-gloss_matt_pearl.png",
+        "/api/img?key=uploads%2F2026-10-22%2F5316c658-8fae-468e-83d4-33eedd4aec58-image.png"
+      ]
+    },
+    "event-id-cards": {
+      "images": [
+        "/images/p/event-id-cards-2.jpg",
+        "/images/cat-business.jpg",
+        "/api/img?key=uploads%2F2026-10-22%2F10292d63-0114-4be4-9f07-72a9377d916a-gloss_matt_pearl.png",
+        "/api/img?key=uploads%2F2026-10-22%2F469aad25-78ce-4108-97fc-448c819dcd0c-image.png"
+      ]
+    },
+    "acrylic-print": {
+      "images": [
+        "/images/p/acrylic-print-2.jpg",
+        "/images/p/acrylic-print-3.jpg",
+        "/api/img?key=uploads%2F2026-10-22%2Ffd997d8b-6add-4bcc-8a8e-8a30e68457ba-image.png"
+      ]
+    },
+    "canvas-print": {
+      "images": [
+        "/api/img?key=uploads%2F2026-10-22%2Fe102ba04-3a2f-4a8c-bc85-dc12d02dc538-image.png"
+      ]
+    },
+    "large-photo-print": {
+      "images": [
+        "/api/img?key=uploads%2F2026-10-22%2Fa23eafcb-c355-45ca-bc3d-a9a80bfd9fe7-image.png"
+      ]
+    },
+    "fine-art-print": {
+      "images": [
+        "/api/img?key=uploads%2F2026-10-22%2Ff8a60554-6b0c-4f89-87ed-ad5e39c04bb1-image.png"
+      ]
+    },
+    "collage-poster": {
+      "images": [
+        "/api/img?key=uploads%2F2026-10-22%2Fa59a3dcf-fa9f-4844-8b30-a0c1a82c4299-image.png"
       ]
     },
     "coffee-mug-white": {
@@ -70,39 +190,46 @@
     },
     "photo-prints-4x6": {
       "images": [
-        "/api/img?key=uploads%2F2026-10-22%2Fa1937019-0a6e-4a61-ad55-230298a27414-gloss_matt_pearl.png"
+        "/api/img?key=uploads%2F2026-10-22%2Fa1937019-0a6e-4a61-ad55-230298a27414-gloss_matt_pearl.png",
+        "/api/img?key=uploads%2F2026-10-22%2F37fb83ac-e631-4925-9942-275ac25364a8-image.png"
       ]
     },
     "photo-prints-5x7": {
       "images": [
-        "/api/img?key=uploads%2F2026-10-22%2F94354b6f-1975-4473-9d19-d1ed23dd39ef-gloss_matt_pearl.png"
+        "/api/img?key=uploads%2F2026-10-22%2F94354b6f-1975-4473-9d19-d1ed23dd39ef-gloss_matt_pearl.png",
+        "/api/img?key=uploads%2F2026-10-22%2F03533209-197b-4e79-8a8f-5c08d91677d3-image.png"
       ]
     },
     "photo-prints-6x8": {
       "images": [
-        "/api/img?key=uploads%2F2026-10-22%2F92bafbd2-1f91-4e84-ba68-672c9a4323a2-gloss_matt_pearl.png"
+        "/api/img?key=uploads%2F2026-10-22%2F92bafbd2-1f91-4e84-ba68-672c9a4323a2-gloss_matt_pearl.png",
+        "/api/img?key=uploads%2F2026-10-22%2F4210f8ad-c51e-48ef-ac56-ec4df787c351-image.png"
       ]
     },
     "photo-prints-8x8": {
       "images": [
-        "/api/img?key=uploads%2F2026-10-22%2F8d598ba2-14ed-4e52-b7be-7498f3a4dc1b-gloss_matt_pearl.png"
+        "/api/img?key=uploads%2F2026-10-22%2F8d598ba2-14ed-4e52-b7be-7498f3a4dc1b-gloss_matt_pearl.png",
+        "/api/img?key=uploads%2F2026-10-22%2F40514f7c-757d-4cfd-b26e-3c33223dc48b-image.png"
       ]
     },
     "photo-prints-8x10": {
       "images": [
-        "/api/img?key=uploads%2F2026-10-22%2F30eda2c5-3ca2-4344-a7c0-5fef510f6be2-gloss_matt_pearl.png"
+        "/api/img?key=uploads%2F2026-10-22%2F30eda2c5-3ca2-4344-a7c0-5fef510f6be2-gloss_matt_pearl.png",
+        "/api/img?key=uploads%2F2026-10-22%2F03bf7e03-9888-449e-be84-e5c96608051e-image.png"
       ]
     },
     "photo-print-12x18": {
       "images": [
-        "/api/img?key=uploads%2F2026-10-22%2F0e3c446f-f1c0-4567-ac18-4c68be31f3e0-gloss_matt_pearl.png"
+        "/api/img?key=uploads%2F2026-10-22%2F0e3c446f-f1c0-4567-ac18-4c68be31f3e0-gloss_matt_pearl.png",
+        "/api/img?key=uploads%2F2026-10-22%2F96ce9583-1eb0-43ef-bef9-a126e3236215-image.png"
       ]
     },
     "retro-prints": {
       "images": [
         "/images/p/retro-prints-2.jpg",
         "/images/p/retro-prints-3.jpg",
-        "/api/img?key=uploads%2F2026-10-22%2Ff377c863-64f7-4adb-992f-2504f1d060f1-gloss_matt_pearl.png"
+        "/api/img?key=uploads%2F2026-10-22%2Ff377c863-64f7-4adb-992f-2504f1d060f1-gloss_matt_pearl.png",
+        "/api/img?key=uploads%2F2026-10-22%2F959b2a61-3c68-48b5-80db-f2ffbe11982b-image.png"
       ]
     },
     "square-prints": {
@@ -112,17 +239,20 @@
     },
     "mini-prints": {
       "images": [
-        "/api/img?key=uploads%2F2026-10-22%2F4aabd6ea-76ca-4dfb-a5d8-86999e2c76bf-gloss_matt_pearl.png"
+        "/api/img?key=uploads%2F2026-10-22%2F4aabd6ea-76ca-4dfb-a5d8-86999e2c76bf-gloss_matt_pearl.png",
+        "/api/img?key=uploads%2F2026-10-22%2F93a05625-fb0d-4b85-afcb-d16c539ed47c-image.png"
       ]
     },
     "card-prints-4x6": {
       "images": [
-        "/api/img?key=uploads%2F2026-10-22%2Fbc55525c-3629-4e2b-93d4-4922d53cb648-gloss_matt_pearl.png"
+        "/api/img?key=uploads%2F2026-10-22%2Fbc55525c-3629-4e2b-93d4-4922d53cb648-gloss_matt_pearl.png",
+        "/api/img?key=uploads%2F2026-10-22%2Fa78e1e2e-34b9-4667-9df1-21c15c563af3-image.png"
       ]
     },
     "card-prints-5x7": {
       "images": [
-        "/api/img?key=uploads%2F2026-10-22%2F6775b1c8-c37c-4335-bb72-980ebe180a53-gloss_matt_pearl.png"
+        "/api/img?key=uploads%2F2026-10-22%2F6775b1c8-c37c-4335-bb72-980ebe180a53-gloss_matt_pearl.png",
+        "/api/img?key=uploads%2F2026-10-22%2F14d85682-a232-40c6-9bea-da9e78ba6799-image.png"
       ]
     }
   },
