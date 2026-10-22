@@ -20,6 +20,48 @@
         "/api/img?key=uploads%2F2026-10-22%2F59ad0434-0db1-4729-aa8d-aa964b927097-gloss_matt_pearl.png"
       ]
     },
+    "desktop-calendar-6x8": {
+      "images": [
+        "/images/p/desktop-calendar-6x8-2.jpg",
+        "/images/p/desktop-calendar-6x8-3.jpg",
+        "/api/img?key=uploads%2F2026-10-22%2F2b8ed157-cf09-464f-9350-84990b792e16-gloss_matt_pearl.png"
+      ]
+    },
+    "desktop-calendar-6x6": {
+      "images": [
+        "/api/img?key=uploads%2F2026-10-22%2Fc40f2d4c-2c1b-4c7a-bd37-8fb2b5936889-gloss_matt_pearl.png"
+      ]
+    },
+    "mini-desktop-calendar": {
+      "images": [
+        "/api/img?key=uploads%2F2026-10-22%2Fbcdb2598-5554-444a-8c2b-d15d9e177029-gloss_matt_pearl.png"
+      ]
+    },
+    "wall-calendar-portrait": {
+      "images": [
+        "/api/img?key=uploads%2F2026-10-22%2Fd486e5dd-9ab9-4679-b0f7-b8b357e630ad-gloss_matt_pearl.png"
+      ]
+    },
+    "wall-calendar-landscape": {
+      "images": [
+        "/api/img?key=uploads%2F2026-10-22%2F2e25adf0-6a24-4485-a340-076aa88689fa-gloss_matt_pearl.png"
+      ]
+    },
+    "magnet-calendar": {
+      "images": [
+        "/api/img?key=uploads%2F2026-10-22%2F74034b07-4c21-47fe-bf5c-59924cad15d2-gloss_matt_pearl.png"
+      ]
+    },
+    "poster-calendar": {
+      "images": [
+        "/api/img?key=uploads%2F2026-10-22%2Fbd79f709-ea67-42aa-a9ff-deaae7c8307f-gloss_matt_pearl.png"
+      ]
+    },
+    "desktop-calendar-4-5x10": {
+      "images": [
+        "/api/img?key=uploads%2F2026-10-22%2Fc35242ee-7a0b-4d25-baf1-23141b972c60-gloss_matt_pearl.png"
+      ]
+    },
     "coffee-mug-white": {
       "image": "/images/p/coffee-mug-white-3.jpg",
       "images": [
