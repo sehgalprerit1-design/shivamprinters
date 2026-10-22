@@ -37,17 +37,16 @@ export function Header({ promo }: { promo?: CouponPublic | null }) {
         </div>
       </div>
       <nav className="hidden md:block border-t border-line relative">
-        <ul className="container-x flex items-center gap-5 h-11 text-sm font-medium">
-          {categories.slice(0, 10).map((c) => (
+        <ul className="container-x flex items-center gap-x-4 xl:gap-x-5 h-11 text-[13px] xl:text-sm font-medium whitespace-nowrap overflow-x-auto no-scrollbar">
+          {[...categories.filter((c) => c.slug !== "business-printing")].map((c) => (
             <li key={c.slug} className="nav-item static">
-              <Link href={`/c/${c.slug}`} className="py-3 inline-block hover:text-brand">{c.name}</Link>
+              <Link href={`/c/${c.slug}`} className="py-3 inline-block whitespace-nowrap hover:text-brand">{c.name}</Link>
               <div className="mega">
                 <div className="container-x grid grid-cols-[1fr_1fr_1fr_280px] gap-8 py-8">
                   <div className="col-span-3 grid grid-cols-3 gap-x-8 gap-y-1">
                     {productsInCategory(c.slug).slice(0, 18).map((p) => (
                       <Link key={p.slug} href={`/p/${p.slug}`} className="py-1.5 text-ink-2 hover:text-brand">{p.name}</Link>
                     ))}
-                    {c.slug === "business-printing" && <Link href="/custom-printing" className="py-1.5 font-semibold text-ink">Custom printing — get a quote</Link>}
                     <Link href={`/c/${c.slug}`} className="py-1.5 font-semibold text-brand">All {c.name} →</Link>
                   </div>
                   <Link href={`/c/${c.slug}`} className="card block">
@@ -62,7 +61,7 @@ export function Header({ promo }: { promo?: CouponPublic | null }) {
             </li>
           ))}
           <li className="nav-item static">
-            <Link href="/gifts" className="py-3 inline-block hover:text-brand">Gift Ideas</Link>
+            <Link href="/gifts" className="py-3 inline-block whitespace-nowrap hover:text-brand">Gift Ideas</Link>
             <div className="mega">
               <div className="container-x grid grid-cols-4 gap-8 py-8 text-ink-2">
                 <div>
@@ -89,9 +88,32 @@ export function Header({ promo }: { promo?: CouponPublic | null }) {
               </div>
             </div>
           </li>
+          {categories.filter((c) => c.slug === "business-printing").map((c) => (
+            <li key={c.slug} className="nav-item static ml-auto">
+              <Link href={`/c/${c.slug}`} className="my-1.5 inline-flex items-center whitespace-nowrap rounded-full bg-amber-300 text-ink px-3.5 py-1.5 font-semibold hover:bg-amber-400 shadow-sm">{c.name}</Link>
+              <div className="mega">
+                <div className="container-x grid grid-cols-[1fr_1fr_1fr_280px] gap-8 py-8">
+                  <div className="col-span-3 grid grid-cols-3 gap-x-8 gap-y-1">
+                    {productsInCategory(c.slug).slice(0, 18).map((p) => (
+                      <Link key={p.slug} href={`/p/${p.slug}`} className="py-1.5 text-ink-2 hover:text-brand">{p.name}</Link>
+                    ))}
+                    <Link href="/custom-printing" className="py-1.5 font-semibold text-ink">Custom printing — get a quote</Link>
+                    <Link href={`/c/${c.slug}`} className="py-1.5 font-semibold text-brand">All {c.name} →</Link>
+                  </div>
+                  <Link href={`/c/${c.slug}`} className="card block">
+                    <div className="aspect-[4/3] bg-surface-2 bg-cover bg-center" style={{ backgroundImage: `url(${c.image})` }} />
+                    <div className="p-3">
+                      <div className="font-semibold">{c.name}</div>
+                      <div className="text-ink-3 text-xs">{c.tagline}</div>
+                    </div>
+                  </Link>
+                </div>
+              </div>
+            </li>
+          ))}
           {seasonal && (
-            <li className="ml-auto">
-              <Link href={`/gifts/${seasonal.slug}`} className="chip bg-brand-soft text-brand-ink">{seasonal.title}</Link>
+            <li className="hidden 2xl:block">
+              <Link href={`/gifts/${seasonal.slug}`} className="chip bg-brand-soft text-brand-ink whitespace-nowrap">{seasonal.title}</Link>
             </li>
           )}
         </ul>

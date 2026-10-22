@@ -93,6 +93,8 @@ const BY_CAT: Record<string, T[]> = {
     { r: 5, t: "Reordered twice for the clinic", b: "Business cards and A5 flyers. Same quality both times, which is what I care about. Easy to reorder from my account." },
     { r: 5, t: "Roll-up standee for our stall", b: "Stand, banner and carry bag all in the box. Took 2 minutes to set up at the exhibition and looked more professional than the printed ones next to us." },
     { r: 4, t: "Flyers printed well, minimum 100", b: "Wanted 50 but the minimum is 100. Printing itself is excellent on the 250gsm card — more like a mini poster." },
+    { r: 5, t: "ID cards for our conference", b: "Sent an Excel of 180 names, got 180 PVC cards with names, roles and QR codes, each on a printed lanyard. Two typos were ours; they reprinted those free." },
+    { r: 5, t: "School ID cards, fast", b: "Needed 300 student cards before term. Uploaded the photos and list on Friday, had them by Wednesday. Cards feel like proper bank cards." },
   ],
   "diaries-planners": [
     { r: 5, t: "Leather feels expensive", b: "Got the genuine leather with gold-foil initials for my father. The leather smells and feels like the real thing and the foil is crisp. He uses it every morning." },
@@ -112,6 +114,8 @@ const BY_CAT: Record<string, T[]> = {
     { r: 3, t: "Mounting took effort", b: "The print is beautiful. The wall mount needed two people and a drill, which the listing could mention." },
   ],
   gifts: [
+    { r: 5, t: "Paper bags for our Diwali hampers", b: "Ordered 100 kraft bags with our logo in gold. Handles are strong, held a 3 kg hamper without a worry, and the print was crisp." },
+    { r: 4, t: "Good bags, confirm the size", b: "Lovely quality coloured bags with ribbon handles. I ordered Small for mugs and should have taken Medium — check the dimensions before ordering." },
     { r: 5, t: "Mug print is crisp", b: "Wraparound photo came out clear and the handle placement is right. Dishwasher twice a day, still perfect." },
     { r: 5, t: "Magic mug is magic", b: "Black until the chai goes in, then our photo appears. My dad was delighted." },
     { r: 4, t: "Cushion is soft, print is good", b: "The photo is sharp and the fabric is soft. Would love a bigger size option." },

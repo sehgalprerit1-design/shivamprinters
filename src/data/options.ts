@@ -102,12 +102,22 @@ const POSTCARD_BACK: OptionGroup = { id: "postcard-back", key: "back", label: "B
 const BANNER_MATERIAL: OptionGroup = { id: "banner-material", key: "material", label: "Material", choices: [{ id: "flex", label: "Flex 280gsm (standard)" }, { id: "starflex", label: "Star flex (brighter, smoother)", delta: 200 }, { id: "vinyl", label: "Vinyl (outdoor, long life)", delta: 400 }] };
 const BANNER_FINISH: OptionGroup = { id: "banner-finish", key: "finishing", label: "Finishing", choices: [{ id: "eyelets", label: "Metal eyelets" }, { id: "pockets", label: "Pole pockets" }, { id: "none", label: "Plain edge" }] };
 
+const ID_MATERIAL: OptionGroup = { id: "id-material", key: "material", label: "Card material", choices: [{ id: "pvc", label: "PVC card (760 micron)", hint: "Like a bank card; reusable" }, { id: "synthetic", label: "Synthetic 300 micron", hint: "Tear-proof, lighter", delta: -150 }, { id: "laminated", label: "Laminated 300gsm card", hint: "Budget, single event", delta: -250 }] };
+const ID_SIDES: OptionGroup = { id: "id-sides", key: "sides", label: "Printing", choices: [{ id: "single", label: "Front only" }, { id: "double", label: "Front + back", delta: 150 }] };
+const ID_LANYARD: OptionGroup = { id: "id-lanyard", key: "lanyard", label: "Lanyard (per card)", choices: [{ id: "none", label: "No lanyard" }, { id: "plain", label: "Plain lanyard", delta: 20 }, { id: "printed", label: "Printed lanyard with logo", delta: 35 }] };
+const ID_HOLDER: OptionGroup = { id: "id-holder", key: "holder", label: "Holder (per card)", choices: [{ id: "none", label: "Punched slot only" }, { id: "pouch", label: "Clear pouch", delta: 8 }, { id: "reel", label: "Retractable reel", delta: 40 }] };
+const BAG_MATERIAL: OptionGroup = { id: "bag-material", key: "material", label: "Paper", choices: [{ id: "kraft", label: "Kraft brown 150gsm" }, { id: "white", label: "White 170gsm" }, { id: "colour", label: "Coloured (red / black / pink / blue)", delta: 100 }, { id: "gloss", label: "Laminated gloss 250gsm", delta: 300 }] };
+const BAG_HANDLE: OptionGroup = { id: "bag-handle", key: "handle", label: "Handles", choices: [{ id: "twisted", label: "Twisted paper" }, { id: "ribbon", label: "Satin ribbon", delta: 125 }, { id: "rope", label: "Cotton rope", delta: 200 }] };
+const BAG_PRINT: OptionGroup = { id: "bag-print", key: "sides", label: "Printing", choices: [{ id: "one", label: "Logo on one side" }, { id: "two", label: "Both sides", delta: 150 }, { id: "full", label: "Full-colour photo print", delta: 400 }] };
+
 function baseOptionsFor(slug: string, category: string): OptionGroup[] {
   if (slug === "business-cards") return [CARD_PAPER, CARD_FINISH, CARD_CORNERS];
   if (slug === "custom-stickers") return [STICKER_SHAPE, STICKER_MATERIAL, STICKER_FINISH];
   if (slug === "brochures-flyers") return [FLYER_PAPER, FLYER_FINISH, FLYER_SIDES];
   if (slug === "photo-postcards") return [POSTCARD_PAPER, POSTCARD_BACK];
   if (slug === "banners-standees") return [BANNER_MATERIAL, BANNER_FINISH];
+  if (slug === "event-id-cards") return [ID_MATERIAL, ID_SIDES, ID_LANYARD, ID_HOLDER];
+  if (slug === "gift-paper-bags") return [BAG_MATERIAL, BAG_HANDLE, BAG_PRINT];
   if (slug === "daily-planner") return [DIARY_COLOUR, PLANNER_LAYOUT, EMBOSS];
   if (slug === "executive-leather-diary") return [DIARY_COLOUR, EMBOSS, PAPER_DIARY];
   if (slug === "five-year-diary") return [DIARY_COLOUR, EMBOSS];
@@ -140,7 +150,7 @@ export function optionsFor(slug: string, category: string): OptionGroup[] {
   return baseOptionsFor(slug, category).map((g) => ({ ...g, choices: g.choices.map((c) => { const k = `${g.id}:${c.id}`; return k in OPT ? { ...c, delta: OPT[k] } : c; }) }));
 }
 /** Every option group in the catalog (for the pricing sheet). */
-export const ALL_OPTION_GROUPS: OptionGroup[] = [FINISH_PRINT, FINISH_FRAME, FRAME_COLOUR, FRAME_COLOUR_FUN, PAPER_BOOK, COVER_BOOK, ORIENTATION, CANVAS_EDGE, ACRYLIC_THICK, MUG_HANDLE, CUSHION_BACK, CAL_START, BOTTLE_COLOUR, THEME_KIDS, BORDER, DIARY_COLOUR, EMBOSS, PAPER_DIARY, PLANNER_LAYOUT, PEN_FINISH, LOGO_METHOD, INSIDE_PAGE, CARD_PAPER, CARD_FINISH, CARD_CORNERS, STICKER_SHAPE, STICKER_MATERIAL, STICKER_FINISH, FLYER_PAPER, FLYER_FINISH, FLYER_SIDES, POSTCARD_PAPER, POSTCARD_BACK, BANNER_MATERIAL, BANNER_FINISH];
+export const ALL_OPTION_GROUPS: OptionGroup[] = [FINISH_PRINT, FINISH_FRAME, FRAME_COLOUR, FRAME_COLOUR_FUN, PAPER_BOOK, COVER_BOOK, ORIENTATION, CANVAS_EDGE, ACRYLIC_THICK, MUG_HANDLE, CUSHION_BACK, CAL_START, BOTTLE_COLOUR, THEME_KIDS, BORDER, DIARY_COLOUR, EMBOSS, PAPER_DIARY, PLANNER_LAYOUT, PEN_FINISH, LOGO_METHOD, INSIDE_PAGE, CARD_PAPER, CARD_FINISH, CARD_CORNERS, STICKER_SHAPE, STICKER_MATERIAL, STICKER_FINISH, FLYER_PAPER, FLYER_FINISH, FLYER_SIDES, POSTCARD_PAPER, POSTCARD_BACK, BANNER_MATERIAL, BANNER_FINISH, ID_MATERIAL, ID_SIDES, ID_LANYARD, ID_HOLDER, BAG_MATERIAL, BAG_HANDLE, BAG_PRINT];
 
 export function optionDelta(groups: OptionGroup[], selected: Record<string, string>) {
   return groups.reduce((a, g) => a + (g.choices.find((c) => c.id === selected[g.key])?.delta ?? 0), 0);

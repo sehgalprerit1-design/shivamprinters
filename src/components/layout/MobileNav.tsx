@@ -20,9 +20,10 @@ export function MobileNav({ categories, occasions, recipients }: { categories: C
             </div>
             <SearchBox />
             <div className="mt-5 text-xs font-semibold uppercase tracking-wide text-ink-3">Shop</div>
-            {categories.map((c) => (
+            {categories.filter((c) => c.slug !== "business-printing").map((c) => (
               <Link key={c.slug} href={`/c/${c.slug}`} onClick={() => setOpen(false)} className="block py-2.5 border-b border-line font-medium">{c.name}</Link>
             ))}
+            <Link href="/c/business-printing" onClick={() => setOpen(false)} className="mt-3 inline-flex items-center rounded-full bg-amber-300 text-ink px-4 py-2 font-semibold">Business Printing</Link>
             <div className="mt-5 text-xs font-semibold uppercase tracking-wide text-ink-3">Gifts by occasion</div>
             {occasions.map((g) => (
               <Link key={g.slug} href={`/gifts/${g.slug}`} onClick={() => setOpen(false)} className="block py-2 text-ink-2">{g.title}</Link>
