@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useCart, cartTotals, inr } from "@/lib/cart";
 import { Trash2 } from "lucide-react";
 import { CallUs } from "@/components/ui/CallUs";
@@ -8,6 +8,8 @@ import { CallUs } from "@/components/ui/CallUs";
 export default function CartPage() {
   const { lines, remove, setQty, coupon, applyCoupon, removeCoupon } = useCart();
   const [code, setCode] = useState(""); const [msg, setMsg] = useState("");
+  const [online, setOnline] = useState<boolean | null>(null);
+  useEffect(() => { fetch("/api/payments").then((r) => r.json()).then((j) => setOnline(!!j.online)).catch(() => setOnline(false)); }, []);
   const t = cartTotals(lines, coupon);
   return (
     <div className="container-x pt-8">
@@ -24,7 +26,7 @@ export default function CartPage() {
                   <div className="font-semibold">{l.productName}</div>
                   <div className="text-sm text-ink-3">{l.variantName}</div>
                   {l.design?.text && Object.values(l.design.text).filter(Boolean).length > 0 && <div className="text-xs text-ink-2 mt-1">“{Object.values(l.design.text).filter(Boolean).join(" · ")}”</div>}
-                  <Link href={`/design/${l.productSlug}?edit=${l.id}`} className="text-xs text-brand font-semibold mt-1 inline-block">Edit design</Link>
+                  {l.design && <Link href={`/design/${l.productSlug}?edit=${l.id}`} className="text-xs text-brand font-semibold mt-1 inline-block">Edit design</Link>}
                   <div className="flex items-center gap-3 mt-3">
                     <div className="inline-flex border border-line rounded-full"><button className="px-3" onClick={() => setQty(l.id, l.qty - 1)}>−</button><span className="px-1 py-1 text-sm">{l.qty}</span><button className="px-3" onClick={() => setQty(l.id, l.qty + 1)}>+</button></div>
                     <span className="font-semibold ml-auto">{inr(l.unitPrice * l.qty)}</span>
@@ -48,7 +50,7 @@ export default function CartPage() {
             )}
             {msg && <div className="text-xs text-ink-2">{msg}</div>}
             <Link href="/checkout" className="btn btn-primary w-full !py-3.5 text-base">Checkout</Link>
-            <div className="text-xs text-ink-3 text-center">Razorpay · UPI · Cards · Cash on delivery</div>
+            <div className="text-xs text-ink-3 text-center">{online === false ? "Cash on delivery (UPI & cards coming soon)" : online ? "UPI · Cards · Net banking · Cash on delivery" : "Cash on delivery available"}</div>
             <div className="text-center pt-1"><CallUs /></div>
           </aside>
         </div>
