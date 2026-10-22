@@ -11,11 +11,15 @@ function Stars({ n, size = 14 }: { n: number; size?: number }) {
   );
 }
 
-export function Reviews({ reviews: sample, avg, counts, productSlug }: { reviews: Review[]; avg: number; counts: number[]; productSlug: string }) {
+export function Reviews({ reviews: sample, avg: sampleAvg, counts: sampleCounts, productSlug }: { reviews: Review[]; avg: number; counts: number[]; productSlug: string }) {
   // Real, approved customer reviews are fetched client-side and shown above the sample ones.
-  const [live, setLive] = useState<Review[]>([]);
-  useEffect(() => { fetch(`/api/reviews?product=${encodeURIComponent(productSlug)}`).then((r) => r.json()).then((j) => setLive((j.reviews ?? []).map((r: Review) => ({ ...r, helpful: 10_000 })))).catch(() => {}); }, [productSlug]);
-  const reviews = live.length ? [...live, ...sample] : sample;
+  const [live, setLive] = useState<(Review & { live?: boolean })[]>([]);
+  useEffect(() => { fetch(`/api/reviews?product=${encodeURIComponent(productSlug)}`, { cache: "no-store" }).then((r) => r.json()).then((j) => setLive((j.reviews ?? []).map((r: Review) => ({ ...r, live: true })))).catch(() => {}); }, [productSlug]);
+  const reviews: (Review & { live?: boolean })[] = live.length ? [...live, ...sample] : sample;
+  // Summary (average + star bars) recomputed so real reviews count.
+  const total = reviews.length;
+  const counts = live.length ? [0, 1, 2, 3, 4, 5].map((s) => reviews.filter((r) => r.rating === s).length) : sampleCounts;
+  const avg = live.length ? Math.round((reviews.reduce((a, r) => a + r.rating, 0) / Math.max(1, total)) * 10) / 10 : sampleAvg;
   const [form, setForm] = useState({ rating: "", title: "", body: "", author: "", city: "", website: "" });
   const [formState, setFormState] = useState<"idle" | "sending" | "done" | "error">("idle"); const [formErr, setFormErr] = useState("");
   const submitReview = async (e: React.FormEvent) => {
@@ -30,9 +34,9 @@ export function Reviews({ reviews: sample, avg, counts, productSlug }: { reviews
   const [shown, setShown] = useState(6);
   const [helped, setHelped] = useState<Set<string>>(new Set());
   const [writing, setWriting] = useState(false);
-  const total = reviews.length;
   let list = reviews.filter((r) => (filter === "photo" ? r.photo : filter ? r.rating === filter : true));
-  list = [...list].sort((a, b) => sort === "recent" ? (a.date < b.date ? 1 : -1) : sort === "high" ? b.rating - a.rating : sort === "low" ? a.rating - b.rating : b.helpful - a.helpful);
+  // Real customer reviews always come first; the chosen sort applies within each group.
+  list = [...list].sort((a, b) => (Number(!!b.live) - Number(!!a.live)) || (sort === "recent" ? (a.date < b.date ? 1 : -1) : sort === "high" ? b.rating - a.rating : sort === "low" ? a.rating - b.rating : b.helpful - a.helpful));
 
   return (
     <section id="reviews" className="mt-16 scroll-mt-32">
@@ -83,7 +87,7 @@ export function Reviews({ reviews: sample, avg, counts, productSlug }: { reviews
                 {r.photo && <div className="mt-3 w-16 h-16 rounded-lg bg-surface-2 border border-line grid place-items-center text-ink-3"><Camera size={18} /></div>}
                 <div className="flex items-center gap-3 flex-wrap text-xs text-ink-3 mt-3">
                   <span className="font-medium text-ink-2">{r.author}</span><span>{r.city}</span>
-                  {r.verified && <span className="inline-flex items-center gap-1 text-accent"><BadgeCheck size={12} />Verified purchase</span>}
+                  {r.live ? <span className="inline-flex items-center gap-1 text-accent"><BadgeCheck size={12} />Customer review</span> : r.verified && <span className="inline-flex items-center gap-1 text-accent"><BadgeCheck size={12} />Verified purchase</span>}
                   {r.variant && <span>· {r.variant}</span>}
                   <span>· {new Date(r.date).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}</span>
                   <button onClick={() => setHelped(new Set(helped).add(r.id))} className={`ml-auto inline-flex items-center gap-1 ${helped.has(r.id) ? "text-accent" : "hover:text-ink"}`}><ThumbsUp size={12} />Helpful ({r.helpful + (helped.has(r.id) ? 1 : 0)})</button>
