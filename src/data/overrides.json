@@ -1,6 +1,25 @@
 {
   "categories": {},
   "products": {
+    "hardcover-photobook": {
+      "images": [
+        "/images/p/hardcover-photobook-2.jpg",
+        "/images/p/hardcover-photobook-3.jpg",
+        "/api/img?key=uploads%2F2026-10-22%2F778476e2-a838-4dae-8be8-b790d127b342-gloss_matt_pearl.png"
+      ]
+    },
+    "softcover-photobook": {
+      "images": [
+        "/api/img?key=uploads%2F2026-10-22%2Fc4218349-982f-4a09-8a55-bb3c2643e744-gloss_matt_pearl.png"
+      ]
+    },
+    "layflat-photobook": {
+      "images": [
+        "/images/p/layflat-photobook-2.jpg",
+        "/images/p/layflat-photobook-3.jpg",
+        "/api/img?key=uploads%2F2026-10-22%2F59ad0434-0db1-4729-aa8d-aa964b927097-gloss_matt_pearl.png"
+      ]
+    },
     "coffee-mug-white": {
       "image": "/images/p/coffee-mug-white-3.jpg",
       "images": [
