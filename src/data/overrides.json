@@ -6,6 +6,63 @@
       "images": [
         "/images/p/coffee-mug-white.jpg"
       ]
+    },
+    "photo-prints-4x6": {
+      "images": [
+        "/api/img?key=uploads%2F2026-10-22%2Fa1937019-0a6e-4a61-ad55-230298a27414-gloss_matt_pearl.png"
+      ]
+    },
+    "photo-prints-5x7": {
+      "images": [
+        "/api/img?key=uploads%2F2026-10-22%2F94354b6f-1975-4473-9d19-d1ed23dd39ef-gloss_matt_pearl.png"
+      ]
+    },
+    "photo-prints-6x8": {
+      "images": [
+        "/api/img?key=uploads%2F2026-10-22%2F92bafbd2-1f91-4e84-ba68-672c9a4323a2-gloss_matt_pearl.png"
+      ]
+    },
+    "photo-prints-8x8": {
+      "images": [
+        "/api/img?key=uploads%2F2026-10-22%2F8d598ba2-14ed-4e52-b7be-7498f3a4dc1b-gloss_matt_pearl.png"
+      ]
+    },
+    "photo-prints-8x10": {
+      "images": [
+        "/api/img?key=uploads%2F2026-10-22%2F30eda2c5-3ca2-4344-a7c0-5fef510f6be2-gloss_matt_pearl.png"
+      ]
+    },
+    "photo-print-12x18": {
+      "images": [
+        "/api/img?key=uploads%2F2026-10-22%2F0e3c446f-f1c0-4567-ac18-4c68be31f3e0-gloss_matt_pearl.png"
+      ]
+    },
+    "retro-prints": {
+      "images": [
+        "/images/p/retro-prints-2.jpg",
+        "/images/p/retro-prints-3.jpg",
+        "/api/img?key=uploads%2F2026-10-22%2Ff377c863-64f7-4adb-992f-2504f1d060f1-gloss_matt_pearl.png"
+      ]
+    },
+    "square-prints": {
+      "images": [
+        "/api/img?key=uploads%2F2026-10-22%2Fc5085bc9-2ab8-4f0b-bc4d-ebbb5391467f-gloss_matt_pearl.png"
+      ]
+    },
+    "mini-prints": {
+      "images": [
+        "/api/img?key=uploads%2F2026-10-22%2F4aabd6ea-76ca-4dfb-a5d8-86999e2c76bf-gloss_matt_pearl.png"
+      ]
+    },
+    "card-prints-4x6": {
+      "images": [
+        "/api/img?key=uploads%2F2026-10-22%2Fbc55525c-3629-4e2b-93d4-4922d53cb648-gloss_matt_pearl.png"
+      ]
+    },
+    "card-prints-5x7": {
+      "images": [
+        "/api/img?key=uploads%2F2026-10-22%2F6775b1c8-c37c-4335-bb72-980ebe180a53-gloss_matt_pearl.png"
+      ]
     }
   },
   "added": [],
