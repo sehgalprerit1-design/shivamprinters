@@ -14,7 +14,11 @@
     "qa:audit": "tsx scripts/qa/audit-data.ts",
     "qa:crawl": "tsx scripts/qa/crawl.ts http://localhost:3000",
     "qa:site": "tsx scripts/qa/e2e-site.ts http://localhost:3000",
-    "qa:products": "tsx scripts/qa/e2e-products.ts http://localhost:3000"
+    "qa:products": "tsx scripts/qa/e2e-products.ts http://localhost:3000",
+    "qa:api": "tsx scripts/qa/api.ts http://localhost:3000",
+    "qa:admin": "tsx scripts/qa/e2e-admin.ts http://localhost:3000",
+    "qa:mobile": "tsx scripts/qa/mobile-crawl.ts http://localhost:3000",
+    "qa:products:mobile": "MOBILE=1 tsx scripts/qa/e2e-products.ts http://localhost:3000"
   },
   "dependencies": {
     "@fontsource-variable/fraunces": "^5.3.0",

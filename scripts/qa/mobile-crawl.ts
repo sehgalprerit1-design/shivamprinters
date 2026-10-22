@@ -36,15 +36,16 @@ const fail: string[] = []; const errs = new Map<string, string[]>();
     if (i % 50 === 0) process.stdout.write(`${i}/${routes.length}\n`);
   }
   // key interactions on mobile
-  await page.goto(`${BASE}/`, { waitUntil: "networkidle" });
-  await page.locator("header button[aria-label='Menu']").click(); await page.waitForTimeout(400);
-  const d = await page.evaluate(() => { const el = document.querySelector("[role=dialog] > div") as HTMLElement | null; return el ? el.getBoundingClientRect().height : 0; });
-  if (d < 800) fail.push(`mobile menu drawer height ${d}`);
-  await page.locator("[role=dialog] a[href='/c/kids']").click(); await page.waitForURL(/\/c\/kids/);
-  await page.goto(`${BASE}/p/coffee-mug-white`, { waitUntil: "networkidle" }); await page.evaluate(() => window.scrollTo(0, 1500)); await page.waitForTimeout(500);
-  const bar = await page.locator(".fixed.bottom-0 a:has-text('Personalise')").isVisible().catch(() => false); if (!bar) fail.push("sticky buy bar not visible on mobile product page");
-  await page.locator(".fixed.bottom-0 a:has-text('Personalise')").click(); await page.waitForURL(/\/design\/coffee-mug-white/);
-  const canvasW = await page.locator("canvas").first().evaluate((c) => c.getBoundingClientRect().width); if (canvasW > 390 || canvasW < 300) fail.push(`editor canvas width on mobile ${canvasW}`);
+  try {
+    await page.goto(`${BASE}/`, { waitUntil: "load" }); await page.waitForTimeout(800);
+    await page.locator("header button[aria-label='Menu']").click(); await page.waitForTimeout(400);
+    const d = await page.evaluate(() => { const el = document.querySelector("[role=dialog] > div") as HTMLElement | null; return el ? el.getBoundingClientRect().height : 0; });
+    if (d < 800) fail.push(`mobile menu drawer height ${d}`);
+    await page.locator("[role=dialog] a[href='/c/kids']").click(); await page.waitForURL(/\/c\/kids/);
+    await page.goto(`${BASE}/p/coffee-mug-white`, { waitUntil: "load" }); await page.waitForTimeout(800); await page.evaluate(() => window.scrollTo(0, 1500)); await page.waitForTimeout(600);
+    const bar = await page.locator(".fixed.bottom-0 a:has-text('Personalise')").isVisible().catch(() => false); if (!bar) fail.push("sticky buy bar not visible on mobile product page");
+    if (bar) { await page.locator(".fixed.bottom-0 a:has-text('Personalise')").click(); await page.waitForURL(/\/design\/coffee-mug-white/); const canvasW = await page.locator("canvas").first().evaluate((c) => c.getBoundingClientRect().width); if (canvasW > 390 || canvasW < 300) fail.push(`editor canvas width on mobile ${canvasW}`); }
+  } catch (e) { fail.push("mobile interactions: " + (e as Error).message.split("\n")[0].slice(0, 120)); }
   console.log(`\nRoutes: ${routes.length}\n=== ${fail.length} failures`); for (const f of fail) console.log(" - " + f);
   console.log(`=== console/page errors`); for (const [u, v] of errs) console.log(` - ${u.replace(BASE, "")}: ${[...new Set(v)].slice(0, 2).join(" | ")}`);
   await browser.close();
