@@ -5,7 +5,7 @@ export const dynamic = "force-dynamic";
 export async function GET(req: Request) {
   const slug = new URL(req.url).searchParams.get("product") ?? "";
   if (!slug) return NextResponse.json({ reviews: [] });
-  const rows = await approvedReviews(slug);
+  const rows = await approvedReviews(slug).catch(() => []);
   return NextResponse.json({ reviews: rows.map((r) => ({ id: r.id, author: r.author, city: r.city ?? "", rating: r.rating, title: r.title, body: r.body, date: new Date(r.createdAt).toISOString().slice(0, 10), verified: false, helpful: 0 })) }, { headers: { "cache-control": "no-store" } }); // never cached: approvals in admin must show immediately
 }
 

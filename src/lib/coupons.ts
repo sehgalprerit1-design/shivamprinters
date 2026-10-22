@@ -60,7 +60,7 @@ export async function deleteCoupon(id: string) {
 export async function findCoupon(code: string): Promise<Coupon | null> {
   const c = code.trim().toUpperCase(); if (!c) return null;
   const prisma = await getPrisma();
-  if (prisma) return prisma.coupon.findUnique({ where: { code: c } });
+  if (prisma) { try { return await prisma.coupon.findUnique({ where: { code: c } }); } catch (e) { console.error("coupon lookup failed", (e as Error).message); return null; } }
   return mem().get(c) ?? null;
 }
 

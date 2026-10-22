@@ -5,7 +5,7 @@ export const metadata: Metadata = { title: "Refer a friend" };
 export const revalidate = 600;
 
 export default async function Page() {
-  const c = await findCoupon("WELCOME10");
+  const c = await findCoupon("WELCOME10").catch(() => null); // never let a DB blip fail the page (or the build)
   const live = c && !couponProblem(c, Number.MAX_SAFE_INTEGER) ? toPublic(c) : null;
   const share = live ? `Check out Shivam Printers for photobooks, frames, mugs and personalised gifts — use code ${live.code} for ${describeCoupon(live)} on your first order: https://shivamprinters.vercel.app` : "Check out Shivam Printers for photobooks, frames, mugs and personalised gifts: https://shivamprinters.vercel.app";
   return (

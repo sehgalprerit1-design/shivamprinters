@@ -15,6 +15,9 @@ git push -u origin main
 neon.tech → New project (region: **AWS Asia Pacific (Singapore)** — closest Neon region to India; Vercel functions are pinned to Singapore too) → copy the connection string.
 That's `DATABASE_URL`.
 
+### Database URL on Vercel (important)
+Use Supabase's **Transaction pooler** (port **6543**) for `DATABASE_URL` — it multiplexes hundreds of serverless connections. The **Session pooler** (port 5432) allows only 15 clients and runs out under normal traffic ("max clients reached"). Set `DIRECT_URL` to the session-pooler URL so `prisma db push`/seed can run at build time. The app adds `connection_limit=1` and `pgbouncer=true` automatically.
+
 ## 3. Cloudflare R2 — photo storage (10 min)
 dash.cloudflare.com → R2 → Create bucket `shivam-uploads`.
 - R2 → Manage API tokens → Create token (Object Read & Write) → copy Access Key ID + Secret.
