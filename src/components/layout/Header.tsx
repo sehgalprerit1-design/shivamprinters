@@ -111,11 +111,6 @@ export function Header({ promo }: { promo?: CouponPublic | null }) {
               </div>
             </li>
           ))}
-          {seasonal && (
-            <li className="hidden 2xl:block">
-              <Link href={`/gifts/${seasonal.slug}`} className="chip bg-brand-soft text-brand-ink whitespace-nowrap">{seasonal.title}</Link>
-            </li>
-          )}
         </ul>
       </nav>
     </header>

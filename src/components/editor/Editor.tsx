@@ -264,7 +264,7 @@ export function Editor({ product, variant: initialVariant, initialOptions = {}, 
               <div className="text-xs font-semibold text-ink-3 mb-1">{g.label}</div>
               <div className="flex flex-wrap gap-1.5">
                 {g.choices.map((c) => (
-                  <button key={c.id} type="button" title={c.hint} onClick={() => setOpts({ ...opts, [g.key]: c.id })} className={`rounded-full border px-2.5 py-1 text-xs ${opts[g.key] === c.id ? "border-brand bg-brand-soft" : "border-line"}`}>{c.label}{c.delta ? ` +₹${c.delta}` : ""}</button>
+                  <button key={c.id} type="button" title={c.hint} onClick={() => setOpts({ ...opts, [g.key]: c.id })} className={`rounded-full border px-2.5 py-1 text-xs ${opts[g.key] === c.id ? "border-brand bg-brand-soft" : "border-line"}`}>{c.label}{c.delta ? ` ${c.delta > 0 ? "+" : "−"}₹${Math.abs(c.delta)}` : ""}</button>
                 ))}
               </div>
             </div>

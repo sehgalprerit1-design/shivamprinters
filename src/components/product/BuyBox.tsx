@@ -51,7 +51,7 @@ export function BuyBox({ product, promo }: { product: Product; promo?: React.Rea
           <div className="flex flex-wrap gap-2">
             {g.choices.map((c) => (
               <button key={c.id} onClick={() => setOpts({ ...opts, [g.key]: c.id })} title={c.hint} className={`rounded-full border px-3 py-1.5 text-sm ${opts[g.key] === c.id ? "border-brand bg-brand-soft" : "border-line hover:border-ink-3"}`}>
-                {c.label}{c.delta ? <span className="text-ink-3 text-xs"> +{inr(c.delta)}</span> : null}
+                {c.label}{c.delta ? <span className="text-ink-3 text-xs"> {c.delta > 0 ? "+" : "−"}{inr(Math.abs(c.delta))}</span> : null}
               </button>
             ))}
           </div>
