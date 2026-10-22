@@ -4,6 +4,11 @@ import { getPrisma, memStore } from "./db";
 import { getProduct } from "@/data/catalog";
 import { optionsFor, optionDelta } from "@/data/options";
 import { sendOrderEmails, sendShippedEmail } from "./email";
+import { notifyOwner } from "./notify";
+import { findCoupon, couponProblem, couponDiscount, incrementCouponUse } from "./coupons";
+
+const siteBase = () => process.env.NEXT_PUBLIC_SITE_URL ?? (process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : "https://shivamprinters.vercel.app");
+const orderAlert = (o: { id: string; number: number; total: number; paymentMethod: string; shippingJson: Record<string, string>; items: { name: string; qty: number }[] }) => notifyOwner({ what: `New order #${o.number} · ₹${o.total.toLocaleString("en-IN")} · ${o.paymentMethod}`, details: `${o.items.map((i) => `${i.qty}× ${i.name}`).join(", ")} — ${o.shippingJson.name}, ${o.shippingJson.city}, ${o.shippingJson.phone}`, link: `${siteBase()}/admin/orders/${o.id}` });
 
 export const OrderInput = z.object({
   address: z.object({ name: z.string(), phone: z.string(), email: z.string().email(), line1: z.string(), line2: z.string().optional(), city: z.string(), state: z.string(), pincode: z.string() }),
@@ -15,10 +20,8 @@ export const OrderInput = z.object({
 });
 export type OrderInputT = z.infer<typeof OrderInput>;
 
-const COUPONS: Record<string, { percentOff: number; maxOff: number }> = { PATAKA25: { percentOff: 25, maxOff: 1000 }, WELCOME10: { percentOff: 10, maxOff: 300 } };
-
 /** Prices are always recomputed server-side from the catalog; never trusted from the client. */
-export function priceOrder(input: OrderInputT) {
+export async function priceOrder(input: OrderInputT) {
   const items = input.lines.map((l) => {
     const p = getProduct(l.productSlug); const v = p?.variants.find((x) => x.sku === l.variantSku);
     if (!p || !v) throw new Error(`Unknown item ${l.productSlug}/${l.variantSku}`);
@@ -26,19 +29,23 @@ export function priceOrder(input: OrderInputT) {
     return { product: p, variant: v, variantLabel: l.variantName ?? v.name, qty: l.qty, unitPrice: v.price + extra, design: l.design };
   });
   const subtotal = items.reduce((a, i) => a + i.unitPrice * i.qty, 0);
-  const c = input.coupon ? COUPONS[input.coupon.toUpperCase()] : undefined;
-  const discount = c ? Math.min(Math.round((subtotal * c.percentOff) / 100), c.maxOff) : 0;
+  let discount = 0; let couponCode: string | null = null;
+  if (input.coupon) {
+    const c = await findCoupon(input.coupon);
+    if (c && !couponProblem(c, subtotal)) { discount = couponDiscount(c, subtotal); couponCode = c.code; }
+  }
   const after = subtotal - discount;
   const shipping = input.shipMethod === "express" ? 149 : after >= 999 ? 0 : 79;
-  return { items, subtotal, discount, shipping, total: after + shipping };
+  return { items, subtotal, discount, shipping, total: after + shipping, couponCode };
 }
 
 export async function createOrder(input: OrderInputT) {
-  const priced = priceOrder(input);
+  const priced = await priceOrder(input);
   const prisma = await getPrisma();
+  if (priced.couponCode) await incrementCouponUse(priced.couponCode);
   const base = {
     email: input.address.email, phone: input.address.phone, shippingJson: input.address, paymentMethod: input.paymentMethod,
-    subtotal: priced.subtotal, discount: priced.discount, shipping: priced.shipping, total: priced.total, couponCode: input.coupon ?? null, shipMethod: input.shipMethod,
+    subtotal: priced.subtotal, discount: priced.discount, shipping: priced.shipping, total: priced.total, couponCode: priced.couponCode, shipMethod: input.shipMethod,
     status: input.paymentMethod === "COD" ? "COD_CONFIRMED" : "PENDING_PAYMENT",
     giftMessage: input.giftMessage ?? null,
   };
@@ -53,12 +60,12 @@ export async function createOrder(input: OrderInputT) {
       },
     });
     // Confirmation emails go out now for COD; for online payment they are sent once the payment is verified (markPaid).
-    if (input.paymentMethod === "COD") { const full = await getOrder(order.id); if (full) await sendOrderEmails(full as any); }
+    if (input.paymentMethod === "COD") { const full = await getOrder(order.id); if (full) { await sendOrderEmails(full as any); await orderAlert(full as any); } }
     return { id: order.id, number: order.number, total: order.total };
   }
   const id = `ord_${Date.now().toString(36)}`; const number = 100000 + memStore().orders.size + 1;
   memStore().orders.set(id, { id, number, ...base, items: priced.items.map((i) => ({ name: i.product.name, variant: i.variantLabel, qty: i.qty, unitPrice: i.unitPrice, preview: i.design?.preview, design: i.design })), createdAt: new Date().toISOString() });
-  if (input.paymentMethod === "COD") await sendOrderEmails(memStore().orders.get(id) as any);
+  if (input.paymentMethod === "COD") { await sendOrderEmails(memStore().orders.get(id) as any); await orderAlert(memStore().orders.get(id) as any); }
   return { id, number, total: priced.total };
 }
 
@@ -82,7 +89,7 @@ export async function markPaid(id: string, razorpayPaymentId: string) {
   const prisma = await getPrisma();
   if (prisma) { await prisma.order.update({ where: { id }, data: { status: "PAID", razorpayPaymentId } }); }
   else { const o = memStore().orders.get(id); if (o) { o.status = "PAID"; o.razorpayPaymentId = razorpayPaymentId; } }
-  const full = await getOrder(id); if (full) await sendOrderEmails(full as any);
+  const full = await getOrder(id); if (full) { await sendOrderEmails(full as any); await orderAlert(full as any); }
 }
 
 export async function listOrders(limit = 200) {

@@ -180,14 +180,20 @@ model OrderItem {
 }
 
 model Coupon {
-  id         String   @id @default(cuid())
-  code       String   @unique
-  percentOff Int?
-  flatOff    Int?
-  maxOff     Int?
-  minOrder   Int      @default(0)
-  expiresAt  DateTime?
-  active     Boolean  @default(true)
+  id           String    @id @default(cuid())
+  code         String    @unique
+  description  String?   // shown to the customer when applied, e.g. "Diwali offer"
+  percentOff   Int?
+  flatOff      Int?
+  maxOff       Int?
+  minOrder     Int       @default(0)
+  startsAt     DateTime?
+  expiresAt    DateTime?
+  maxUses      Int?
+  usedCount    Int       @default(0)
+  showInBanner Boolean   @default(false)
+  active       Boolean   @default(true)
+  createdAt    DateTime  @default(now())
 }
 
 model Enquiry {

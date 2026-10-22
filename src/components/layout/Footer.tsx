@@ -12,7 +12,7 @@ export function Footer() {
         <div className="col-span-2 md:col-span-1">
           <div className="display text-2xl font-bold">Shivam <span className="text-brand">Printers</span></div>
           <p className="text-ink-2 mt-3">Photo printing and personalised gifts, made in our own print centre and delivered across India.</p>
-          <div className="mt-4 text-ink-3 text-xs">Personalised kids' essentials too — see our Kids range</div>
+          <div className="mt-4 text-ink-3 text-xs">Personalised kids&apos; essentials too — see our Kids range</div>
           <div className="mt-4"><CallUs /></div>
         </div>
         <div>

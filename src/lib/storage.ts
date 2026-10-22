@@ -21,6 +21,15 @@ export async function presignGet(key: string) {
   return getSignedUrl(await client(), new GetObjectCommand({ Bucket: BUCKET, Key: key }), { expiresIn: 3600 });
 }
 
+/** Stream an object (used by /api/img to serve admin-uploaded product images). */
+export async function getObjectStream(key: string) {
+  const { GetObjectCommand } = await import("@aws-sdk/client-s3");
+  const r = await (await client()).send(new GetObjectCommand({ Bucket: BUCKET, Key: key }));
+  const body = r.Body ? (r.Body as { transformToWebStream: () => ReadableStream }).transformToWebStream() : null;
+  if (!body) throw new Error("No body");
+  return { body, contentType: r.ContentType, contentLength: r.ContentLength };
+}
+
 /** Server-side round-trip: put a tiny object, read it back, delete it. For /api/health?storage=1. */
 export async function storageSelfTest() {
   if (!storageEnabled) return { configured: false };

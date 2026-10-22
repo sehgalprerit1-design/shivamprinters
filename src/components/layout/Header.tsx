@@ -4,13 +4,14 @@ import { giftPagesByGroup } from "@/data/gifts";
 import { CartButton } from "@/components/cart/CartButton";
 import { MobileNav } from "./MobileNav";
 import { SearchBox } from "./SearchBox";
+import { describeCoupon, type CouponPublic } from "@/lib/coupons";
 
 const month = new Date().getMonth() + 1;
 const seasonal = [...giftPagesByGroup("festival"), ...giftPagesByGroup("occasion")]
   .filter((g) => g.season && month >= g.season.startMonth && month <= g.season.endMonth)
   .slice(0, 1)[0];
 
-export function Header() {
+export function Header({ promo }: { promo?: CouponPublic | null }) {
   const occasions = giftPagesByGroup("occasion").slice(0, 12);
   const recipients = giftPagesByGroup("recipient").filter((g) => !g.slug.includes("-gifts-for-")).slice(0, 14);
   const festivals = giftPagesByGroup("festival").slice(0, 8);
@@ -19,7 +20,7 @@ export function Header() {
   return (
     <header className="sticky top-0 z-40 bg-surface/95 backdrop-blur border-b border-line">
       <div className="bg-ink text-white text-xs text-center py-1.5 px-4">
-        <span className="font-semibold">25% off up to ₹1,000</span> with code <span className="font-mono bg-white/15 px-1.5 py-0.5 rounded">PATAKA25</span><span className="hidden sm:inline"> · Free shipping over ₹999 · COD available</span> · <a href="tel:+919910888217" className="underline underline-offset-2"><span className="hidden sm:inline">Questions? </span>Call<span className="hidden sm:inline"> us</span> 9910888217</a> · <a href="https://wa.me/919910888217?text=Hi%20Shivam%20Printers%2C%20I%20have%20a%20question." target="_blank" rel="noopener noreferrer" className="underline underline-offset-2">WhatsApp</a>
+        {promo ? <><span className="font-semibold">{describeCoupon(promo)}</span> with code <span className="font-mono bg-white/15 px-1.5 py-0.5 rounded">{promo.code}</span><span className="hidden sm:inline"> · Free shipping over ₹999 · COD available</span></> : <><span className="font-semibold">Free shipping over ₹999</span> · COD available</>} · <a href="tel:+919910888217" className="underline underline-offset-2"><span className="hidden sm:inline">Questions? </span>Call<span className="hidden sm:inline"> us</span> 9910888217</a> · <a href="https://wa.me/919910888217?text=Hi%20Shivam%20Printers%2C%20I%20have%20a%20question." target="_blank" rel="noopener noreferrer" className="underline underline-offset-2">WhatsApp</a>
       </div>
       <div className="container-x flex items-center gap-4 h-16">
         <MobileNav categories={categories} occasions={occasions} recipients={recipients} />

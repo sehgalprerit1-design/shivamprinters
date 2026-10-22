@@ -18,7 +18,7 @@ export type CartLine = {
 type CartState = {
   lines: CartLine[];
   open: boolean;
-  coupon?: { code: string; percentOff?: number; flatOff?: number; maxOff?: number };
+  coupon?: { code: string; description?: string; percentOff?: number; flatOff?: number; maxOff?: number; minOrder?: number; expiresAt?: string };
   add: (line: Omit<CartLine, "id">) => void;
   /** Replace an existing line (edit flow); falls back to add if the id is gone. */
   replace: (id: string, line: Omit<CartLine, "id">) => void;
@@ -26,13 +26,8 @@ type CartState = {
   setQty: (id: string, qty: number) => void;
   clear: () => void;
   setOpen: (open: boolean) => void;
-  applyCoupon: (code: string) => { ok: boolean; message: string };
+  applyCoupon: (code: string) => Promise<{ ok: boolean; message: string }>;
   removeCoupon: () => void;
-};
-
-const COUPONS: Record<string, NonNullable<CartState["coupon"]>> = {
-  PATAKA25: { code: "PATAKA25", percentOff: 25, maxOff: 1000 },
-  WELCOME10: { code: "WELCOME10", percentOff: 10, maxOff: 300 },
 };
 
 export const useCart = create<CartState>()(
@@ -51,11 +46,15 @@ export const useCart = create<CartState>()(
         set((s) => ({ lines: s.lines.map((l) => (l.id === id ? { ...l, qty: Math.max(1, Math.min(99, qty)) } : l)) })),
       clear: () => set({ lines: [], coupon: undefined }),
       setOpen: (open) => set({ open }),
-      applyCoupon: (code) => {
-        const c = COUPONS[code.trim().toUpperCase()];
-        if (!c) return { ok: false, message: "That code isn't valid." };
-        set({ coupon: c });
-        return { ok: true, message: `${c.code} applied.` };
+      applyCoupon: async (code) => {
+        const subtotal = get().lines.reduce((a, l) => a + l.unitPrice * l.qty, 0);
+        try {
+          const r = await fetch("/api/coupons/validate", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ code: code.trim().toUpperCase(), subtotal }) });
+          const j = (await r.json()) as { ok: boolean; message: string; coupon?: NonNullable<CartState["coupon"]> };
+          if (!j.ok || !j.coupon) return { ok: false, message: j.message ?? "That code isn't valid." };
+          set({ coupon: j.coupon });
+          return { ok: true, message: j.message };
+        } catch { return { ok: false, message: "Couldn't check that code — please try again." }; }
       },
       removeCoupon: () => set({ coupon: undefined }),
     }),
@@ -66,9 +65,10 @@ export const useCart = create<CartState>()(
 export function cartTotals(lines: CartLine[], coupon?: CartState["coupon"], shipMethod: "express" | "economy" = "economy") {
   const subtotal = lines.reduce((a, l) => a + l.unitPrice * l.qty, 0);
   let discount = 0;
-  if (coupon) {
+  if (coupon && subtotal >= (coupon.minOrder ?? 0) && !(coupon.expiresAt && Date.now() > new Date(coupon.expiresAt).getTime())) {
     discount = coupon.percentOff ? Math.round((subtotal * coupon.percentOff) / 100) : (coupon.flatOff ?? 0);
     if (coupon.maxOff) discount = Math.min(discount, coupon.maxOff);
+    discount = Math.min(discount, subtotal);
   }
   const afterDiscount = subtotal - discount;
   const shipping = afterDiscount === 0 ? 0 : shipMethod === "express" ? 149 : afterDiscount >= 999 ? 0 : 79;

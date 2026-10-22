@@ -9,7 +9,7 @@ import { useWishlist } from "@/lib/wishlist";
 import { useCart } from "@/lib/cart";
 import { CallUs } from "@/components/ui/CallUs";
 
-export function BuyBox({ product }: { product: Product }) {
+export function BuyBox({ product, promo }: { product: Product; promo?: React.ReactNode }) {
   const [v, setV] = useState(product.variants[0]);
   const groups = optionsFor(product.slug, product.category);
   const [opts, setOpts] = useState<Record<string, string>>(defaultOptions(groups));
@@ -65,7 +65,7 @@ export function BuyBox({ product }: { product: Product }) {
             <span className="text-3xl font-bold">{inr(unit)}</span>
             {v.compareAt && pct > 0 && <><span className="price-strike">{inr(v.compareAt)}</span><span className="chip bg-brand text-white">{pct}% off</span></>}
           </div>
-          <div className="text-xs text-ink-3 mt-1">Inclusive of GST · <b>PATAKA25</b> for 25% off at checkout</div>
+          <div className="text-xs text-ink-3 mt-1">Inclusive of GST{promo ? <> · {promo}</> : null}</div>
         </div>
         <div className="ml-auto">
           <div className="text-xs font-semibold mb-1">Qty</div>

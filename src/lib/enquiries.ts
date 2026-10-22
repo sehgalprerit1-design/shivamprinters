@@ -4,6 +4,7 @@ import { z } from "zod";
 import { getPrisma, memStore } from "./db";
 import { sendMail, NOTIFY_EMAIL } from "./email";
 import { presignGet, storageEnabled } from "./storage";
+import { notifyOwner } from "./notify";
 
 export const ENQUIRY_KINDS = ["Business cards", "Stickers & labels", "Brochures & flyers", "Postcards & invites", "Banners & standees", "Letterheads & envelopes", "Packaging & boxes", "Diaries & notebooks", "Something else"] as const;
 
@@ -32,6 +33,7 @@ export async function createEnquiry(input: EnquiryInputT) {
   const art = data.artworkKey && storageEnabled ? await presignGet(data.artworkKey).catch(() => null) : null;
   const rows = Object.entries({ Name: data.name, Phone: data.phone, Email: data.email, Company: data.company, "What": data.kind, Quantity: data.quantity, Deadline: data.deadline }).filter(([, v]) => v).map(([k, v]) => `<tr><td style="padding:4px 12px 4px 0;color:#777">${k}</td><td style="padding:4px 0">${v}</td></tr>`).join("");
   await sendMail(NOTIFY_EMAIL, `Quote request: ${data.kind} — ${data.name} (${data.phone})`, `<div style="font-family:Inter,Arial,sans-serif;max-width:560px;color:#1d1a17"><h2 style="margin:0 0 8px">New custom-printing enquiry</h2><table>${rows}</table><p style="white-space:pre-wrap;border-left:3px solid #e2573f;padding-left:12px">${data.message}</p>${art ? `<p><a href="${art}">Download attached artwork</a> (link valid 7 days)</p>` : ""}<p><a href="tel:+91${data.phone}">Call ${data.phone}</a> · <a href="https://wa.me/91${data.phone}">WhatsApp</a> · <a href="${base}/admin/enquiries">All enquiries</a></p></div>`);
+  await notifyOwner({ what: `New quote request: ${data.kind}${data.quantity ? ` × ${data.quantity}` : ""}`, details: `${data.name}${data.company ? ` (${data.company})` : ""}, ${data.phone}${data.deadline ? `, needed by ${data.deadline}` : ""} — "${data.message.slice(0, 120)}${data.message.length > 120 ? "…" : ""}"`, link: `${base}/admin/enquiries` });
   if (data.email) await sendMail(data.email, "We got your printing enquiry — Shivam Printers", `<div style="font-family:Inter,Arial,sans-serif;max-width:560px;color:#1d1a17"><h2 style="margin:0 0 8px">Thanks, ${data.name.split(" ")[0]}!</h2><p>We've received your enquiry for <b>${data.kind}</b> and will call or WhatsApp you on ${data.phone} within one working day with a quote.</p><p style="color:#777;font-size:12px">In a hurry? Call us 9910888217.</p></div>`);
   return row;
 }

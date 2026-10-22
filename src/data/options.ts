@@ -133,9 +133,9 @@ function baseOptionsFor(slug: string, category: string): OptionGroup[] {
   return [];
 }
 
-import prices from "./prices.json";
-const OPT = (prices as { options?: Record<string, number> }).options ?? {};
-/** Option groups for a product, with surcharges overridden from prices.json (edited in /admin/pricing). */
+import overrides from "./overrides.json";
+const OPT: Record<string, number> = (overrides as { options?: Record<string, number> }).options ?? {};
+/** Option groups for a product, with surcharges overridden from overrides.json (edited in /admin/pricing). */
 export function optionsFor(slug: string, category: string): OptionGroup[] {
   return baseOptionsFor(slug, category).map((g) => ({ ...g, choices: g.choices.map((c) => { const k = `${g.id}:${c.id}`; return k in OPT ? { ...c, delta: OPT[k] } : c; }) }));
 }

@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 import { getPrisma } from "@/lib/db";
 import { storageSelfTest } from "@/lib/storage";
 import { emailSelfTest } from "@/lib/email";
+import { notifySelfTest } from "@/lib/notify";
 export const dynamic = "force-dynamic";
 
 export async function GET(req: Request) {
@@ -15,5 +16,6 @@ export async function GET(req: Request) {
   const q = new URL(req.url).searchParams;
   if (q.get("storage")) out.storage = await storageSelfTest();
   if (q.get("email")) out.email = await emailSelfTest();
+  if (q.get("notify")) out.notify = await notifySelfTest();
   return NextResponse.json(out, { status: out.ok ? 200 : 500 });
 }

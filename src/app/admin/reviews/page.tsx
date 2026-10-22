@@ -12,7 +12,7 @@ export default async function AdminReviews() {
   const rows = await listReviews();
   return (
     <div>
-      <div className="flex items-center justify-between mb-6"><div className="flex items-center gap-4"><h1 className="text-3xl font-bold">Reviews</h1><Link href="/admin" className="text-brand text-sm font-semibold">Orders →</Link><Link href="/admin/enquiries" className="text-brand text-sm font-semibold">Enquiries →</Link><Link href="/admin/pricing" className="text-brand text-sm font-semibold">Pricing →</Link></div><SignOut /></div>
+      <div className="flex items-center justify-between mb-6"><div className="flex items-center gap-4"><h1 className="text-3xl font-bold">Reviews</h1><Link href="/admin" className="text-brand text-sm font-semibold">Orders →</Link><Link href="/admin/enquiries" className="text-brand text-sm font-semibold">Enquiries →</Link><Link href="/admin/pricing" className="text-brand text-sm font-semibold">Catalogue &amp; pricing →</Link></div><SignOut /></div>
       <p className="text-ink-2 text-sm mb-4">{rows.filter((r) => !r.approved).length} waiting · {rows.filter((r) => r.approved).length} live. Approved reviews show at the top of the product&apos;s reviews, above the sample ones.</p>
       {rows.length === 0 ? <div className="card p-8 text-center text-ink-3">No customer reviews yet.</div> : (
         <div className="space-y-3">

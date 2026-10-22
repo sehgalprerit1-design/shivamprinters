@@ -16,7 +16,8 @@ async function main() {
       await prisma.variant.upsert({ where: { sku: v.sku }, update: { name: v.name, price: v.price, compareAt: v.compareAt ?? null }, create: { sku: v.sku, name: v.name, price: v.price, compareAt: v.compareAt ?? null, productId: prod.id } });
     }
   }
-  await prisma.coupon.upsert({ where: { code: "PATAKA25" }, update: {}, create: { code: "PATAKA25", percentOff: 25, maxOff: 1000 } });
+  await prisma.coupon.upsert({ where: { code: "PATAKA25" }, update: {}, create: { code: "PATAKA25", description: "Festive offer", percentOff: 25, maxOff: 1000, showInBanner: true } });
+  await prisma.coupon.upsert({ where: { code: "WELCOME10" }, update: {}, create: { code: "WELCOME10", description: "First order", percentOff: 10, maxOff: 300 } });
   console.log(`Seeded ${categories.length} categories, ${products.length} products`);
 }
 main().finally(() => prisma.$disconnect());

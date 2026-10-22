@@ -41,7 +41,7 @@ export default function CartPage() {
             <div className="flex justify-between"><span>Economy shipping</span><span>{t.shipping === 0 ? "Free" : inr(t.shipping)}</span></div>
             <div className="flex justify-between font-bold text-base border-t border-line pt-3"><span>Total</span><span>{inr(t.total)}</span></div>
             {!coupon && (
-              <form onSubmit={(e) => { e.preventDefault(); setMsg(applyCoupon(code).message); }} className="flex gap-2 pt-2">
+              <form onSubmit={async (e) => { e.preventDefault(); setMsg("Checking…"); setMsg((await applyCoupon(code)).message); }} className="flex gap-2 pt-2">
                 <input className="input !py-2" placeholder="Coupon code" value={code} onChange={(e) => setCode(e.target.value)} />
                 <button className="btn btn-ghost !py-2">Apply</button>
               </form>

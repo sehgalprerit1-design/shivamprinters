@@ -33,6 +33,20 @@ resend.com → Domains → Add `shivamprinters.com` → add the 3 DNS records it
 API Keys → Create. Env: `RESEND_API_KEY`, `EMAIL_FROM="Shivam Printers <orders@shivamprinters.com>"`, `ORDER_NOTIFY_EMAIL=<your inbox>`.
 (Skip this step to launch without emails; everything else still works.)
 
+## 5b. SMS + WhatsApp alerts for new orders and enquiries (MSG91, Indian provider)
+MSG91 (msg91.com, Indore) sends SMS from an Indian sender ID and WhatsApp through the official Business API, and handles the TRAI/DLT paperwork. Alerts go to `NOTIFY_PHONE` (default +919910888217).
+
+1. Sign up at msg91.com → Dashboard → **Authkey** → copy into Vercel as `MSG91_AUTHKEY`.
+2. **WhatsApp:** MSG91 → WhatsApp → *Add number*. Use a number that is **not** already on the WhatsApp app (the Business API takes the number over), or migrate the shop number. MSG91 guides you through Meta business verification (1–3 days). Then *Templates → Create*: name `shop_alert`, category **Utility**, language English, body exactly:
+   `Shivam Printers alert: {{1}}. {{2}}. Open: {{3}}`
+   Once approved, set `MSG91_WA_NUMBER=91XXXXXXXXXX` (the onboarded number) and `MSG91_WA_TEMPLATE=shop_alert`.
+3. **SMS:** MSG91 → SMS → *DLT registration* (one-time, with PAN/GST; MSG91 submits it to the telecom DLT portal). Register sender ID (6 letters, e.g. `SHVPRT`) and a **Transactional** template:
+   `Shivam Printers alert: ##VAR1##. ##VAR2##. Open: ##VAR3##`
+   Set `MSG91_SMS_TEMPLATE_ID` (the MSG91 flow/template ID) and `MSG91_SMS_SENDER=SHVPRT`.
+4. Redeploy, then open `/api/health?notify=1` — you should receive the test SMS/WhatsApp and see `ok: true` per channel.
+
+Twilio works as an alternative (`TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_SMS_FROM`, `TWILIO_WHATSAPP_FROM`), but it has no Indian numbers and SMS to India from abroad is filtered.
+
 ## 6. Vercel (10 min)
 vercel.com → Add New Project → Import the GitHub repo → before deploying, open **Environment Variables** and paste everything from `.env.example` with real values, plus:
 - `ADMIN_PASSWORD` — a strong password for `/admin`
@@ -54,6 +68,12 @@ At your registrar add the records Vercel shows (A `76.76.21.21` for root, CNAME 
 - [ ] Switch Razorpay to live keys. Redeploy.
 - [ ] Google Search Console → add property → submit `https://www.shivamprinters.com/sitemap.xml`.
 - [ ] Replace the three homepage testimonials with real ones when you have them.
+
+## Catalogue & pricing (admin)
+`/admin/pricing` edits names, categories, variants, SKUs, prices, surcharges, hides products and adds new products (with image upload). Save & publish commits `src/data/overrides.json` to GitHub (needs `GITHUB_TOKEN`); Vercel rebuilds in ~2–3 min. The code catalogue in `src/data/catalog.ts` is the base; the JSON holds only what you changed.
+
+## Coupons (admin)
+`/admin/coupons` — create codes with percentage or flat discount, max discount, minimum order, start and expiry dates (IST), redemption cap and on/off. Tick "Advertise in the top bar" on one code to show it site-wide (refreshes within ~10 min).
 
 ## Day-to-day
 - New orders: `/admin` (and an email to ORDER_NOTIFY_EMAIL). Open an order → download originals + Design JSON → print → mark **In production** → **Shipped** (with tracking URL; customer is emailed).

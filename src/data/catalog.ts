@@ -44,7 +44,7 @@ export type Product = {
   featured?: boolean;
 };
 
-export const categories: Category[] = [
+const baseCategories: Category[] = [
   { slug: "photobooks", name: "Photobooks", tagline: "Your story, bound beautifully", description: "Hardcover, softcover and layflat photo books in sizes from 5.5\" to 10x8\". Choose a theme, drop in your photos and we handle the rest.", image: "/images/cat-photobooks.jpg", order: 1 },
   { slug: "framed-prints", name: "Framed Prints", tagline: "Ready to hang, ready to gift", description: "Designer, classic, coloured and premium frames with your photo printed and mounted. Delivered ready to hang.", image: "/images/cat-frames.jpg", order: 2 },
   { slug: "calendars", name: "Calendars", tagline: "Twelve months of favourites", description: "Desktop, wall, magnet and poster calendars for 2027. Start on any month.", image: "/images/cat-calendars.jpg", order: 3 },
@@ -60,7 +60,7 @@ export const categories: Category[] = [
 
 const text = (key: string, label: string, max = 30) => ({ key, label, max });
 
-export const products: Product[] = [
+const baseProducts: Product[] = [
   // ---------- Photobooks ----------
   { slug: "hardcover-photobook", legacyPath: "/photobooks/hardcover-8x8-book-20", category: "photobooks", name: "Hardcover Photobook", description: "A rigid, glossy hardcover with 170gsm matte-laminated pages. Our bestseller for travel, weddings and year-in-review books.", image: "/images/p/hardcover-photobook.jpg", images: ["/images/p/hardcover-photobook-2.jpg", "/images/p/hardcover-photobook-3.jpg"], badges: ["Bestseller"], personalisation: "multi-photo", template: { aspect: 1, photoSlots: 20, textFields: [text("title", "Cover title", 40), text("spine", "Spine text", 30)] }, variants: [
     { sku: "PB-HC-55-20", name: "5.5x5.5\", 20 pages", price: 599, compareAt: 799 },
@@ -257,12 +257,38 @@ export const products: Product[] = [
   { slug: "skeleton-clips", legacyPath: "/accessories/skeleton-clips", category: "accessories", name: "Skeleton Clips (Set of 2)", description: "Metal stand clips for displaying prints on a desk.", image: "/images/p/skeleton-clips.jpg", personalisation: "none", template: { aspect: 1, photoSlots: 0, textFields: [] }, variants: [{ sku: "AC-SKEL", name: "Set of 2", price: 199, compareAt: 299 }], tags: ["under-499", "corporate"], rating: 4.4, reviews: 200 },
 ];
 
-// Price overrides edited in /admin/pricing (committed to src/data/prices.json).
-import prices from "./prices.json";
-{
-  const V = (prices as { variants?: Record<string, { price?: number; compareAt?: number | null }> }).variants ?? {};
-  for (const p of products) for (const v of p.variants) { const o = V[v.sku]; if (!o) continue; if (typeof o.price === "number") v.price = o.price; if (o.compareAt === null) delete v.compareAt; else if (typeof o.compareAt === "number") v.compareAt = o.compareAt; }
-}
+// ---------------------------------------------------------------------------
+// Admin overrides (src/data/overrides.json, edited in /admin/pricing and committed to GitHub).
+// The code above is the base catalogue; the storefront uses the effective catalogue below.
+import overridesJson from "./overrides.json";
+import { OverridesZ, type Overrides } from "./overrides-schema";
+
+const OV: Overrides = (() => { const r = OverridesZ.safeParse(overridesJson); if (!r.success) { console.warn("overrides.json invalid, ignoring:", r.error.issues[0]); return OverridesZ.parse({}); } return r.data; })();
+const clone = <T,>(x: T): T => JSON.parse(JSON.stringify(x));
+
+/** Base catalogue as written in code (before admin overrides). Used by the admin sheet to compute diffs. */
+export const base = { categories: baseCategories, products: baseProducts };
+
+export const categories: Category[] = baseCategories.map((c) => ({ ...c, ...(OV.categories[c.slug] ?? {}) }));
+
+export const products: Product[] = [
+  ...baseProducts.map((p) => {
+    const o = OV.products[p.slug]; if (!o) return p;
+    const q = clone(p);
+    if (o.name) q.name = o.name; if (o.description) q.description = o.description; if (o.category) q.category = o.category; if (o.image) q.image = o.image; if (o.images) q.images = o.images;
+    if (o.badges) q.badges = o.badges; if (o.tags) q.tags = o.tags;
+    if (o.variants) q.variants = o.variants.map((v) => ({ sku: v.sku, name: v.name, price: v.price, ...(v.compareAt ? { compareAt: v.compareAt } : {}) }));
+    return Object.assign(q, { hidden: o.hidden });
+  }),
+  ...OV.added.map((a) => ({ slug: a.slug, category: a.category, name: a.name, description: a.description, image: a.image, images: a.images, badges: a.badges, personalisation: a.personalisation, template: a.template, variants: a.variants.map((v) => ({ sku: v.sku, name: v.name, price: v.price, ...(v.compareAt ? { compareAt: v.compareAt } : {}) })), tags: a.tags, rating: 4.7, reviews: 0, hidden: a.hidden } as Product & { hidden?: boolean })),
+].filter((p) => !(p as { hidden?: boolean }).hidden && categories.some((c) => c.slug === p.category));
+
+/** Every product including hidden ones (admin only). */
+export const allProductsIncludingHidden = (): (Product & { hidden?: boolean; added?: boolean })[] => [
+  ...baseProducts.map((p) => { const o = OV.products[p.slug]; const q = clone(p); if (o) { if (o.name) q.name = o.name; if (o.description) q.description = o.description; if (o.category) q.category = o.category; if (o.image) q.image = o.image; if (o.images) q.images = o.images; if (o.badges) q.badges = o.badges; if (o.tags) q.tags = o.tags; if (o.variants) q.variants = o.variants.map((v) => ({ sku: v.sku, name: v.name, price: v.price, ...(v.compareAt ? { compareAt: v.compareAt } : {}) })); } return { ...q, hidden: o?.hidden }; }),
+  ...OV.added.map((a) => ({ slug: a.slug, category: a.category, name: a.name, description: a.description, image: a.image, images: a.images, badges: a.badges, personalisation: a.personalisation, template: a.template, variants: a.variants.map((v) => ({ sku: v.sku, name: v.name, price: v.price, ...(v.compareAt ? { compareAt: v.compareAt } : {}) })), tags: a.tags, rating: 4.7, reviews: 0, hidden: a.hidden, added: true })),
+];
+export const currentOverrides = (): Overrides => clone(OV);
 
 export const getCategory = (slug: string) => categories.find((c) => c.slug === slug);
 export const getProduct = (slug: string) => products.find((p) => p.slug === slug);

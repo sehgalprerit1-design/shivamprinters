@@ -14,8 +14,10 @@ import { Gallery } from "@/components/product/Gallery";
 import { RecentlyViewed } from "@/components/product/RecentlyViewed";
 import { StickyBuyBar } from "@/components/product/StickyBuyBar";
 import { CallUs } from "@/components/ui/CallUs";
+import { bannerCoupon, describeCoupon } from "@/lib/coupons";
 
 export const dynamicParams = false;
+export const revalidate = 600;
 export function generateStaticParams() { return products.map((p) => ({ slug: p.slug })); }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
@@ -47,6 +49,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
   const reviews = reviewsFor(p); const sum = ratingSummary(reviews);
   const groups = optionsFor(p.slug, p.category);
   const kind = { photo: "Add 1 photo", text: "Add a name", "photo+text": "Add a photo and text", "multi-photo": `Add up to ${p.template.photoSlots} photos`, none: "Ready-made, ships as is" }[p.personalisation];
+  const promo = await bannerCoupon();
   const gallery = [{ src: p.image, label: "Product" }, ...(p.images ?? []).map((src, i) => ({ src, label: i === 0 ? "In use" : "Detail" })), ...(p.images ? [] : [{ src: c.image, label: "In context" }])];
 
   return (
@@ -64,9 +67,9 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
         <div>
           <div className="flex gap-2 mb-2">{p.badges?.map((b) => <span key={b} className="chip bg-brand-soft text-brand-ink">{b}</span>)}</div>
           <h1 className="text-3xl md:text-4xl font-bold">{p.name}</h1>
-          <a href="#reviews" className="flex items-center gap-2 mt-2 text-sm hover:underline"><span className="flex items-center gap-1 text-gold"><Star size={14} className="fill-gold" />{sum.avg}</span><span className="text-ink-3">{p.reviews.toLocaleString("en-IN")} ratings · {sum.total} reviews</span><span className="text-ink-3">·</span><span className="text-ink-2">{kind}</span></a>
+          <a href="#reviews" className="flex items-center gap-2 mt-2 text-sm hover:underline"><span className="flex items-center gap-1 text-gold"><Star size={14} className="fill-gold" />{sum.avg}</span><span className="text-ink-3">{p.reviews > 0 ? `${p.reviews.toLocaleString("en-IN")} ratings · ` : ""}{sum.total} reviews</span><span className="text-ink-3">·</span><span className="text-ink-2">{kind}</span></a>
           <p className="text-ink-2 mt-4 leading-relaxed">{p.description}</p>
-          <BuyBox product={p} />
+          <BuyBox product={p} promo={promo ? <><b>{promo.code}</b> for {describeCoupon(promo)} at checkout</> : null} />
 
           <div className="mt-8 border-t border-line pt-5">
             <div className="flex items-center gap-2 font-semibold mb-3"><Printer size={16} className="text-accent" />Specifications</div>

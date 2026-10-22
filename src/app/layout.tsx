@@ -7,6 +7,10 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { CartDrawer } from "@/components/cart/CartDrawer";
 import { WhatsAppFloat } from "@/components/ui/WhatsAppFloat";
+import { bannerCoupon } from "@/lib/coupons";
+
+// Pages are static but re-rendered every 10 minutes so the advertised coupon and seasonal tiles stay current.
+export const revalidate = 600;
 
 
 export const metadata: Metadata = {
@@ -20,11 +24,12 @@ export const metadata: Metadata = {
   other: { "geo.region": "IN", "geo.placename": "India" },
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const promo = await bannerCoupon();
   return (
     <html lang="en-IN" className="h-full antialiased">
       <body className="min-h-full flex flex-col">
-        <Header />
+        <Header promo={promo} />
         <main className="flex-1">{children}</main>
         <Footer />
         <CartDrawer />
