@@ -53,12 +53,22 @@ const mug = products.find((p) => p.slug === "coffee-mug-white")!;
   const r2 = await get(`/api/reviews?product=${mug.slug}`); ok(r2.status === 200 && Array.isArray(r2.body.reviews) && !(r2.body.reviews as unknown[]).some((x) => (x as { title: string }).title === "API review"), "review: unapproved review not public");
   const r3 = await post("/api/reviews", { productSlug: "nope", author: "QA", rating: 5, title: "x y", body: "0123456789abc" }); ok(r3.status === 400, "review: unknown product rejected");
 
+  // offers sign-up (footer)
+  const s1 = await post("/api/subscribe", { contact: "qa-sub@example.com" }); ok(s1.status === 200 && s1.body.ok === true && s1.body.channel === "email", "subscribe: email accepted");
+  const s2 = await post("/api/subscribe", { contact: "abc" }); ok(s2.status === 400, "subscribe: junk rejected");
+  const s3 = await post("/api/subscribe", { contact: "9876543210", website: "http://spam" }); ok(s3.status === 200 && s3.body.ok === true, "subscribe: honeypot pretends success");
+  // group landing pages + grouped breadcrumbs
+  const photo = await (await fetch(`${BASE}/c/photo`)).text(); ok(photo.includes("Photobooks") && photo.includes("Framed Prints") && photo.includes("Photo Prints"), "/c/photo lists its three sub-categories");
+  const biz = await (await fetch(`${BASE}/c/business-printing`)).text(); ok(biz.includes("Bags &amp; Stationery") && biz.includes("Custom printing"), "/c/business-printing includes Bags & Stationery");
+  const bags = await (await fetch(`${BASE}/c/bags-stationery`)).text(); ok(/Breadcrumb[\s\S]*Business Printing[\s\S]*Bags &amp; Stationery/.test(bags), "/c/bags-stationery breadcrumb goes through Business Printing");
+  const pb = await (await fetch(`${BASE}/c/photobooks`)).text(); ok(/Breadcrumb[\s\S]*href="\/c\/photo"/.test(pb), "/c/photobooks breadcrumb goes through Photo");
+
   // coupons validate
   const c1 = await post("/api/coupons/validate", { code: "pataka25", subtotal: 2000 }); ok(c1.status === 200 && c1.body.ok === true, "coupon: PATAKA25 valid");
   const c2 = await post("/api/coupons/validate", { code: "NOPE", subtotal: 2000 }); ok(c2.body.ok === false, "coupon: unknown rejected");
 
   // admin auth
-  for (const p of ["/api/admin/pricing", "/api/admin/coupons", "/api/admin/reviews", "/api/admin/enquiries", "/api/admin/orders/x"]) {
+  for (const p of ["/api/admin/pricing", "/api/admin/coupons", "/api/admin/customers", "/api/admin/reviews", "/api/admin/enquiries", "/api/admin/orders/x"]) {
     const m = p.endsWith("/x") || p.endsWith("reviews") || p.endsWith("enquiries") ? "PATCH" : "GET";
     const r = await fetch(BASE + p, { method: m, headers: { "content-type": "application/json" }, body: m === "PATCH" ? "{}" : undefined }); ok(r.status === 401, `admin ${m} ${p} requires login (got ${r.status})`);
   }
@@ -72,8 +82,17 @@ const mug = products.find((p) => p.slug === "coffee-mug-white")!;
   const cat = await get("/api/admin/pricing", H); ok(cat.status === 200 && Array.isArray(cat.body.products) && (cat.body.products as unknown[]).length >= products.length, "admin: catalogue state includes all products");
   const enq = await fetch(`${BASE}/admin/enquiries`, { headers: H }); ok((await enq.text()).includes("API test enquiry"), "admin: enquiry listed");
   const rev = await fetch(`${BASE}/admin/reviews`, { headers: H }); ok((await rev.text()).includes("API review"), "admin: review listed for moderation");
+  // customers: order + enquiry with the same phone merge into one row; sign-up is its own row; honeypot row absent
+  const cus = await get("/api/admin/customers", H); const list = (cus.body.customers ?? []) as { id: string; phone: string | null; email: string | null; name: string | null; source: string; ordersCount: number; totalSpent: number; marketingOptIn: boolean }[];
+  const qa = list.filter((c) => c.phone === "9910888217"); ok(qa.length === 1, `customers: one row for the QA phone (got ${qa.length})`);
+  ok(qa[0]?.email === "qa@example.com" && qa[0]?.ordersCount >= 2 && qa[0]?.totalSpent > 0, "customers: QA row has email, order count and spend " + JSON.stringify(qa[0]).slice(0, 160));
+  ok(list.some((c) => c.email === "qa-sub@example.com" && c.source === "newsletter" && c.marketingOptIn), "customers: footer sign-up recorded with opt-in");
+  ok(!list.some((c) => c.phone === "9876543210"), "customers: honeypot sign-up not recorded");
+  const csv = await fetch(`${BASE}/api/admin/customers?format=csv&optin=1`, { headers: H }); ok(csv.status === 200 && (csv.headers.get("content-type") ?? "").includes("text/csv") && (await csv.text()).includes("qa-sub@example.com"), "customers: opted-in CSV downloads");
+  if (qa[0]) { const pt = await fetch(`${BASE}/api/admin/customers`, { method: "PATCH", headers: { ...H, "content-type": "application/json" }, body: JSON.stringify({ id: qa[0].id, marketingOptIn: false }) }); ok(pt.status === 200, "customers: opt-out toggle"); const again = await get("/api/admin/customers", H); ok(((again.body.customers ?? []) as typeof list).find((c) => c.id === qa[0].id)?.marketingOptIn === false, "customers: opt-out persisted"); }
+  const cpage = await fetch(`${BASE}/admin/customers`, { headers: H }); ok(cpage.status === 200 && (await cpage.text()).includes("QA Api"), "admin: customers page lists the buyer");
   // sitemap / robots include everything
-  const sm = await (await fetch(`${BASE}/sitemap.xml`)).text(); for (const p of products) if (!sm.includes(`/p/${p.slug}<`)) fail.push(`sitemap missing /p/${p.slug}`); for (const c of categories) if (!sm.includes(`/c/${c.slug}<`)) fail.push(`sitemap missing /c/${c.slug}`);
+  const sm = await (await fetch(`${BASE}/sitemap.xml`)).text(); ok(sm.includes("/c/photo<"), "sitemap has /c/photo"); for (const p of products) if (!sm.includes(`/p/${p.slug}<`)) fail.push(`sitemap missing /p/${p.slug}`); for (const c of categories) if (!sm.includes(`/c/${c.slug}<`)) fail.push(`sitemap missing /c/${c.slug}`);
   const rb = await (await fetch(`${BASE}/robots.txt`)).text(); ok(/Disallow: \/admin|Disallow: \/api/.test(rb) || rb.includes("/api/"), "robots has disallows");
   ok(/Disallow: \/admin/.test(rb), "robots disallows /admin");
 

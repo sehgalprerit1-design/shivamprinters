@@ -1,6 +1,7 @@
 // Crawl every route of a running site and report problems.
 // npx tsx scripts/crawl.ts http://localhost:3000
 import { products, categories } from "../../src/data/catalog";
+import { groupPages } from "../../src/data/nav";
 import { giftPages } from "../../src/data/gifts";
 import { posts } from "../../src/data/blog";
 import { redirects } from "../../src/lib/redirects";
@@ -9,7 +10,7 @@ const BASE = process.argv[2] ?? "http://localhost:3000";
 const STATIC = ["/", "/products", "/gifts", "/blog", "/about", "/help", "/returns", "/privacy", "/terms", "/careers", "/refer", "/bulk-orders", "/custom-printing", "/cart", "/checkout", "/wishlist", "/account", "/search?q=mug", "/search?q=", "/sitemap.xml", "/robots.txt", "/admin", "/this-page-does-not-exist", "/p/nope", "/c/nope", "/gifts/nope", "/design/nope"];
 const routes = [
   ...STATIC,
-  ...categories.map((c) => `/c/${c.slug}`),
+  ...groupPages.map((g) => `/c/${g.slug}`), ...categories.map((c) => `/c/${c.slug}`),
   ...products.map((p) => `/p/${p.slug}`),
   ...products.map((p) => `/design/${p.slug}`),
   ...giftPages.map((g) => `/gifts/${g.slug}`),

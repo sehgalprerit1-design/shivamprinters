@@ -1,7 +1,8 @@
 import Link from "next/link";
-import { categories } from "@/data/catalog";
+import { navItems } from "@/data/nav";
 import { giftPagesByGroup } from "@/data/gifts";
 import { CallUs } from "@/components/ui/CallUs";
+import { SubscribeForm } from "./SubscribeForm";
 
 export function Footer() {
   const recipients = giftPagesByGroup("recipient").filter((g) => !g.slug.includes("-gifts-for-")).slice(0, 10);
@@ -14,10 +15,18 @@ export function Footer() {
           <p className="text-ink-2 mt-3">Photo printing and personalised gifts, made in our own print centre and delivered across India.</p>
           <div className="mt-4 text-ink-3 text-xs">Personalised kids&apos; essentials too — see our Kids range</div>
           <div className="mt-4"><CallUs /></div>
+          <SubscribeForm />
         </div>
         <div>
           <div className="font-semibold mb-3">Shop</div>
-          {categories.map((c) => <Link key={c.slug} href={`/c/${c.slug}`} className="block py-1 text-ink-2 hover:text-brand">{c.name}</Link>)}
+          {navItems.map((it) => it.kind === "category" ? (
+            <Link key={it.category.slug} href={`/c/${it.category.slug}`} className="block py-1 text-ink-2 hover:text-brand">{it.category.name}</Link>
+          ) : (
+            <div key={it.group.slug}>
+              <Link href={`/c/${it.group.slug}`} className="block py-1 text-ink-2 hover:text-brand">{it.group.name}</Link>
+              {it.group.categories.filter((c) => c.slug !== it.group.slug).map((c) => <Link key={c.slug} href={`/c/${c.slug}`} className="block py-1 pl-3 text-ink-3 hover:text-brand">{c.name}</Link>)}
+            </div>
+          ))}
         </div>
         <div>
           <div className="font-semibold mb-3">Gifts for</div>

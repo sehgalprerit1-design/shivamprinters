@@ -5,6 +5,7 @@ import { getPrisma, memStore } from "./db";
 import { sendMail, NOTIFY_EMAIL } from "./email";
 import { presignGet, storageEnabled } from "./storage";
 import { notifyOwner } from "./notify";
+import { recordCustomer } from "./customers";
 
 export const ENQUIRY_KINDS = ["Business cards", "Stickers & labels", "Brochures & flyers", "Postcards & invites", "Banners & standees", "Letterheads & envelopes", "Packaging & boxes", "Diaries & notebooks", "Something else"] as const;
 
@@ -28,6 +29,7 @@ export async function createEnquiry(input: EnquiryInputT) {
   let row: Record<string, unknown>;
   if (prisma) row = await prisma.enquiry.create({ data });
   else { const id = `enq_${Date.now().toString(36)}`; row = { id, createdAt: new Date().toISOString(), status: "NEW", ...data }; memStore().enquiries.set(id, row); }
+  await recordCustomer({ email: data.email, phone: data.phone, name: data.name, company: data.company, source: "enquiry" });
 
   const base = process.env.NEXT_PUBLIC_SITE_URL ?? (process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : "https://shivamprinters.vercel.app");
   const art = data.artworkKey && storageEnabled ? await presignGet(data.artworkKey).catch(() => null) : null;

@@ -212,6 +212,33 @@ model Enquiry {
   status     String   @default("NEW") // NEW | QUOTED | WON | CLOSED
 }
 
+/// Everyone who has bought, enquired, reviewed with contact details, or signed up for offers.
+/// One row per person, matched by email or phone. Used for marketing lists and order history.
+model Customer {
+  id             String    @id @default(cuid())
+  email          String?   @unique
+  phone          String?   @unique
+  name           String?
+  company        String?
+  city           String?
+  state          String?
+  pincode        String?
+  source         String    // order | enquiry | newsletter | admin
+  marketingOptIn Boolean   @default(true)
+  emailVerified  Boolean   @default(false)
+  phoneVerified  Boolean   @default(false)
+  ordersCount    Int       @default(0)
+  totalSpent     Int       @default(0)
+  lastOrderAt    DateTime?
+  tags           String[]
+  notes          String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  @@index([createdAt])
+  @@index([marketingOptIn])
+}
+
 model Review {
   id          String   @id @default(cuid())
   createdAt   DateTime @default(now())

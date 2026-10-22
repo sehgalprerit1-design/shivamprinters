@@ -19,6 +19,7 @@ export default function Privacy() {
         <li>To answer support requests and handle reprints or refunds.</li>
         <li>To show you your past orders so you can reorder a design.</li>
         <li>We do not sell your data. We do not use your photos for marketing or AI training.</li>
+        <li>If you tick &ldquo;keep me posted about offers&rdquo; at checkout or sign up in the footer, we may send occasional offers by email or WhatsApp. Every message has an unsubscribe option, and you can opt out any time by writing to us.</li>
       </ul>
       <h2>Your photos</h2>
       <p>Uploaded photos are stored on secure cloud storage in encrypted form and are accessible only to the production team working on your order. They are retained for 12 months after delivery so you can reorder, then deleted. You can ask us to delete them sooner at any time.</p>

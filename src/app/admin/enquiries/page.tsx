@@ -1,9 +1,8 @@
-import Link from "next/link";
 import { isAdmin } from "@/lib/admin";
 import { listEnquiries } from "@/lib/enquiries";
 import { presignGet, storageEnabled } from "@/lib/storage";
 import { Login } from "../Login";
-import { SignOut } from "../SignOut";
+import { AdminNav } from "../AdminNav";
 import { EnquiryStatus } from "./EnquiryStatus";
 export const dynamic = "force-dynamic";
 
@@ -15,7 +14,7 @@ export default async function Enquiries() {
   const links = await Promise.all(rows.map((e) => (e.artworkKey && storageEnabled ? presignGet(String(e.artworkKey)).catch(() => null) : Promise.resolve(null))));
   return (
     <div>
-      <div className="flex items-center justify-between mb-6"><div className="flex items-center gap-4"><h1 className="text-3xl font-bold">Enquiries</h1><Link href="/admin" className="text-brand text-sm font-semibold">Orders →</Link><Link href="/admin/pricing" className="text-brand text-sm font-semibold">Catalogue &amp; pricing →</Link><Link href="/admin/reviews" className="text-brand text-sm font-semibold">Reviews →</Link><Link href="/admin/coupons" className="text-brand text-sm font-semibold">Coupons →</Link></div><SignOut /></div>
+      <AdminNav title={<>Enquiries</>} current="/admin/enquiries" className="mb-6" />
       <p className="text-ink-2 text-sm mb-4">{rows.filter((e) => e.status === "NEW").length} new · {rows.length} total. Each one was also emailed to you.</p>
       {rows.length === 0 ? <div className="card p-8 text-center text-ink-3">No enquiries yet.</div> : (
         <div className="space-y-3">

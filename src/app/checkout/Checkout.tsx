@@ -23,6 +23,7 @@ export function Checkout({ onlinePayments }: { onlinePayments: boolean }) {
   const [errs, setErrs] = useState<Record<string, string>>({});
   const [busy, setBusy] = useState(false);
   const [gift, setGift] = useState(""); const [isGift, setIsGift] = useState(false);
+  const [optIn, setOptIn] = useState(true);
   const t = cartTotals(lines, coupon, ship);
   const f = (k: keyof AddressT) => ({ value: a[k] ?? "", onChange: (e: React.ChangeEvent<HTMLInputElement>) => setA({ ...a, [k]: e.target.value }), className: `input ${errs[k] ? "!border-brand" : ""}` });
 
@@ -34,7 +35,7 @@ export function Checkout({ onlinePayments }: { onlinePayments: boolean }) {
     if (!r.success) { setErrs(Object.fromEntries(r.error.issues.map((i) => [i.path[0], i.message]))); return; }
     setErrs({}); setBusy(true);
     try {
-      const res = await fetch("/api/orders", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ address: r.data, lines: lines.map((l) => ({ productSlug: l.productSlug, variantSku: l.variantSku, variantName: l.variantName, qty: l.qty, design: l.design })), coupon: coupon?.code, shipMethod: ship, paymentMethod: pay, giftMessage: isGift ? gift : undefined }) });
+      const res = await fetch("/api/orders", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ address: r.data, lines: lines.map((l) => ({ productSlug: l.productSlug, variantSku: l.variantSku, variantName: l.variantName, qty: l.qty, design: l.design })), coupon: coupon?.code, shipMethod: ship, paymentMethod: pay, giftMessage: isGift ? gift : undefined, marketingOptIn: optIn }) });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "Could not place order");
       if (pay === "COD") { clear(); router.push(`/orders/${data.orderId}?placed=1`); return; }
@@ -73,6 +74,7 @@ export function Checkout({ onlinePayments }: { onlinePayments: boolean }) {
               <select className={`input ${errs.state ? "!border-brand" : ""}`} value={a.state} onChange={(e) => setA({ ...a, state: e.target.value })}><option value="">State</option>{STATES.map((st) => <option key={st}>{st}</option>)}</select>
             </div>
             {Object.keys(errs).filter((k) => k !== "form").length > 0 && <div className="text-brand text-sm mt-2">Please check: {Object.values(errs).join(", ")}</div>}
+            <label className="flex items-start gap-2.5 mt-4 text-sm cursor-pointer"><input type="checkbox" className="mt-0.5" checked={optIn} onChange={(e) => setOptIn(e.target.checked)} /><span className="text-ink-2">Keep me posted about offers and new products on WhatsApp and email. <span className="text-ink-3">Unsubscribe any time.</span></span></label>
           </section>
           <section className="card p-5">
             <h2 className="font-bold text-lg mb-4">Delivery speed</h2>

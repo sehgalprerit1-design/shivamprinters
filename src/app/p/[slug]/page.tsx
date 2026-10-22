@@ -8,6 +8,7 @@ import { reviewsFor, ratingSummary } from "@/data/reviews";
 import { optionsFor } from "@/data/options";
 import { ProductGrid } from "@/components/product/ProductGrid";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
+import { categoryTrail } from "@/data/nav";
 import { BuyBox } from "@/components/product/BuyBox";
 import { Reviews } from "@/components/product/Reviews";
 import { Gallery } from "@/components/product/Gallery";
@@ -54,7 +55,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
 
   return (
     <div className="container-x">
-      <Breadcrumbs items={[{ href: `/c/${c.slug}`, label: c.name }, { label: p.name }]} />
+      <Breadcrumbs items={[...categoryTrail(c).map((t) => ({ ...t, href: t.href ?? `/c/${c.slug}` })), { label: p.name }]} />
       <div className="grid md:grid-cols-2 gap-8 lg:gap-14">
         <div className="md:sticky md:top-32 self-start">
           <Gallery images={gallery} alt={p.name} />

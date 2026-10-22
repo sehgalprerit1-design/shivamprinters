@@ -78,7 +78,13 @@ At your registrar add the records Vercel shows (A `76.76.21.21` for root, CNAME 
 ## Coupons (admin)
 `/admin/coupons` — create codes with percentage or flat discount, max discount, minimum order, start and expiry dates (IST), redemption cap and on/off. Tick "Advertise in the top bar" on one code to show it site-wide (refreshes within ~10 min).
 
+## Customers (admin)
+`/admin/customers` — everyone who orders, sends an enquiry or signs up for offers in the footer, one row per person (matched by phone or email, so an enquiry and a later order from the same number become one customer). Shows orders, spend, city, where they came from and whether they ticked "keep me posted about offers" at checkout. Toggle the opt-in off when someone asks to stop; "Opted-in CSV" downloads the list for WhatsApp Business broadcasts or an email tool. There are no customer logins — checkout is guest-only on purpose; the record is created silently. Phone/email are not verified yet: email verification can come from Resend bounce webhooks and phone verification from an MSG91 OTP once that account exists.
+
+## Navigation groups
+`src/data/nav.ts` decides how categories appear in the header: **Photo** is a virtual tab (`/c/photo`) holding Photo Prints, Photobooks and Framed Prints; **Business Printing** (yellow button) also holds Bags & Stationery. Categories themselves are unchanged (URLs, admin sheet, sitemap). To move a category into a group, add its slug to the group's list there.
+
 ## Day-to-day
 - New orders: `/admin` (and an email to ORDER_NOTIFY_EMAIL). Open an order → download originals + Design JSON → print → mark **In production** → **Shipped** (with tracking URL; customer is emailed).
-- Prices/products: edit `src/data/catalog.ts`, push to GitHub, Vercel redeploys in ~2 min, then re-run `npm run db:seed`.
-- Coupons: `src/lib/orders.ts` (`COUPONS`).
+- Prices/products: `/admin/pricing` → Save & publish (see above). `src/data/catalog.ts` is the base catalogue in code.
+- Coupons: `/admin/coupons`. Customers and marketing list: `/admin/customers`.

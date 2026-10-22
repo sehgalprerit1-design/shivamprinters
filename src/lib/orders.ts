@@ -6,6 +6,7 @@ import { optionsFor, optionDelta } from "@/data/options";
 import { sendOrderEmails, sendShippedEmail } from "./email";
 import { notifyOwner } from "./notify";
 import { findCoupon, couponProblem, couponDiscount, incrementCouponUse } from "./coupons";
+import { recordCustomer } from "./customers";
 
 const siteBase = () => process.env.NEXT_PUBLIC_SITE_URL ?? (process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : "https://shivamprinters.vercel.app");
 const orderAlert = (o: { id: string; number: number; total: number; paymentMethod: string; shippingJson: Record<string, string>; items: { name: string; qty: number }[] }) => notifyOwner({ what: `New order #${o.number} · ₹${o.total.toLocaleString("en-IN")} · ${o.paymentMethod}`, details: `${o.items.map((i) => `${i.qty}× ${i.name}`).join(", ")} — ${o.shippingJson.name}, ${o.shippingJson.city}, ${o.shippingJson.phone}`, link: `${siteBase()}/admin/orders/${o.id}` });
@@ -17,6 +18,7 @@ export const OrderInput = z.object({
   shipMethod: z.enum(["economy", "express"]),
   paymentMethod: z.enum(["RAZORPAY", "COD"]),
   giftMessage: z.string().max(200).optional(),
+  marketingOptIn: z.boolean().optional(), // "keep me posted about offers" at checkout
 });
 export type OrderInputT = z.infer<typeof OrderInput>;
 
@@ -60,11 +62,13 @@ export async function createOrder(input: OrderInputT) {
       },
     });
     // Confirmation emails go out now for COD; for online payment they are sent once the payment is verified (markPaid).
+    await recordCustomer({ ...input.address, source: "order", optIn: input.marketingOptIn, order: input.paymentMethod === "COD" ? { total: order.total } : undefined });
     if (input.paymentMethod === "COD") { const full = await getOrder(order.id); if (full) { await sendOrderEmails(full as any); await orderAlert(full as any); } }
     return { id: order.id, number: order.number, total: order.total };
   }
   const id = `ord_${Date.now().toString(36)}`; const number = 100000 + memStore().orders.size + 1;
   memStore().orders.set(id, { id, number, ...base, items: priced.items.map((i) => ({ name: i.product.name, variant: i.variantLabel, qty: i.qty, unitPrice: i.unitPrice, preview: i.design?.preview, design: i.design })), createdAt: new Date().toISOString() });
+  await recordCustomer({ ...input.address, source: "order", optIn: input.marketingOptIn, order: input.paymentMethod === "COD" ? { total: priced.total } : undefined });
   if (input.paymentMethod === "COD") { await sendOrderEmails(memStore().orders.get(id) as any); await orderAlert(memStore().orders.get(id) as any); }
   return { id, number, total: priced.total };
 }
@@ -89,7 +93,7 @@ export async function markPaid(id: string, razorpayPaymentId: string) {
   const prisma = await getPrisma();
   if (prisma) { await prisma.order.update({ where: { id }, data: { status: "PAID", razorpayPaymentId } }); }
   else { const o = memStore().orders.get(id); if (o) { o.status = "PAID"; o.razorpayPaymentId = razorpayPaymentId; } }
-  const full = await getOrder(id); if (full) { await sendOrderEmails(full as any); await orderAlert(full as any); }
+  const full = await getOrder(id); if (full) { await sendOrderEmails(full as any); await orderAlert(full as any); await recordCustomer({ email: (full as any).email, phone: (full as any).phone, source: "order", order: { total: Number((full as any).total) } }); }
 }
 
 export async function listOrders(limit = 200) {
