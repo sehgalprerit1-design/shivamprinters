@@ -1,1 +1,13 @@
-{ "categories": {}, "products": {}, "added": [], "options": {} }
+{
+  "categories": {},
+  "products": {
+    "coffee-mug-white": {
+      "image": "/images/p/coffee-mug-white-3.jpg",
+      "images": [
+        "/images/p/coffee-mug-white.jpg"
+      ]
+    }
+  },
+  "added": [],
+  "options": {}
+}
