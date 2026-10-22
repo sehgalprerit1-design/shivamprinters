@@ -4,7 +4,7 @@ import { createRazorpayOrder, razorpayEnabled } from "@/lib/razorpay";
 
 export async function POST(req: Request) {
   const parsed = OrderInput.safeParse(await req.json());
-  if (!parsed.success) return NextResponse.json({ error: "Invalid order" }, { status: 400 });
+  if (!parsed.success) { const i = parsed.error.issues[0]; return NextResponse.json({ error: `Please check ${String(i?.path.slice(-1)[0] ?? "the form")}: ${i?.message ?? "invalid"}` }, { status: 400 }); }
   if (parsed.data.paymentMethod === "RAZORPAY" && !razorpayEnabled) return NextResponse.json({ error: "Online payment isn't available right now — please choose Cash on delivery." }, { status: 400 });
   try {
     const order = await createOrder(parsed.data);

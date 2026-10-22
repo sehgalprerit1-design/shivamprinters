@@ -18,7 +18,7 @@ export const EnquiryInput = z.object({
   deadline: z.string().trim().max(40).optional(),
   message: z.string().trim().min(5).max(2000),
   artworkKey: z.string().trim().max(300).optional(),
-  website: z.string().max(0).optional(), // honeypot
+  website: z.string().max(500).optional(), // honeypot — any value means a bot; the API pretends success
 });
 export type EnquiryInputT = z.infer<typeof EnquiryInput>;
 

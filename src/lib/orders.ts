@@ -11,7 +11,7 @@ const siteBase = () => process.env.NEXT_PUBLIC_SITE_URL ?? (process.env.VERCEL_P
 const orderAlert = (o: { id: string; number: number; total: number; paymentMethod: string; shippingJson: Record<string, string>; items: { name: string; qty: number }[] }) => notifyOwner({ what: `New order #${o.number} · ₹${o.total.toLocaleString("en-IN")} · ${o.paymentMethod}`, details: `${o.items.map((i) => `${i.qty}× ${i.name}`).join(", ")} — ${o.shippingJson.name}, ${o.shippingJson.city}, ${o.shippingJson.phone}`, link: `${siteBase()}/admin/orders/${o.id}` });
 
 export const OrderInput = z.object({
-  address: z.object({ name: z.string(), phone: z.string(), email: z.string().email(), line1: z.string(), line2: z.string().optional(), city: z.string(), state: z.string(), pincode: z.string() }),
+  address: z.object({ name: z.string().trim().min(2).max(80), phone: z.string().trim().regex(/^[6-9]\d{9}$/, "10-digit Indian mobile"), email: z.string().trim().email().max(120), line1: z.string().trim().min(4).max(200), line2: z.string().trim().max(200).optional(), city: z.string().trim().min(2).max(60), state: z.string().trim().min(2).max(60), pincode: z.string().trim().regex(/^\d{6}$/, "6-digit PIN") }),
   lines: z.array(z.object({ productSlug: z.string(), variantSku: z.string(), variantName: z.string().optional(), qty: z.number().int().min(1).max(99), design: z.any().optional() })).min(1),
   coupon: z.string().optional(),
   shipMethod: z.enum(["economy", "express"]),

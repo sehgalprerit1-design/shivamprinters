@@ -11,7 +11,7 @@ export const ReviewInput = z.object({
   rating: z.number().int().min(1).max(5),
   title: z.string().trim().min(2).max(120),
   body: z.string().trim().min(10).max(2000),
-  website: z.string().max(0).optional(), // honeypot
+  website: z.string().max(500).optional(), // honeypot — any value means a bot; the API pretends success
 });
 export type ReviewInputT = z.infer<typeof ReviewInput>;
 export type DbReview = { id: string; createdAt: string | Date; productSlug: string; author: string; city: string | null; rating: number; title: string; body: string; approved: boolean };

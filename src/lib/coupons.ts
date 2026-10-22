@@ -89,11 +89,14 @@ export async function incrementCouponUse(code: string) {
 }
 
 /** The coupon to advertise in the top bar (active, in date, flagged showInBanner). */
+const bannerCache: { at: number; value: CouponPublic | null } = { at: 0, value: null };
 export async function bannerCoupon(): Promise<CouponPublic | null> {
+  if (Date.now() - bannerCache.at < 5 * 60_000) return bannerCache.value; // per-instance cache: pages render often, the banner changes rarely
   try {
     const all = await listCoupons();
     const c = all.find((x) => x.showInBanner && !couponProblem(x, Number.MAX_SAFE_INTEGER));
-    return c ? toPublic(c) : null;
-  } catch { return null; }
+    bannerCache.value = c ? toPublic(c) : null; bannerCache.at = Date.now();
+    return bannerCache.value;
+  } catch { return bannerCache.value; }
 }
 export const describeCoupon = (c: CouponPublic) => c.percentOff ? `${c.percentOff}% off${c.maxOff ? ` up to ₹${c.maxOff.toLocaleString("en-IN")}` : ""}` : `₹${(c.flatOff ?? 0).toLocaleString("en-IN")} off`;

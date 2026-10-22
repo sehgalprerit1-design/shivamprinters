@@ -100,7 +100,9 @@ async function testProduct(page: Page, p: Product, idx: number) {
 (async () => {
   const fs = await import("node:fs"); fs.mkdirSync(SHOTS, { recursive: true });
   const browser = await chromium.launch();
-  const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+  const mobile = process.env.MOBILE === "1";
+  const ctx = await browser.newContext(mobile ? { viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 2 } : { viewport: { width: 1280, height: 900 } });
+  if (mobile) console.log("Running at phone width (390px)");
   const page = await ctx.newPage();
   const list = FILTER ? products.filter((p) => p.slug.includes(FILTER)) : products;
   let i = 0;
