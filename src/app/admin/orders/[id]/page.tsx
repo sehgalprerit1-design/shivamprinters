@@ -6,10 +6,11 @@ import { presignGet, storageEnabled } from "@/lib/storage";
 import { inr } from "@/lib/format";
 import { Login } from "../../Login";
 import { StatusButtons } from "./StatusButtons";
+import { PrintFiles } from "./PrintFiles";
 export const dynamic = "force-dynamic";
 
 type Slot = { key?: string; zoom: number; dx: number; dy: number; rot: number; w: number; h: number };
-type Design = { preview?: string; text?: Record<string, string>; options?: Record<string, string>; slots?: Slot[]; canvas?: { w: number; h: number; aspect: number } };
+type Design = { preview?: string; text?: Record<string, string>; options?: Record<string, string>; slots?: Slot[]; canvas?: { w: number; h: number; aspect: number }; files?: { key: string; name: string }[]; studio?: { spec: { wMM: number; hMM: number; bleedMM: number; safeMM: number }; faces: { id: string; label: string; json: string }[] } };
 
 export default async function AdminOrder({ params }: { params: Promise<{ id: string }> }) {
   if (!(await isAdmin())) return <Login />;
@@ -18,7 +19,7 @@ export default async function AdminOrder({ params }: { params: Promise<{ id: str
   const a = o.shippingJson as Record<string, string>;
   const items = o.items as { name: string; variant: string; qty: number; unitPrice: number; preview?: string; design?: Design | null }[];
   const links: Record<string, string> = {};
-  if (storageEnabled) for (const it of items) for (const s of it.design?.slots ?? []) if (s.key && !links[s.key]) links[s.key] = await presignGet(s.key);
+  if (storageEnabled) for (const it of items) for (const s of [...(it.design?.slots ?? []), ...(it.design?.files ?? [])]) if (s.key && !links[s.key]) links[s.key] = await presignGet(s.key);
   return (
     <div>
       <Link href="/admin" className="text-sm text-ink-3">← All orders</Link>
@@ -35,6 +36,8 @@ export default async function AdminOrder({ params }: { params: Promise<{ id: str
                   <div className="text-sm text-ink-3">{inr(it.unitPrice)} each</div>
                   {it.design?.text && Object.entries(it.design.text).filter(([, v]) => v).length > 0 && <div className="mt-2 text-sm"><b>Text:</b> {Object.entries(it.design.text).filter(([, v]) => v).map(([k, v]) => `${k}: “${v}”`).join(" · ")}</div>}
                   {it.design?.options && <div className="text-sm"><b>Options:</b> {Object.entries(it.design.options).map(([k, v]) => `${k}=${v}`).join(", ")}</div>}
+                  {it.design?.files?.length ? <div className="mt-2 text-sm"><b>Customer&apos;s own design:</b> {it.design.files.map((f) => <a key={f.key} href={links[f.key] ?? "#"} target="_blank" rel="noreferrer" className={`chip border border-line ml-1 ${links[f.key] ? "hover:border-brand" : "opacity-50"}`}>{f.name} ↓</a>)}</div> : null}
+                  {it.design?.studio && <PrintFiles studio={it.design.studio} links={links} name={`order-${String(o.number)}-${k + 1}`} />}
                 </div>
               </div>
               {it.design?.slots && (
