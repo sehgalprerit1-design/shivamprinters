@@ -149,24 +149,27 @@ export function MonthGrid(g: Geo, year: number, month: number, box: { x: number;
 /* ---------------- rendering ---------------- */
 export async function renderJSON(json: string, spec: PrintSpec, o: { width?: number; trim?: boolean; format?: "png" | "jpeg"; quality?: number; showFrames?: boolean } = {}) {
   const g = geo(spec);
+  // Keep the working canvas small (large items like banners are tens of thousands of units wide);
+  // toDataURL's multiplier re-renders the vector scene at the requested output size.
+  const k = Math.min(1, 1600 / Math.max(g.W, g.H));
   const el = document.createElement("canvas");
-  const sc = new F.StaticCanvas(el, { width: g.W, height: g.H, enableRetinaScaling: false });
+  const sc = new F.StaticCanvas(el, { width: Math.round(g.W * k), height: Math.round(g.H * k), enableRetinaScaling: false });
   try {
     await sc.loadFromJSON(json);
+    sc.setZoom(k);
     if (!o.showFrames) sc.getObjects().forEach((x) => { if ((x as Obj).role === "frame") x.visible = false; });
-    sc.renderAll();
     const w = o.trim ? g.tw : g.W;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const opt: any = { format: o.format ?? "png", quality: o.quality ?? 0.85, multiplier: (o.width ?? 600) / w };
-    if (o.trim) Object.assign(opt, { left: g.b, top: g.b, width: g.tw, height: g.th });
+    const opt: any = { format: o.format ?? "png", quality: o.quality ?? 0.85, multiplier: (o.width ?? 600) / (w * k) };
+    if (o.trim) Object.assign(opt, { left: g.b * k, top: g.b * k, width: g.tw * k, height: g.th * k });
     return sc.toDataURL(opt);
   } finally { sc.dispose(); }
 }
 
 /** Run a mutation against a face that isn't on screen, returning its new JSON. */
 export async function withJSON(json: string, spec: PrintSpec, fn: (c: F.StaticCanvas) => void | Promise<void>) {
-  const g = geo(spec);
-  const sc = new F.StaticCanvas(document.createElement("canvas"), { width: g.W, height: g.H, enableRetinaScaling: false });
+  void spec; // geometry lives in the JSON; this canvas is never drawn
+  const sc = new F.StaticCanvas(document.createElement("canvas"), { width: 1, height: 1, enableRetinaScaling: false, renderOnAddRemove: false });
   try { await sc.loadFromJSON(json); await fn(sc); return JSON.stringify(sc.toObject(PROPS)); } finally { sc.dispose(); }
 }
 

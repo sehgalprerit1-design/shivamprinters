@@ -190,8 +190,7 @@ export function Studio({ product, variant: initialVariant, initialOptions = {}, 
 
   /* ---------------- building faces ---------------- */
   const jsonFromBuilt = (b: ReturnType<typeof build>) => {
-    const gg = geo(specRef.current);
-    const sc = new F.StaticCanvas(document.createElement("canvas"), { width: gg.W, height: gg.H, enableRetinaScaling: false });
+    const sc = new F.StaticCanvas(document.createElement("canvas"), { width: 1, height: 1, enableRetinaScaling: false, renderOnAddRemove: false });
     applyBuilt(sc, b); b.objs.forEach((o) => { if (o.role === "calendar") o.locked = true; });
     const j = JSON.stringify(sc.toObject(PROPS)); void sc.dispose(); return j;
   };
