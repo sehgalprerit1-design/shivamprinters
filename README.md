@@ -47,7 +47,8 @@ src/data/catalog.ts      9 categories, 90 products, 120+ variants, tags  (seed s
 src/data/gifts.ts        111 gift landing pages (occasion/recipient/festival/collection)
 src/data/blog.ts         Blog posts (migrate the rest from the old CMS)
 src/lib/redirects.ts     Every old shivamprinters.com URL → new URL (301), wired into next.config.ts
-src/components/editor/   Canvas personalisation editor (upload, pan/zoom/rotate, text, preview)
+src/components/editor/   Design studio (Fabric.js): photo frames, text, graphics, QR, layouts, pages, print guides
+src/lib/print-spec.ts    Print size, bleed, safe zone and pages/sides for every product
 src/lib/orders.ts        Server-side pricing (never trusts client prices), order creation
 src/app/api/             orders, orders/[id]/confirm (Razorpay signature), upload (presign)
 prisma/schema.prisma     Data model
@@ -69,10 +70,19 @@ Thirteen per-finish premium-frame URLs collapse into `/p/premium-frame` with var
 
 - **Legal copy** (`/privacy`, `/terms`, `/returns`): placeholders — paste Shivam Printers' actual text.
 - **Auth**: `/account` is an OTP UI stub; wire MSG91/Twilio and a session cookie.
-- **Print pipeline**: the editor saves `design` JSON (slot crops, rotation, text) + a preview. A render worker should regenerate at full resolution from the originals in S3 and write `OrderItem.printFileKey`. The canvas code in `Editor.tsx` is the reference implementation.
+- **Print pipeline**: the design studio saves every face (front/back, book pages, calendar months, prints) as Fabric JSON in `design.studio`, with photos referenced by their S3 key (`srcKey`), plus a preview. In `/admin/orders/[id]`, **Print-ready PDF** re-renders each face at 300 dpi with bleed from the originals (capped at 12,000 px for banners). A server-side render worker writing `OrderItem.printFileKey` is still a good next step for vector text.
 - **Reviews**: ratings are static numbers from the current site; connect to the review provider.
 - **Blog**: 6 posts migrated as examples; the remaining ~50 slugs from the old sitemap need importing into `src/data/blog.ts` (or a CMS).
 - **Search**: simple in-memory scoring; swap for Typesense/Algolia when the catalog grows.
+
+## Design studio
+
+`/design/<product>` opens the studio for every personalisable product. It works in real millimetres:
+
+- **Print spec** (`src/lib/print-spec.ts`): trim size from the variant name (inches, cm, ft, A-sizes) or a per-product table, 2–10 mm bleed, safe zone, and the faces to design (business card front/back, 20 book pages, cover + 12 calendar months that follow the start-month option, 24 separate prints, mug wrap with handle zones).
+- **Layouts** (`src/components/editor/studio/layouts.ts`): starter layouts per face role, including calendar month grids, a full-year poster, postcard backs, ID badges, banners, kids name labels themed by the Theme option, diary covers coloured by the Cover colour and foil options, and 12 business card templates.
+- **Editing**: photo frames (drag to pan, handles to zoom, print-quality dpi check), text with 16 fonts, shapes, icons, QR codes (WhatsApp, UPI, website), background colours, layers, lock, group, undo/redo, keyboard shortcuts, preview after trimming, and an approval checkbox before add to cart.
+- **Your details**: the product's text fields stay in sync with the matching text on the design; instruction-only fields (notes, names lists) are saved for the team, not printed.
 
 ## SEO launch checklist
 

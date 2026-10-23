@@ -58,6 +58,10 @@ h1, h2, h3, .display { font-family: var(--font-display); letter-spacing: -0.01em
   .btn-ghost { background: transparent; color: var(--ink); border: 1px solid var(--line); }
   .btn-ghost:hover { background: var(--surface-2); }
   .btn:disabled { opacity: .5; cursor: not-allowed; }
+  .tog { display: inline-grid; place-items: center; min-width: 2.1rem; height: 2.1rem; padding: 0 .5rem; border-radius: .6rem; border: 1px solid var(--line); background: var(--surface); font-size: .85rem; }
+  .tog:hover { background: var(--surface-2); }
+  .tog[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: #fff; }
+  .tog:disabled { opacity: .4; }
 
   .card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
   .chip { display: inline-flex; align-items: center; border-radius: 999px; padding: .25rem .7rem; font-size: .75rem; font-weight: 600; }

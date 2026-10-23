@@ -12,7 +12,9 @@ export type CartLine = {
   qty: number;
   image: string;
   /** Saved personalisation; preview is a data URL rendered by the editor */
-  design?: { preview?: string; text?: Record<string, string>; photoCount: number; options?: Record<string, string>; slots?: { key?: string; zoom: number; dx: number; dy: number; rot: number; w: number; h: number }[]; canvas?: { w: number; h: number; aspect: number } };
+  design?: { preview?: string; text?: Record<string, string>; photoCount: number; options?: Record<string, string>; slots?: { key?: string; zoom: number; dx: number; dy: number; rot: number; w: number; h: number }[]; canvas?: { w: number; h: number; aspect: number };
+    /** Design studio scene: every face as Fabric JSON (photos reference storage keys via srcKey). */
+    studio?: { v: number; spec: { wMM: number; hMM: number; bleedMM: number; safeMM: number }; faces: { id: string; label: string; json: string }[] } };
 };
 
 type CartState = {

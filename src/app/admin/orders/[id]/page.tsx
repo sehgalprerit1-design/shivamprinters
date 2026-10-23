@@ -6,10 +6,11 @@ import { presignGet, storageEnabled } from "@/lib/storage";
 import { inr } from "@/lib/format";
 import { Login } from "../../Login";
 import { StatusButtons } from "./StatusButtons";
+import { PrintFiles } from "./PrintFiles";
 export const dynamic = "force-dynamic";
 
 type Slot = { key?: string; zoom: number; dx: number; dy: number; rot: number; w: number; h: number };
-type Design = { preview?: string; text?: Record<string, string>; options?: Record<string, string>; slots?: Slot[]; canvas?: { w: number; h: number; aspect: number } };
+type Design = { preview?: string; text?: Record<string, string>; options?: Record<string, string>; slots?: Slot[]; canvas?: { w: number; h: number; aspect: number }; studio?: { spec: { wMM: number; hMM: number; bleedMM: number; safeMM: number }; faces: { id: string; label: string; json: string }[] } };
 
 export default async function AdminOrder({ params }: { params: Promise<{ id: string }> }) {
   if (!(await isAdmin())) return <Login />;
@@ -35,6 +36,7 @@ export default async function AdminOrder({ params }: { params: Promise<{ id: str
                   <div className="text-sm text-ink-3">{inr(it.unitPrice)} each</div>
                   {it.design?.text && Object.entries(it.design.text).filter(([, v]) => v).length > 0 && <div className="mt-2 text-sm"><b>Text:</b> {Object.entries(it.design.text).filter(([, v]) => v).map(([k, v]) => `${k}: “${v}”`).join(" · ")}</div>}
                   {it.design?.options && <div className="text-sm"><b>Options:</b> {Object.entries(it.design.options).map(([k, v]) => `${k}=${v}`).join(", ")}</div>}
+                  {it.design?.studio && <PrintFiles studio={it.design.studio} links={links} name={`order-${String(o.number)}-${k + 1}`} />}
                 </div>
               </div>
               {it.design?.slots && (
