@@ -15,28 +15,28 @@ import { useRouter } from "next/navigation";
 import * as F from "fabric";
 import {
   Undo2, Redo2, ZoomIn, ZoomOut, Eye, LayoutTemplate, Images, Type, Shapes, QrCode, Palette, Trash2, Copy, Lock, LockOpen,
-  ArrowUp, ArrowDown, AlignLeft, AlignCenter, AlignRight, Upload, AlertTriangle, Check, X, Crosshair, Maximize2, RefreshCw, Contrast, Group, Ungroup,
+  ArrowUp, ArrowDown, FileUp, AlignLeft, AlignCenter, AlignRight, Upload, AlertTriangle, Check, X, Crosshair, Maximize2, RefreshCw, Contrast, Group, Ungroup,
 } from "lucide-react";
 import type { Product, Variant } from "@/data/catalog";
 import { optionsFor, optionDelta, defaultOptions, optionLabel } from "@/data/options";
 import { useCart, type CartLine } from "@/lib/cart";
 import { inr } from "@/lib/format";
 import { CallUs } from "@/components/ui/CallUs";
-import { printSpec, printedFields } from "@/lib/print-spec";
+import { printSpec, printedFields, allowsOwnDesign, artworkRequirements } from "@/lib/print-spec";
 import {
   MM, PT, PROPS, ICONS, FONTS, GOOGLE_FONTS_URL, fontLabel, geo, T, R, C, Ring, Ln, P, Icon, QR, Frame, fillFrame, photoToFrame, fitPhoto, photoDpi,
   renderJSON, withJSON, walk, loadImage, type Obj,
 } from "./engine";
 import { build, defaultPreset, presetsFor, applyBuilt, sample, type Ctx } from "./layouts";
 
-type Photo = { id: string; el: HTMLImageElement; file?: File; url: string; name: string; key?: string };
-type Tab = "layouts" | "photos" | "text" | "graphics" | "qr" | "colour";
+type Photo = { id: string; el: HTMLImageElement; file?: File; url: string; name: string; key?: string; source?: File };
+type Tab = "upload" | "layouts" | "photos" | "text" | "graphics" | "qr" | "colour";
 const SWATCHES = ["#FFFFFF", "#FAF6F0", "#F3E9DC", "#FDEBE6", "#F6E1E1", "#E3F1F2", "#DDE5D8", "#F5C400", "#E9A23B", "#E2573F", "#C2185B", "#1F6F78", "#1D3B2F", "#1F2A44", "#5A3A28", "#1D1A17"];
 const INK = ["#1D1A17", "#FFFFFF", "#E2573F", "#1F6F78", "#C8962E", "#1F2A44", "#6B1E2A", "#2E9E5B"];
 const uid = () => Math.random().toString(36).slice(2, 10);
 const LOW_DPI = 150, GOOD_DPI = 220;
 
-export function Studio({ product, variant: initialVariant, initialOptions = {}, initialQty = 1, editLineId }: { product: Product; variant: Variant; initialOptions?: Record<string, string>; initialQty?: number; editLineId?: string }) {
+export function Studio({ product, variant: initialVariant, initialOptions = {}, initialQty = 1, editLineId, initialMode }: { initialMode?: string; product: Product; variant: Variant; initialOptions?: Record<string, string>; initialQty?: number; editLineId?: string }) {
   const router = useRouter();
   const add = useCart((s) => s.add); const replace = useCart((s) => s.replace);
   const groups = useMemo(() => optionsFor(product.slug, product.category), [product.slug, product.category]);
@@ -74,7 +74,11 @@ export function Studio({ product, variant: initialVariant, initialOptions = {}, 
   const [ready, setReady] = useState(false);
   const [selV, setSelV] = useState(0);
   const [histV, setHistV] = useState(0);
-  const [tab, setTab] = useState<Tab>("layouts");
+  const ownDesign = allowsOwnDesign(product);
+  const [tab, setTab] = useState<Tab>(initialMode === "upload" && ownDesign ? "upload" : "layouts");
+  const [fitMode, setFitMode] = useState<"fill" | "fit">("fill");
+  const [artNotes, setArtNotes] = useState<string[]>([]);
+  const artInput = useRef<HTMLInputElement>(null);
   const [tray, setTray] = useState<Photo[]>([]);
   const [zoomMul, setZoomMul] = useState(1);
   const [guides, setGuides] = useState(true);
@@ -369,6 +373,81 @@ export function Studio({ product, variant: initialVariant, initialOptions = {}, 
     void readFiles(e.dataTransfer.files, hit && (hit.role === "frame" || hit.role === "photo") ? hit : null);
   };
 
+  /* ---------------- customer's own print-ready design ---------------- */
+  const pdfPages = async (f: File, max: number): Promise<{ pages: Photo[]; total: number }> => {
+    const pdfjs = await import("pdfjs-dist/legacy/build/pdf.mjs");
+    pdfjs.GlobalWorkerOptions.workerSrc = new URL("pdfjs-dist/legacy/build/pdf.worker.min.mjs", import.meta.url).toString();
+    const doc = await pdfjs.getDocument({ data: new Uint8Array(await f.arrayBuffer()) }).promise;
+    const pages: Photo[] = [];
+    for (let i = 1; i <= Math.min(doc.numPages, max); i++) {
+      setBusy(`Reading ${f.name}, page ${i} of ${Math.min(doc.numPages, max)}…`);
+      const page = await doc.getPage(i); const vp1 = page.getViewport({ scale: 1 });
+      const vp = page.getViewport({ scale: Math.min(300 / 72, 6000 / Math.max(vp1.width, vp1.height)) });
+      const cv = document.createElement("canvas"); cv.width = Math.round(vp.width); cv.height = Math.round(vp.height);
+      const ctx = cv.getContext("2d")!; ctx.fillStyle = "#fff"; ctx.fillRect(0, 0, cv.width, cv.height);
+      await page.render({ canvasContext: ctx, viewport: vp, canvas: cv }).promise;
+      const blob = await new Promise<Blob>((res, rej) => cv.toBlob((b) => (b ? res(b) : rej(new Error("render"))), "image/png"));
+      const file = new File([blob], `${f.name.replace(/\.pdf$/i, "")}-page-${i}.png`, { type: "image/png" });
+      const url = URL.createObjectURL(file); const el = await loadImage(url);
+      pages.push({ id: uid(), el, file, url, name: `${f.name} page ${i}`, source: f });
+    }
+    return { pages, total: doc.numPages };
+  };
+  const placeArtwork = (sc: F.StaticCanvas, p: Photo, mode: "fill" | "fit") => {
+    const gg = geo(specRef.current), iw = p.el.naturalWidth, ih = p.el.naturalHeight;
+    const [bx, by, bw, bh] = mode === "fill" ? [0, 0, gg.W, gg.H] : [gg.b, gg.b, gg.tw, gg.th];
+    const k = mode === "fill" ? Math.max(bw / iw, bh / ih) : Math.min(bw / iw, bh / ih);
+    sc.getObjects().slice().forEach((o) => sc.remove(o)); sc.backgroundColor = "#FFFFFF";
+    const img = new F.FabricImage(p.el, { originX: "center", originY: "center", left: bx + bw / 2, top: by + bh / 2, scaleX: k, scaleY: k }) as Obj;
+    img.role = "artwork"; img.fileId = p.id; img.srcKey = p.key; img.locked = true; applyLock(img);
+    sc.add(img);
+    return k;
+  };
+  const artNote = (p: Photo, i: number, k: number, mode: "fill" | "fit") => {
+    const gg = geo(specRef.current), a = p.el.naturalWidth / p.el.naturalHeight;
+    const near = (x: number, y: number) => Math.abs(x - y) / y < 0.02;
+    const dpi = Math.round((25.4 * MM) / k);
+    const shape = near(a, gg.W / gg.H) ? "matches the size with bleed" : near(a, gg.tw / gg.th) ? (mode === "fill" ? "has no bleed, so the outer edge is trimmed slightly" : "matches the cut size") : mode === "fill" ? "is a different shape, so its edges are cropped" : "is a different shape, so it has a white border";
+    return `${specRef.current.faces.length > 1 ? `${specRef.current.faces[i].label}: ` : ""}${p.name} ${shape} · ${dpi} dpi${dpi < LOW_DPI ? " (may print soft)" : ""}`;
+  };
+  const uploadArtwork = async (list: FileList | null, mode = fitMode) => {
+    if (!list?.length || !cvRef.current) return;
+    const c = cvRef.current; c.discardActiveObject();
+    const n = facesRef.current.length, start = faceRef.current;
+    const items: Photo[] = []; const notes: string[] = [];
+    try {
+      for (const f of [...list]) {
+        if (items.length >= n - start) break;
+        if (f.type === "application/pdf" || /\.pdf$/i.test(f.name)) {
+          const { pages, total } = await pdfPages(f, n - start - items.length);
+          items.push(...pages);
+          if (total > pages.length) notes.push(`${f.name} has ${total} pages; only the first ${pages.length} ${pages.length === 1 ? "was" : "were"} used because this product has ${n} ${n === 2 ? "sides" : n === 1 ? "side" : "pages"}.`);
+        } else if (f.type.startsWith("image/")) {
+          setBusy(`Opening ${f.name}…`);
+          const url = URL.createObjectURL(f); const el = await loadImage(url);
+          items.push({ id: uid(), el, file: f, url, name: f.name });
+        } else notes.push(`${f.name} isn't a JPG, PNG or PDF, so it was skipped.`);
+      }
+    } catch (err) { console.error("Design file", err); notes.push("One file couldn't be opened. Export it again as PDF, JPG or PNG and try once more."); }
+    for (let k = 0; k < items.length; k++) {
+      const p = items[k], i = start + k; photos.current.set(p.id, p);
+      if (i === faceRef.current) { const sc = placeArtwork(c, p, mode); c.requestRenderAll(); pushHistory(); notes.unshift(artNote(p, i, sc, mode)); }
+      else {
+        let sc = 1; facesRef.current[i] = await withJSON(facesRef.current[i], specRef.current, (s2) => { sc = placeArtwork(s2, p, mode); });
+        hist.current[i] = { stack: [facesRef.current[i]], i: 0 }; void refreshThumb(i); notes.splice(k, 0, artNote(p, i, sc, mode));
+      }
+    }
+    setBusy(null); setArtNotes(notes); setTray([...photos.current.values()]); void refreshThumb(faceRef.current);
+    if (items.length) { dirty.current = true; toast(items.length > 1 ? `Your design is on ${items.length} ${n === 2 ? "sides" : "pages"}. Check the preview before ordering.` : "Your design is placed. Check the preview before ordering."); }
+  };
+  /** Re-place the current face's artwork with a different fit. */
+  const refitArtwork = (mode: "fill" | "fit") => {
+    setFitMode(mode); const c = cvRef.current; if (!c) return;
+    const art = c.getObjects().find((o) => (o as Obj).role === "artwork") as Obj | undefined; if (!art) return;
+    const p = photos.current.get(art.fileId) ?? { id: art.fileId ?? uid(), el: (art as unknown as F.FabricImage).getElement() as HTMLImageElement, url: "", name: "Your design", key: art.srcKey };
+    const sc = placeArtwork(c, p, mode); c.requestRenderAll(); pushHistory(); setArtNotes([artNote(p, faceRef.current, sc, mode)]);
+  };
+
   /* ---------------- adding objects ---------------- */
   const centerAdd = (o: Obj) => {
     const c = cvRef.current!; const gg = geo(specRef.current);
@@ -475,6 +554,7 @@ export function Studio({ product, variant: initialVariant, initialOptions = {}, 
     const used = new Set<string>();
     facesRef.current.forEach((j) => walk(JSON.parse(j).objects, (o) => { if (o.fileId) used.add(o.fileId); }));
     const keys: Record<string, string> = {};
+    const files: { key: string; name: string }[] = []; const sourceKeys = new Map<File, string>();
     try {
       const todo = [...used].map((id) => photos.current.get(id)).filter(Boolean) as Photo[];
       for (let k = 0; k < todo.length; k++) {
@@ -492,6 +572,16 @@ export function Studio({ product, variant: initialVariant, initialOptions = {}, 
         }
         keys[p.id] = j.key;
       }
+      // Customers' original PDFs (pages were rendered for the design; the team also gets the source file).
+      for (const p of todo) {
+        if (!p.source || sourceKeys.has(p.source)) continue;
+        setBusy(`Uploading ${p.source.name}…`);
+        const r = await fetch("/api/upload", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ filename: p.source.name, mime: p.source.type || "application/pdf", bytes: p.source.size }) });
+        const j = (await r.json()) as { key: string; url: string | null; error?: string };
+        if (!r.ok) throw new Error(j.error ?? "Upload failed");
+        if (j.url) { const put = await fetch(j.url, { method: "PUT", body: p.source, headers: { "content-type": p.source.type || "application/pdf" } }).catch(() => null); if (!put?.ok) throw new Error("Your PDF couldn't be uploaded. Please try again or call us."); }
+        sourceKeys.set(p.source, j.key); files.push({ key: j.key, name: p.source.name });
+      }
     } catch (e) { setBusy(null); setError((e as Error).message); return; }
     setBusy("Saving your design…");
     const faces = facesRef.current.map((j) => { const d = JSON.parse(j); walk(d.objects, (o) => { if (o.fileId && keys[o.fileId]) o.srcKey = keys[o.fileId]; }); return JSON.stringify(d); });
@@ -502,7 +592,7 @@ export function Studio({ product, variant: initialVariant, initialOptions = {}, 
     const label = optionLabel(groups, opts);
     const line = {
       productSlug: product.slug, productName: product.name, variantSku: variant.sku, variantName: label ? `${variant.name} · ${label}` : variant.name, unitPrice, qty, image: product.image,
-      design: { preview: previewUrl, text, photoCount: used.size, options: opts, slots, canvas: { w: g.W, h: g.H, aspect: spec.wMM / spec.hMM },
+      design: { preview: previewUrl, text, photoCount: used.size, options: opts, slots, ...(files.length ? { files } : {}), canvas: { w: g.W, h: g.H, aspect: spec.wMM / spec.hMM },
         studio: { v: 1, spec: { wMM: spec.wMM, hMM: spec.hMM, bleedMM: spec.bleedMM, safeMM: spec.safeMM }, faces: spec.faces.map((f, i) => ({ id: f.id, label: f.label, json: faces[i] })) } },
     };
     if (editLineId) replace(editLineId, line); else add(line);
@@ -526,7 +616,8 @@ export function Studio({ product, variant: initialVariant, initialOptions = {}, 
 
       {/* ---------- tools ---------- */}
       <section className="order-2 xl:order-1 card p-3 self-start xl:sticky xl:top-28">
-        <div className="grid grid-cols-6 gap-1">
+        <div className={`grid gap-1 ${ownDesign ? "grid-cols-7" : "grid-cols-6"}`}>
+          {ownDesign && <TabBtn id="upload" icon={FileUp} label="Your file" tab={tab} setTab={setTab} />}
           <TabBtn id="layouts" icon={LayoutTemplate} label="Layouts" tab={tab} setTab={setTab} />
           <TabBtn id="photos" icon={Images} label="Photos" tab={tab} setTab={setTab} />
           <TabBtn id="text" icon={Type} label="Text" tab={tab} setTab={setTab} />
@@ -535,6 +626,32 @@ export function Studio({ product, variant: initialVariant, initialOptions = {}, 
           <TabBtn id="colour" icon={Palette} label="Colour" tab={tab} setTab={setTab} />
         </div>
         <div className="mt-3 max-h-[calc(100vh-15rem)] overflow-y-auto pr-1 space-y-3">
+          {tab === "upload" && (() => { const req = artworkRequirements(spec); return (<>
+            <div className="font-semibold">Upload your own design</div>
+            <p className="text-sm text-ink-2">Already have a print-ready design? Upload it and we print it as it is. {multiFace ? `Upload one file per ${spec.faces[1]?.role === "back" || spec.faces[1]?.role === "postcard-back" ? "side" : "page"}, or a multi-page PDF: page 1 goes on ${spec.faces[faceIdx]?.label.toLowerCase()}, page 2 on the next, and so on.` : ""}</p>
+            <div className="rounded-xl bg-surface-2 p-3 text-sm space-y-1">
+              <div className="text-xs font-semibold uppercase tracking-wide text-ink-3">Make your file</div>
+              <div className="tabular-nums"><b>{req.W} × {req.H} mm</b>, that is {req.w} × {req.h} mm plus {req.bleed} mm bleed on each side</div>
+              <div className="tabular-nums">At least {req.pxW} × {req.pxH} px ({req.dpi} dpi)</div>
+              <div>Keep text and logos {req.safe} mm inside the cut line</div>
+              {spec.wrap === "mug" && <div>The 14 mm at each end sits by the handle</div>}
+              <div className="text-ink-3 text-xs">PDF, JPG or PNG. PDFs print exactly as exported; fonts are included.</div>
+            </div>
+            <fieldset className="space-y-1.5 text-sm">
+              <legend className="text-xs font-semibold text-ink-3 mb-1">How should it fit?</legend>
+              <label className="flex gap-2 items-start"><input type="radio" name="fitmode" className="mt-1" checked={fitMode === "fill"} onChange={() => refitArtwork("fill")} /><span>Fill to the edges <span className="text-ink-3">(my file includes bleed)</span></span></label>
+              <label className="flex gap-2 items-start"><input type="radio" name="fitmode" className="mt-1" checked={fitMode === "fit"} onChange={() => refitArtwork("fit")} /><span>Fit inside the cut line <span className="text-ink-3">(adds a white border if the shape differs)</span></span></label>
+            </fieldset>
+            <label className="card border-dashed p-5 text-center cursor-pointer hover:border-brand block" onDragOver={(e) => e.preventDefault()} onDrop={(e) => { e.preventDefault(); void uploadArtwork(e.dataTransfer.files); }}>
+              <FileUp className="mx-auto text-brand" />
+              <div className="font-semibold mt-2">Choose your design file</div>
+              <div className="text-xs text-ink-3">It replaces everything on {multiFace ? `${spec.faces[faceIdx]?.label.toLowerCase()}${spec.faces.length - faceIdx > 1 ? " onwards" : ""}` : "the design"}. Undo brings it back.</div>
+              <input ref={artInput} type="file" accept="application/pdf,image/png,image/jpeg,image/webp" multiple={multiFace} className="hidden" onChange={(e) => { void uploadArtwork(e.target.files); e.target.value = ""; }} />
+            </label>
+            {artNotes.length > 0 && <ul className="text-xs space-y-1">{artNotes.map((n) => <li key={n} className={`flex gap-1.5 ${/soft|cropped|border|not used|skipped|couldn/.test(n) ? "text-amber-800" : "text-ink-2"}`}>{/soft|cropped|border|not used|skipped|couldn/.test(n) ? <AlertTriangle size={13} className="shrink-0 mt-0.5" /> : <Check size={13} className="shrink-0 mt-0.5 text-accent" />}{n}</li>)}</ul>}
+            <p className="text-xs text-ink-3">Prefer to design here instead? Use Layouts, Photos and Text. No file yet? <a href="/custom-printing" className="underline">Ask our designer</a>.</p>
+          </>); })()}
+
           {tab === "layouts" && (<>
             <p className="text-xs text-ink-3">{product.slug === "business-cards" ? "Each template sets up the front and the back. Your details carry over." : `Layouts for ${multiFace ? spec.faces[faceIdx]?.label.toLowerCase() : "your design"}. Photos you've added move into the new frames.`}</p>
             <div className="grid grid-cols-2 gap-2">
@@ -665,7 +782,7 @@ export function Studio({ product, variant: initialVariant, initialOptions = {}, 
       <aside className="order-3 space-y-4 self-start xl:sticky xl:top-28 xl:max-h-[calc(100vh-8rem)] xl:overflow-y-auto no-scrollbar">
         {sel && (
           <div className="card p-4 space-y-3">
-            <div className="flex items-center justify-between"><div className="font-semibold">{isMulti ? "Several items" : isText ? "Text" : sel.role === "frame" ? "Photo frame" : sel.role === "photo" ? "Photo" : sel.role === "image" ? "Image" : sel.role === "qr" ? "QR code" : sel.role === "calendar" ? "Calendar dates" : isGroup ? "Group" : "Shape"}</div>
+            <div className="flex items-center justify-between"><div className="font-semibold">{isMulti ? "Several items" : isText ? "Text" : sel.role === "frame" ? "Photo frame" : sel.role === "photo" ? "Photo" : sel.role === "artwork" ? "Your design" : sel.role === "image" ? "Image" : sel.role === "qr" ? "QR code" : sel.role === "calendar" ? "Calendar dates" : isGroup ? "Group" : "Shape"}</div>
               <button type="button" aria-label="Deselect" className="text-ink-3" onClick={() => { const c = cvRef.current!; c.discardActiveObject(); c.requestRenderAll(); }}><X size={16} /></button></div>
 
             {sel.role === "frame" && (<>
@@ -673,6 +790,16 @@ export function Studio({ product, variant: initialVariant, initialOptions = {}, 
               <button type="button" className="btn btn-primary w-full !py-2" onClick={() => { pendingTarget.current = sel; fileInput.current?.click(); }}><Upload size={16} />Add photo here</button>
               {tray.length > 0 && <p className="text-xs text-ink-3">Or tap one of Your photos in the Photos tab.</p>}
             </>)}
+
+            {sel.role === "artwork" && (() => { const dpi = photoDpi(sel); return (<>
+              <div className="flex items-center justify-between text-sm"><span>Print quality</span><span className={`font-semibold ${dpi >= LOW_DPI ? "text-accent" : "text-amber-700"}`}>{dpi >= LOW_DPI ? "Good" : "May print soft"} · {dpi} dpi</span></div>
+              <p className="text-xs text-ink-3">Your uploaded design is locked so it can&apos;t be nudged by accident. Unlock it below to adjust.</p>
+              <div className="grid grid-cols-2 gap-2">
+                <button type="button" className="btn btn-ghost !py-1.5 text-sm" onClick={() => refitArtwork("fill")}><Maximize2 size={15} />Fill edges</button>
+                <button type="button" className="btn btn-ghost !py-1.5 text-sm" onClick={() => refitArtwork("fit")}>Fit inside</button>
+                <button type="button" className="btn btn-ghost !py-1.5 text-sm col-span-2" onClick={() => { setTab("upload"); artInput.current?.click(); }}><RefreshCw size={15} />Replace file</button>
+              </div>
+            </>); })()}
 
             {sel.role === "photo" && (() => { const dpi = photoDpi(sel); const q = dpi >= GOOD_DPI ? ["Sharp", "text-accent"] : dpi >= LOW_DPI ? ["Good", "text-accent"] : ["May print soft", "text-amber-700"]; return (<>
               <div className="flex items-center justify-between text-sm"><span>Print quality</span><span className={`font-semibold ${q[1]}`}>{q[0]} · {dpi} dpi</span></div>
@@ -706,7 +833,7 @@ export function Studio({ product, variant: initialVariant, initialOptions = {}, 
               <label className="block text-xs text-ink-3">Line height<input type="range" min={0.8} max={2.2} step={0.05} className="w-full accent-[var(--brand)]" value={sel.lineHeight ?? 1.15} onChange={(e) => { sel.set("lineHeight", Number(e.target.value)); mod(sel, false); }} onMouseUp={() => pushHistory()} onTouchEnd={() => pushHistory()} /></label>
             </>)}
 
-            {sel.role !== "photo" && sel.role !== "frame" && sel.role !== "image" && (
+            {sel.role !== "photo" && sel.role !== "frame" && sel.role !== "image" && sel.role !== "artwork" && (
               <div>
                 <div className="text-xs text-ink-3 mb-1.5">Colour</div>
                 <div className="flex flex-wrap items-center gap-1.5">

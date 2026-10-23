@@ -131,3 +131,17 @@ export function printedFields(product: Product) {
   const card = ["business-cards", "event-id-cards", "name-tag", "bag-tag", "pet-tags"].includes(product.slug);
   return product.template.textFields.filter((f) => (card ? !["names"].includes(f.key) : !NON_PRINT_KEYS.has(f.key)));
 }
+
+/** Products where customers can upload a finished, print-ready design instead of using the editor. */
+export function allowsOwnDesign(product: Product) {
+  if (product.personalisation === "none" || product.category === "diaries-planners" || product.slug === "book-designing-service") return false;
+  return product.template.photoSlots > 0 || product.category === "business-printing";
+}
+
+/** File requirements shown to customers uploading their own design. */
+export function artworkRequirements(spec: PrintSpec) {
+  const W = spec.wMM + 2 * spec.bleedMM, H = spec.hMM + 2 * spec.bleedMM, big = Math.max(W, H);
+  const dpi = big > 1000 ? 100 : big > 500 ? 150 : 300;
+  const px = (mm: number) => Math.round((mm / 25.4) * dpi);
+  return { W: fmt(W), H: fmt(H), w: fmt(spec.wMM), h: fmt(spec.hMM), bleed: spec.bleedMM, safe: spec.safeMM, dpi, pxW: px(W), pxH: px(H) };
+}

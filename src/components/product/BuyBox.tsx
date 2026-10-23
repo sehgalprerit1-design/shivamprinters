@@ -8,6 +8,7 @@ import { inr } from "@/lib/format";
 import { useWishlist } from "@/lib/wishlist";
 import { useCart } from "@/lib/cart";
 import { CallUs } from "@/components/ui/CallUs";
+import { allowsOwnDesign } from "@/lib/print-spec";
 
 export function BuyBox({ product, promo }: { product: Product; promo?: React.ReactNode }) {
   const [v, setV] = useState(product.variants[0]);
@@ -81,6 +82,9 @@ export function BuyBox({ product, promo }: { product: Product; promo?: React.Rea
         <button onClick={() => wish.toggle(product.slug)} aria-label="Save" className={`btn btn-ghost !px-4 ${wished ? "text-brand border-brand" : ""}`}><Heart size={18} className={wished ? "fill-brand" : ""} /></button>
         <button onClick={() => { if (navigator.share) navigator.share({ title: product.name, url: location.href }).catch(() => {}); else { navigator.clipboard?.writeText(location.href); setCopied(true); setTimeout(() => setCopied(false), 2000); } }} aria-label="Share" title={copied ? "Link copied" : "Share"} className="btn btn-ghost !px-4 relative"><Share2 size={18} />{copied && <span className="absolute -top-8 right-0 text-xs bg-ink text-white rounded-md px-2 py-1 whitespace-nowrap">Link copied</span>}</button>
       </div>
+      {!readyMade && allowsOwnDesign(product) && (
+        <Link href={`/design/${product.slug}?${q}&mode=upload`} className="btn btn-ghost w-full mt-2 !py-2.5 text-sm">Have a print-ready file? Upload your design</Link>
+      )}
       <p className="text-xs text-ink-3 text-center mt-2">{readyMade ? "No personalisation needed — ships as shown." : "You can still change size, finish and quantity while personalising."}</p>
       <div className="text-center mt-2"><CallUs whatsapp={`Hi Shivam Printers, I have a question about "${product.name}".`} /></div>
 
