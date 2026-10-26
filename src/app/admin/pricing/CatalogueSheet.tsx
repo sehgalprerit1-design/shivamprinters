@@ -205,7 +205,7 @@ function ProductDetails({ p, cats, presets, setP, uploadImage, isBase }: { p: Pr
           {[p.image, ...(p.images ?? [])].map((src, i) => (
             <div key={`${src}-${i}`} className="relative group">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={src} alt="" title={i === 0 ? "Main image" : "Click to make main"} onClick={() => { if (i === 0) return; const rest = (p.images ?? []).filter((_, k) => k !== i - 1); setP(p.slug, { image: src, images: [p.image, ...rest].slice(0, 6) }); }} className={`w-16 h-16 rounded-lg object-cover border bg-surface ${i === 0 ? "border-brand ring-2 ring-brand/30" : "border-line cursor-pointer hover:opacity-80"}`} />
+              <img src={src} alt="" title={i === 0 ? "Main image" : "Click to make main"} onClick={() => { if (i === 0) return; const rest = (p.images ?? []).filter((_, k) => k !== i - 1); setP(p.slug, { image: src, images: [p.image, ...rest].slice(0, 6) }); }} className={`w-16 h-16 rounded-lg object-contain border bg-surface ${i === 0 ? "border-brand ring-2 ring-brand/30" : "border-line cursor-pointer hover:opacity-80"}`} />
               {i > 0 && <button type="button" onClick={() => setP(p.slug, { images: (p.images ?? []).filter((_, k) => k !== i - 1) })} className="absolute -top-1.5 -right-1.5 bg-ink text-white rounded-full w-5 h-5 text-[10px] leading-5 text-center opacity-0 group-hover:opacity-100" aria-label="Remove image">✕</button>}
               {i === 0 && <span className="absolute bottom-0 inset-x-0 bg-brand text-white text-[9px] text-center rounded-b-lg">main</span>}
             </div>
@@ -263,7 +263,7 @@ function NewProductForm({ category, presets, existing, uploadImage, onCancel, on
         <label className="block"><span className="text-xs text-ink-3">Tags for gift pages (comma-separated, e.g. birthday, under-499)</span><input className={`${inp} w-full mt-1`} value={tags} onChange={(e) => setTags(e.target.value)} /></label>
         <div className="flex items-center gap-3">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          {image ? <img src={image} alt="" className="w-16 h-16 rounded-lg object-cover border border-line" /> : <div className="w-16 h-16 rounded-lg border border-dashed border-line grid place-items-center text-ink-3"><ImagePlus size={18} /></div>}
+          {image ? <img src={image} alt="" className="w-16 h-16 rounded-lg object-contain border border-line" /> : <div className="w-16 h-16 rounded-lg border border-dashed border-line grid place-items-center text-ink-3"><ImagePlus size={18} /></div>}
           <div className="flex flex-col gap-1">
             <label className="btn btn-ghost !py-1.5 text-xs cursor-pointer w-fit">{uploading ? "Uploading…" : "Upload image *"}<input type="file" accept="image/*" className="hidden" onChange={async (e) => { const f = e.target.files?.[0]; if (!f) return; setUploading(true); setErr(""); try { setImage(await uploadImage(f)); } catch (x) { setErr((x as Error).message); } finally { setUploading(false); e.target.value = ""; } }} /></label>
             <input className={`${inp} w-64 text-xs`} placeholder="…or an existing image path, e.g. /images/p/tote-bag.jpg" value={image} onChange={(e) => setImage(e.target.value.trim())} />

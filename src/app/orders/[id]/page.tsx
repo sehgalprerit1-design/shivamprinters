@@ -25,7 +25,7 @@ export default async function OrderPage({ params, searchParams }: { params: Prom
       <div className="card mt-6 divide-y divide-line">
         {items.map((i, k) => (
           <div key={k} className="flex gap-4 p-4">
-            <div className="w-16 h-16 rounded-lg bg-surface-2 bg-cover bg-center border border-line" style={{ backgroundImage: i.preview ? `url(${i.preview})` : undefined }} />
+            <div className="w-16 h-16 rounded-lg bg-white bg-contain bg-no-repeat bg-center border border-line" style={{ backgroundImage: i.preview ? `url(${i.preview})` : undefined }} />
             <div className="flex-1 min-w-0"><div className="font-semibold">{i.name}</div><div className="text-xs text-ink-3">{i.variant} × {i.qty}</div>
               {i.design?.text && Object.entries(i.design.text).filter(([, v]) => v).length > 0 && <div className="text-xs text-ink-2 mt-1 truncate">{Object.entries(i.design.text).filter(([, v]) => v).map(([k, v]) => `${k}: “${v}”`).join(" · ")}</div>}
               {(i.design?.photoCount ?? 0) > 0 && <div className="text-xs text-ink-3">{i.design!.photoCount} photo{i.design!.photoCount === 1 ? "" : "s"} · design saved for print</div>}</div>

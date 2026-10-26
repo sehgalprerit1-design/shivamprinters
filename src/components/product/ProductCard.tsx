@@ -9,9 +9,9 @@ export function ProductCard({ p, priority = false }: { p: Product; priority?: bo
   const pct = compare ? Math.round(((compare - price) / compare) * 100) : 0;
   return (
     <Link href={`/p/${p.slug}`} className="card group block">
-      <div className="relative aspect-square bg-surface-2 overflow-hidden">
+      <div className="relative aspect-square bg-white overflow-hidden">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={p.image} alt={p.name} loading={priority ? "eager" : "lazy"} className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-300" />
+        <img src={p.image} alt={p.name} loading={priority ? "eager" : "lazy"} className="w-full h-full object-contain group-hover:scale-[1.03] transition-transform duration-300" />
         {p.badges?.[0] && <span className="chip bg-white/90 text-ink absolute top-2 left-2">{p.badges[0]}</span>}
         {pct > 0 && <span className="chip bg-brand text-white absolute top-2 right-2">{pct}% off</span>}
       </div>

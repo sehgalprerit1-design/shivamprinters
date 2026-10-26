@@ -19,7 +19,7 @@ export function CartDrawer() {
           {lines.length === 0 && <div className="text-ink-3 text-center py-16">Nothing here yet. Go print something.</div>}
           {lines.map((l) => (
             <div key={l.id} className="flex gap-3">
-              <div className="w-20 h-20 rounded-lg bg-surface-2 bg-cover bg-center shrink-0 border border-line" style={{ backgroundImage: `url(${l.design?.preview ?? l.image})` }} />
+              <div className="w-20 h-20 rounded-lg bg-white bg-contain bg-no-repeat bg-center shrink-0 border border-line" style={{ backgroundImage: `url(${l.design?.preview ?? l.image})` }} />
               <div className="flex-1 min-w-0">
                 <div className="font-semibold truncate">{l.productName}</div>
                 <div className="text-xs text-ink-3">{l.variantName}{l.design?.photoCount ? ` · ${l.design.photoCount} photo${l.design.photoCount > 1 ? "s" : ""}` : ""}</div>

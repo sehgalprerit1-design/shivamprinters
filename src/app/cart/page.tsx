@@ -21,7 +21,7 @@ export default function CartPage() {
           <div className="space-y-4">
             {lines.map((l) => (
               <div key={l.id} className="card p-4 flex gap-4">
-                <div className="w-28 h-28 rounded-lg bg-surface-2 bg-cover bg-center shrink-0 border border-line" style={{ backgroundImage: `url(${l.design?.preview ?? l.image})` }} />
+                <div className="w-28 h-28 rounded-lg bg-white bg-contain bg-no-repeat bg-center shrink-0 border border-line" style={{ backgroundImage: `url(${l.design?.preview ?? l.image})` }} />
                 <div className="flex-1">
                   <div className="font-semibold">{l.productName}</div>
                   <div className="text-sm text-ink-3">{l.variantName}</div>
