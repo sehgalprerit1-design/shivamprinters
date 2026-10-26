@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { liveFor, countdownLine, needsDeliveryCheck, type LiveEvent } from "@/lib/events";
 import { SeasonalPanel, type PanelEvent } from "./SeasonalPanel";
+import { siteImage } from "@/data/site-images";
 
 const toPanel = (l: LiveEvent): PanelEvent => ({
   id: l.event.id, name: l.event.dayName ?? l.event.name, audience: l.event.audience, headline: l.event.headline, sub: l.event.sub, cta: l.event.cta,
@@ -21,7 +22,7 @@ export function Hero() {
       <div className={`grid gap-4 ${primary ? "lg:grid-cols-2" : ""}`}>
         <div className="relative rounded-3xl overflow-hidden bg-ink text-white min-h-[380px] md:min-h-[520px] flex items-end">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/images/hero.jpg" alt="" className="absolute inset-0 w-full h-full object-cover opacity-90" fetchPriority="high" />
+          <img src={siteImage("home.hero", "/images/hero.jpg")} alt="" className="absolute inset-0 w-full h-full object-cover opacity-90" fetchPriority="high" />
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
           <div className="relative p-6 md:p-10 max-w-2xl fade-up">
             <span className="chip bg-white/15 backdrop-blur text-white mb-4">Made in our own print centre · Pan-India delivery</span>

@@ -9,6 +9,7 @@ export const ADMIN_SECTIONS = [
   { href: "/admin/coupons", label: "Coupons" },
   { href: "/admin/reviews", label: "Reviews" },
   { href: "/admin/events", label: "Seasonal events" },
+  { href: "/admin/images", label: "Images" },
 ] as const;
 
 /** Page title plus links to every other admin section. */

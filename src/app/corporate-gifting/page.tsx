@@ -7,6 +7,7 @@ import { Section } from "@/components/ui/Section";
 import { EnquiryForm } from "@/components/business/EnquiryForm";
 import { CallUs, whatsappUrl, WhatsAppIcon } from "@/components/ui/CallUs";
 import { BIZ } from "@/data/legal";
+import { siteImage } from "@/data/site-images";
 import { inr } from "@/lib/format";
 
 export const metadata: Metadata = {
@@ -51,7 +52,7 @@ export default function CorporateGifting() {
       <section className="container-x pt-8 md:pt-12">
         <div className="relative rounded-3xl overflow-hidden bg-ink text-white p-6 md:p-10 grid lg:grid-cols-[1.15fr_1fr] gap-8 items-start">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/images/corporate-diwali.jpg" alt="" className="absolute inset-0 w-full h-full object-cover" fetchPriority="high" />
+          <img src={siteImage("corporate.hero", "/images/corporate-diwali.jpg")} alt="" className="absolute inset-0 w-full h-full object-cover" fetchPriority="high" />
           <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/55 to-black/20" />
           <div className="relative">
             <div className="chip bg-white/10 text-white mb-3">Diwali corporate gifting</div>

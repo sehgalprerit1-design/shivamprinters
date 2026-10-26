@@ -1,3 +1,4 @@
+import { siteImage } from "./site-images";
 // Gift landing pages. Each page is a slug + tag query + copy, rendered by
 // app/gifts/[slug]/page.tsx. This replaces ~100 hand-maintained /pages/* URLs
 // with one template; the legacy slug is kept so old URLs 301 cleanly.
@@ -23,7 +24,7 @@ const G = (
   extra: Partial<GiftPage> = {},
 ): GiftPage => ({ slug, title, h1: title, intro, tags, group, ...extra });
 
-export const giftPages: GiftPage[] = [
+const giftPagesBase: GiftPage[] = [
   // --- Occasions
   G("occasion", "thank-you-gifts", "Thank You Gifts", "A photo and a few words say it better than a message. Postcards, mugs, frames and prints to thank the people who showed up.", ["thank-you", "friends", "teacher"]),
   G("occasion", "birthday-gifts", "Birthday Gifts", "Mugs, cushions, frames and books that put their face on the party.", ["birthday"], { image: "/images/birthday.jpg" }),
@@ -156,6 +157,10 @@ export const giftPages: GiftPage[] = [
   G("collection", "2027-photo-calendars-planners", "2027 Calendars & Planners", "", ["new-year"]),
   G("collection", "print-photos-online", "Print Photos Online", "Upload from your phone, pick a size, done.", ["under-499", "family", "travel"]),
 ];
+
+/** Gift pages with admin-chosen banner images applied (see /admin/images). */
+export const giftPages: GiftPage[] = giftPagesBase.map((g) => ({ ...g, image: siteImage(`gift.${g.slug}`, g.image) }));
+export const baseGiftPages = giftPagesBase;
 
 export const getGiftPage = (slug: string) => giftPages.find((g) => g.slug === slug);
 export const giftPagesByGroup = (group: GiftPage["group"]) => giftPages.filter((g) => g.group === group);

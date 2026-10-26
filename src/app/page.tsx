@@ -3,6 +3,7 @@ import { categories, products, productsByTag } from "@/data/catalog";
 import { giftPagesByGroup } from "@/data/gifts";
 import { Hero } from "@/components/home/Hero";
 import { liveEvents } from "@/lib/events";
+import { siteImage } from "@/data/site-images";
 import { ProductGrid } from "@/components/product/ProductGrid";
 import { Section } from "@/components/ui/Section";
 import { Upload, Palette, Truck, ShieldCheck } from "lucide-react";
@@ -93,7 +94,7 @@ export default async function Home() {
       <section className="container-x">
         <div className="rounded-3xl overflow-hidden grid md:grid-cols-2 bg-[#fff4c7]">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/images/cat-kids.jpg" alt="Shivam Printers kids range" className="w-full h-64 md:h-full object-cover" loading="lazy" />
+          <img src={siteImage("home.kids-banner", "/images/cat-kids.jpg")} alt="Shivam Printers kids range" className="w-full h-64 md:h-full object-cover" loading="lazy" />
           <div className="p-8 md:p-12 flex flex-col justify-center">
             <div className="text-xs font-semibold uppercase tracking-wide text-ink-2">Shivam Printers Kids</div>
             <h2 className="text-3xl md:text-4xl font-bold mt-2">Name it. Label it. Never lose it.</h2>

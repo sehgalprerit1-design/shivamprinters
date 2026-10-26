@@ -80,6 +80,28 @@ const PATH = "src/data/overrides.json";
 const token = () => (process.env.GITHUB_TOKEN ?? "").trim() || undefined;
 export const publishMode = (): "github" | "local" | "none" => (token() ? "github" : process.env.NODE_ENV === "development" || process.env.ALLOW_LOCAL_PUBLISH ? "local" : "none");
 
+/** Commit one JSON data file to the site repo (or write it locally in dev). Shared by the catalogue sheet and /admin/images. */
+export async function publishDataFile(filePath: string, body: string, message: string) {
+  const mode = publishMode();
+  if (mode === "local") {
+    const fs = await import("node:fs/promises"); const path = await import("node:path");
+    // Literal paths keep Next's file tracer from pulling the whole repo into the server bundle.
+    if (filePath === "src/data/overrides.json") await fs.writeFile(path.join(process.cwd(), "src/data/overrides.json"), body, "utf8");
+    else if (filePath === "src/data/site-image-overrides.json") await fs.writeFile(path.join(process.cwd(), "src/data/site-image-overrides.json"), body, "utf8");
+    else throw new Error(`Unknown data file ${filePath}`);
+    return { mode, note: "Saved locally; restart the dev server to see the changes." };
+  }
+  if (mode === "none") throw new Error("Publishing is not configured: add a GITHUB_TOKEN (fine-grained, Contents: read & write on the site repo) in Vercel.");
+  const h = { Authorization: `Bearer ${token()}`, Accept: "application/vnd.github+json", "X-GitHub-Api-Version": "2022-11-28", "content-type": "application/json" };
+  const url = `https://api.github.com/repos/${OWNER_REPO}/contents/${filePath}`;
+  const cur = await fetch(`${url}?ref=${BRANCH}`, { headers: h, cache: "no-store" });
+  const sha = cur.ok ? ((await cur.json()) as { sha: string }).sha : undefined;
+  const put = await fetch(url, { method: "PUT", headers: h, body: JSON.stringify({ message, content: Buffer.from(body).toString("base64"), sha, branch: BRANCH }) });
+  if (!put.ok) throw new Error(`GitHub replied ${put.status}: ${(await put.text()).slice(0, 200)}`);
+  const j = (await put.json()) as { commit: { sha: string; html_url: string } };
+  return { mode, commit: j.commit.sha.slice(0, 7), url: j.commit.html_url, note: "Published. The site rebuilds automatically; changes are live in about 2–3 minutes." };
+}
+
 export async function publishCatalogue(state: CatalogueState, who = "admin") {
   const ov = buildOverrides(state);
   const body = JSON.stringify(ov, null, 2) + "\n";

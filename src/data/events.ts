@@ -1,3 +1,4 @@
+import { siteImage } from "./site-images";
 // Festival & season calendar that drives the seasonal half of the homepage hero,
 // the header "shop the season" card and /admin/events.
 //
@@ -39,7 +40,7 @@ export type SeasonalEvent = {
 
 const E = (e: SeasonalEvent) => e;
 
-export const events: SeasonalEvent[] = [
+const eventsBase: SeasonalEvent[] = [
   // ---- Autumn festive season
   E({ id: "karwa-chauth", name: "Karwa Chauth", kind: "festival", audience: "consumer", leadDays: 14, priority: 60,
     dates: { 2026: "2026-10-29", 2027: "2027-10-18", 2028: "2028-10-07" },
@@ -152,3 +153,7 @@ export const events: SeasonalEvent[] = [
     headline: "Turn the holiday into a book", sub: "Hardcover and layflat photobooks from the trip photos still sitting on your phone.", cta: "Make a photobook", href: "/c/photobooks",
     tone: "from-cyan-600 to-teal-900", tags: ["travel", "family"] }),
 ];
+
+/** Events with admin-chosen panel images applied (see /admin/images). */
+export const events: SeasonalEvent[] = eventsBase.map((e) => ({ ...e, image: siteImage(`event.${e.id}`, e.image) }));
+export const baseEvents = eventsBase;
