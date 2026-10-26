@@ -1,16 +1,20 @@
 import Link from "next/link";
 import { productsInCategory, type Category } from "@/data/catalog";
 import { navItems, type NavGroup } from "@/data/nav";
-import { giftPagesByGroup } from "@/data/gifts";
+import { giftPagesByGroup, giftPages } from "@/data/gifts";
+import { liveFor, countdownLine } from "@/lib/events";
 import { CartButton } from "@/components/cart/CartButton";
 import { MobileNav } from "./MobileNav";
 import { SearchBox } from "./SearchBox";
 import { describeCoupon, type CouponPublic } from "@/lib/coupons";
 
-const month = new Date().getMonth() + 1;
-const seasonal = [...giftPagesByGroup("festival"), ...giftPagesByGroup("occasion")]
-  .filter((g) => g.season && month >= g.season.startMonth && month <= g.season.endMonth)
-  .slice(0, 1)[0];
+/** "Shop the season" card in the gifts menu follows the events calendar (src/data/events.ts). */
+function seasonalCard() {
+  const live = liveFor("consumer")[0];
+  if (!live) return null;
+  const page = giftPages.find((g) => `/gifts/${g.slug}` === live.event.href);
+  return { href: live.event.href, title: live.event.cta, image: live.event.image ?? page?.image ?? "/images/diwali.jpg", tagline: countdownLine(live) ?? "Shop the season →" };
+}
 
 function PromoCard({ href, image, title, tagline }: { href: string; image: string; title: string; tagline: string }) {
   return (
@@ -120,13 +124,14 @@ export function Header({ promo }: { promo?: CouponPublic | null }) {
                   <div className="text-xs font-semibold uppercase tracking-wide text-ink-3 mb-2 mt-5">Collections</div>
                   {collections.map((g) => <Link key={g.slug} href={`/gifts/${g.slug}`} className="block py-1 hover:text-brand">{g.title}</Link>)}
                 </div>
-                <Link href={seasonal ? `/gifts/${seasonal.slug}` : "/gifts"} className="card block">
-                  <div className="aspect-[4/3] bg-surface-2 bg-cover bg-center" style={{ backgroundImage: `url(${seasonal?.image ?? "/images/diwali.jpg"})` }} />
+                {(() => { const sc = seasonalCard(); return (
+                <Link href={sc?.href ?? "/gifts"} className="card block">
+                  <div className="aspect-[4/3] bg-surface-2 bg-cover bg-center" style={{ backgroundImage: `url(${sc?.image ?? "/images/diwali.jpg"})` }} />
                   <div className="p-3">
-                    <div className="font-semibold text-ink">{seasonal?.title ?? "Gift finder"}</div>
-                    <div className="text-ink-3 text-xs">Shop the season →</div>
+                    <div className="font-semibold text-ink">{sc?.title ?? "Gift finder"}</div>
+                    <div className="text-ink-3 text-xs">{sc?.tagline ?? "Shop the season →"}</div>
                   </div>
-                </Link>
+                </Link>); })()}
               </div>
             </div>
           </li>

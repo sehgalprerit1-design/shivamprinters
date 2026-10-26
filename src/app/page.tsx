@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { categories, products, productsByTag } from "@/data/catalog";
 import { giftPagesByGroup } from "@/data/gifts";
+import { Hero } from "@/components/home/Hero";
+import { liveEvents } from "@/lib/events";
 import { ProductGrid } from "@/components/product/ProductGrid";
 import { Section } from "@/components/ui/Section";
 import { Upload, Palette, Truck, ShieldCheck } from "lucide-react";
@@ -21,9 +23,12 @@ export default async function Home() {
   const real = await latestApprovedReviews(3).catch(() => []);
   const quotes: [string, string][] = real.length >= 3 ? real.map((r) => [`${r.author}${r.city ? `, ${r.city}` : ""}`, r.body] as [string, string]) : SAMPLE_QUOTES;
   const featured = products.filter((p) => p.featured);
-  const seasonal = [...giftPagesByGroup("festival"), ...giftPagesByGroup("occasion")].filter(
-    (g) => g.season && month >= g.season.startMonth && month <= g.season.endMonth,
-  );
+  const liveSlugs = liveEvents().map((l) => l.event.href.replace("/gifts/", "")).filter((s) => !s.startsWith("/"));
+  const allGift = [...giftPagesByGroup("festival"), ...giftPagesByGroup("occasion")];
+  const seasonal = [
+    ...liveSlugs.map((slug) => allGift.find((g) => g.slug === slug)).filter((g): g is NonNullable<typeof g> => !!g),
+    ...allGift.filter((g) => g.season && month >= g.season.startMonth && month <= g.season.endMonth),
+  ].filter((g, i, a) => a.indexOf(g) === i);
   const occasionTiles = [...seasonal, ...giftPagesByGroup("occasion").filter((g) => ["birthday-gifts", "anniversary-gifts", "wedding-gifts", "corporate-gifts"].includes(g.slug))].slice(0, 4);
   const under499 = productsByTag(["under-499"], 8);
   const steps = [
@@ -35,22 +40,7 @@ export default async function Home() {
 
   return (
     <>
-      <section className="container-x pt-6 md:pt-10">
-        <div className="relative rounded-3xl overflow-hidden bg-ink text-white min-h-[460px] md:min-h-[560px] flex items-end">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/images/hero.jpg" alt="" className="absolute inset-0 w-full h-full object-cover opacity-90" fetchPriority="high" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-          <div className="relative p-6 md:p-12 max-w-2xl fade-up">
-            <span className="chip bg-white/15 backdrop-blur text-white mb-4">Made in our own print centre · Pan-India delivery</span>
-            <h1 className="text-4xl md:text-6xl font-bold leading-[1.05]">Your photos, <em className="not-italic text-brand">printed properly.</em></h1>
-            <p className="text-white/85 text-lg mt-4 max-w-lg">Photobooks, frames, calendars and gifts made from the pictures on your phone. Upload, personalise in minutes, delivered anywhere in India.</p>
-            <div className="flex flex-wrap gap-3 mt-6">
-              <Link href="/products" className="btn btn-primary">Start creating</Link>
-              <Link href="/gifts" className="btn bg-white text-ink hover:bg-surface-2">Find a gift</Link>
-            </div>
-          </div>
-        </div>
-      </section>
+      <Hero />
 
       <Section title="What would you like to make?">
         <div className="grid grid-cols-2 md:grid-cols-5 gap-3 md:gap-5">

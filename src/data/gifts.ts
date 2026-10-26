@@ -67,6 +67,9 @@ export const giftPages: GiftPage[] = [
   G("festival", "durga-pooja-gifts", "Durga Pooja Gifts", "Frames and prints for the pandal season.", ["festive", "family"]),
   G("festival", "holi-gifts", "Holi Gifts", "Colourful mugs, cushions and prints.", ["friends", "festive"], { season: { startMonth: 2, endMonth: 3 } }),
   G("festival", "onam-gifts", "Onam Gifts", "Festive frames, prints and family calendars.", ["festive", "family"]),
+  G("festival", "eid-gifts", "Eid Gifts", "Eid Mubarak with something that lasts: framed family photos, personalised mugs, cushions and a photobook of the people at the table.", ["festive", "family", "premium"]),
+  G("festival", "gurpurab-gifts", "Gurpurab Gifts", "Gifts for Guru Nanak Jayanti: framed family photos, 2027 calendars and photobooks of the year's gatherings, for family and sangat.", ["festive", "family", "parents", "grandparents"]),
+  G("festival", "lohri-sankranti-pongal-gifts", "Lohri, Makar Sankranti & Pongal Gifts", "Harvest festival gifts for the family: framed photos, wall calendars and personalised mugs for the bonfire, the kites and the first Pongal.", ["festive", "family", "newborn", "couples"]),
   G("festival", "navroz-gifts", "Navroz Gifts", "Frames and photobooks for the new year.", ["festive", "family"]),
   G("festival", "festive-gifts", "Festive Gifts", "Everything we make for the festive season.", ["festive", "diwali", "premium"]),
 
