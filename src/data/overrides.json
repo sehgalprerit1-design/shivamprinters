@@ -112,7 +112,8 @@
       "images": [
         "/images/p/daily-planner-2.jpg",
         "/images/cat-diaries.jpg",
-        "/api/img?key=uploads%2F2026-10-26%2F30acd9ba-e8ba-4c4f-a04f-6d7bc6abb905-Dairy_Brown_Good.png"
+        "/api/img?key=uploads%2F2026-10-26%2F30acd9ba-e8ba-4c4f-a04f-6d7bc6abb905-Dairy_Brown_Good.png",
+        "/api/img?key=uploads%2F2026-10-26%2F09ed8d9a-70a7-4509-a1a7-9c6fd4f2c8bc-Dairy_Custom_Print.png"
       ]
     },
     "executive-leather-diary": {
@@ -120,11 +121,15 @@
       "images": [
         "/images/p/executive-leather-diary-2.jpg",
         "/images/cat-diaries.jpg",
-        "/api/img?key=uploads%2F2026-10-26%2Facd7128f-a99c-4b0c-aa38-b23470f704ad-Dairy_Brown_Good_2.png"
+        "/api/img?key=uploads%2F2026-10-26%2Facd7128f-a99c-4b0c-aa38-b23470f704ad-Dairy_Brown_Good_2.png",
+        "/api/img?key=uploads%2F2026-10-26%2F7a40da1a-d900-4565-b480-cd095d954326-Dairy_Custom_Print.png"
       ]
     },
     "five-year-diary": {
-      "image": "/api/img?key=uploads%2F2026-10-26%2F8e65e718-af79-47f1-b7af-2759290c3029-Dairy_5_year.png"
+      "image": "/api/img?key=uploads%2F2026-10-26%2F8e65e718-af79-47f1-b7af-2759290c3029-Dairy_5_year.png",
+      "images": [
+        "/api/img?key=uploads%2F2026-10-26%2Fcaeaa0d7-5af8-4cf5-b560-767b0a011980-Dairy_Custom_Print.png"
+      ]
     },
     "combo-gift-set": {
       "images": [
