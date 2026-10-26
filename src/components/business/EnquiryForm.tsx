@@ -2,8 +2,9 @@
 import { useState } from "react";
 import { CheckCircle2, Paperclip, AlertTriangle } from "lucide-react";
 import { CallUs } from "@/components/ui/CallUs";
+import { track } from "@/lib/track";
 
-const KINDS = ["Business cards", "Stickers & labels", "Brochures & flyers", "Postcards & invites", "Banners & standees", "Letterheads & envelopes", "Packaging & boxes", "Diaries & notebooks", "Something else"];
+const KINDS = ["Business cards", "Stickers & labels", "Brochures & flyers", "Postcards & invites", "Banners & standees", "Letterheads & envelopes", "Packaging & boxes", "Diaries & notebooks", "Corporate gifts", "Something else"];
 
 export function EnquiryForm({ defaultKind, compact = false }: { defaultKind?: string; compact?: boolean }) {
   const [f, setF] = useState({ name: "", phone: "", email: "", company: "", kind: defaultKind ?? KINDS[0], quantity: "", deadline: "", message: "", website: "" });
@@ -23,6 +24,7 @@ export function EnquiryForm({ defaultKind, compact = false }: { defaultKind?: st
       }
       const r = await fetch("/api/enquiry", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ ...f, artworkKey }) });
       const j = await r.json(); if (!r.ok) throw new Error(j.error ?? "Something went wrong");
+      track({ name: "lead", kind: f.kind, source: window.location.pathname });
       setState("done");
     } catch (e) { setErr((e as Error).message); setState("error"); }
   }

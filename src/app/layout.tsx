@@ -8,6 +8,7 @@ import { Footer } from "@/components/layout/Footer";
 import { CartDrawer } from "@/components/cart/CartDrawer";
 import { WhatsAppFloat } from "@/components/ui/WhatsAppFloat";
 import { bannerCoupon } from "@/lib/coupons";
+import { Analytics } from "@/components/analytics/Analytics";
 
 // Pages are static but re-rendered every 10 minutes so the advertised coupon and seasonal tiles stay current.
 export const revalidate = 600;
@@ -34,6 +35,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <Footer />
         <CartDrawer />
         <WhatsAppFloat />
+        <Analytics />
       </body>
     </html>
   );

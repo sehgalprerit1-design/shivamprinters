@@ -7,7 +7,7 @@ import { presignGet, storageEnabled } from "./storage";
 import { notifyOwner } from "./notify";
 import { recordCustomer } from "./customers";
 
-export const ENQUIRY_KINDS = ["Business cards", "Stickers & labels", "Brochures & flyers", "Postcards & invites", "Banners & standees", "Letterheads & envelopes", "Packaging & boxes", "Diaries & notebooks", "Something else"] as const;
+export const ENQUIRY_KINDS = ["Business cards", "Stickers & labels", "Brochures & flyers", "Postcards & invites", "Banners & standees", "Letterheads & envelopes", "Packaging & boxes", "Diaries & notebooks", "Corporate gifts", "Something else"] as const;
 
 export const EnquiryInput = z.object({
   name: z.string().trim().min(2).max(80),

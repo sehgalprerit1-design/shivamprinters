@@ -3,6 +3,7 @@ import Link from "next/link";
 import { getOrder } from "@/lib/orders";
 import { inr } from "@/lib/format";
 import { CallUs } from "@/components/ui/CallUs";
+import { TrackPurchase } from "@/components/analytics/Analytics";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Order", robots: { index: false } };
@@ -16,6 +17,7 @@ export default async function OrderPage({ params, searchParams }: { params: Prom
   const status = String(o.status).replace(/_/g, " ").toLowerCase();
   return (
     <div className="container-x pt-10 max-w-3xl">
+      {placed && <TrackPurchase orderId={String(o.number)} value={Number(o.total)} />}
       {placed && <div className="rounded-2xl bg-accent-soft text-accent p-5 mb-6"><div className="font-bold text-lg">Order placed. Thank you!</div><div className="text-sm">We&apos;ve emailed {String(o.email)}. Production starts within 24 hours.</div></div>}
       {String(o.status) === "PENDING_PAYMENT" && <div className="rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 p-5 mb-6"><div className="font-bold">Payment not received yet</div><div className="text-sm">This order will start production once payment is confirmed. If the payment window closed, call or WhatsApp us on 9910888217 to pay by UPI, or place the order again with cash on delivery.</div></div>}
       <h1 className="text-3xl font-bold">Order #{String(o.number)}</h1>

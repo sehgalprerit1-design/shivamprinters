@@ -38,7 +38,7 @@ export function Footer() {
         </div>
         <div>
           <div className="font-semibold mb-3">Help</div>
-          {[["/about", "About Shivam Printers"], ["/about#promise", "Our promise"], ["/help", "Help desk"], ["/returns", "Returns & refunds"], ["/bulk-orders", "Bulk & corporate orders"], ["/refer", "Refer a friend"], ["/blog", "Ideas & inspiration"], ["/careers", "Careers"]].map(([h, t]) => (
+          {[["/about", "About Shivam Printers"], ["/about#promise", "Our promise"], ["/help", "Help desk"], ["/returns", "Returns & refunds"], ["/bulk-orders", "Bulk & corporate orders"], ["/corporate-gifting", "Corporate Diwali gifts"], ["/refer", "Refer a friend"], ["/blog", "Ideas & inspiration"], ["/careers", "Careers"]].map(([h, t]) => (
             <Link key={h} href={h} className="block py-1 text-ink-2 hover:text-brand">{t}</Link>
           ))}
         </div>
