@@ -59,11 +59,11 @@
     "photo-tile-set-4": {
       "images": [
         "/api/img?key=uploads%2F2026-10-26%2F3171e43b-213d-408b-8731-6715a136f8d6-baby_photo_5x7_-_baby.png",
-        "/api/img?key=uploads%2F2026-10-26%2Fe4d9813a-0d33-42a1-9c6e-2f936cfd86ec-baby_photo_5x7.png",
         "/api/img?key=uploads%2F2026-10-26%2F2541d6ad-1cb5-4ce9-abd2-47a750c39a10-Photo_5x7_.png",
-        "/api/img?key=uploads%2F2026-10-26%2F58f2ec17-046e-4839-800e-eaee799d4e0f-Photo_2_8_x_8_-_3.png",
         "/api/img?key=uploads%2F2026-10-26%2Fa23ddeae-cd41-452e-8d78-a135a0593a10-Photo_5x7_.png",
-        "/api/img?key=uploads%2F2026-10-26%2Ff3444730-1082-409b-a1d0-177247f31983-Photo_8_x_10.png"
+        "/api/img?key=uploads%2F2026-10-26%2Ff3444730-1082-409b-a1d0-177247f31983-Photo_8_x_10.png",
+        "/api/img?key=uploads%2F2026-10-26%2F59ccca9d-8834-4c14-a750-61c8dabff278-Photo_Family_.png",
+        "/api/img?key=uploads%2F2026-10-26%2Fdfa9e357-5db9-46ad-b520-67ded3487702-Photo_4.png"
       ],
       "variants": [
         {
