@@ -26,6 +26,53 @@
         "/api/img?key=uploads%2F2026-10-22%2F5cad0b20-515e-4e50-bfd8-cf927f0e006f-gloss_matt_pearl.png"
       ]
     },
+    "photo-tile": {
+      "images": [
+        "/api/img?key=uploads%2F2026-10-26%2Fd7a9089d-4b57-4ae6-a403-c944b18b884a-baby_photo_5x7_-_baby.png",
+        "/api/img?key=uploads%2F2026-10-26%2F90bc6c36-4d04-4f90-b777-a2796ffe6a6b-Photo_2_8_x_8_-_3.png",
+        "/api/img?key=uploads%2F2026-10-26%2Fd22b7748-20c7-4b20-bb7e-b450ff1187d0-Photo_8_x_10.png",
+        "/api/img?key=uploads%2F2026-10-26%2F32e6dfbe-a50b-4064-9c9f-b4a21bc157f9-Photo_Dining_table_set_of_8.png",
+        "/api/img?key=uploads%2F2026-10-26%2Fe571da53-5c8e-4ae3-ac9a-eaf5beeab26f-office_certificate.png"
+      ]
+    },
+    "photo-tile-set-4": {
+      "images": [
+        "/api/img?key=uploads%2F2026-10-26%2F3171e43b-213d-408b-8731-6715a136f8d6-baby_photo_5x7_-_baby.png",
+        "/api/img?key=uploads%2F2026-10-26%2Fe4d9813a-0d33-42a1-9c6e-2f936cfd86ec-baby_photo_5x7.png",
+        "/api/img?key=uploads%2F2026-10-26%2F2541d6ad-1cb5-4ce9-abd2-47a750c39a10-Photo_5x7_.png",
+        "/api/img?key=uploads%2F2026-10-26%2F58f2ec17-046e-4839-800e-eaee799d4e0f-Photo_2_8_x_8_-_3.png",
+        "/api/img?key=uploads%2F2026-10-26%2Fa23ddeae-cd41-452e-8d78-a135a0593a10-Photo_5x7_.png",
+        "/api/img?key=uploads%2F2026-10-26%2Ff3444730-1082-409b-a1d0-177247f31983-Photo_8_x_10.png"
+      ],
+      "variants": [
+        {
+          "sku": "PT-57-4",
+          "name": "5x7\" tiles, set of 4",
+          "price": 799,
+          "compareAt": 949
+        },
+        {
+          "sku": "PT-88-4",
+          "name": "8x8\" tiles, set of 4",
+          "price": 1149,
+          "compareAt": 1249
+        },
+        {
+          "sku": "PT-108-4",
+          "name": "10x8\" tiles, set of 4",
+          "price": 1349,
+          "compareAt": 1549
+        }
+      ]
+    },
+    "photo-tile-set-8": {
+      "images": [
+        "/api/img?key=uploads%2F2026-10-26%2Fbec88290-be5b-4691-aac1-2b2dc5eb115e-Photo_2_8_x_8_-_3.png",
+        "/api/img?key=uploads%2F2026-10-26%2F73247a3c-e17c-4ea4-82d1-bf4d5a956ed0-Photo_8_x_10.png",
+        "/api/img?key=uploads%2F2026-10-26%2Fe9231891-c4b4-486b-8ae5-88ca0a416a2a-Photo_Dining_table_set_of_8.png",
+        "/api/img?key=uploads%2F2026-10-26%2F72a5021c-cfc3-4d77-ae14-91c2d1aa4206-photo_set_of_8.png"
+      ]
+    },
     "designer-frame": {
       "images": [
         "/images/p/designer-frame-2.jpg",
