@@ -34,6 +34,7 @@
         "/api/img?key=uploads%2F2026-10-26%2F32e6dfbe-a50b-4064-9c9f-b4a21bc157f9-Photo_Dining_table_set_of_8.png",
         "/api/img?key=uploads%2F2026-10-26%2Fe571da53-5c8e-4ae3-ac9a-eaf5beeab26f-office_certificate.png"
       ],
+      "hidden": true,
       "variants": [
         {
           "sku": "PT-57-1",
