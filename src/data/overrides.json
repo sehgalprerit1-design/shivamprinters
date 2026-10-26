@@ -107,6 +107,22 @@
         "/api/img?key=uploads%2F2026-10-22%2F40b831c9-e9e2-4fa7-b750-025aa76d9477-image.png"
       ]
     },
+    "daily-planner": {
+      "image": "/api/img?key=uploads%2F2026-10-26%2Ff52e0c0f-cc0c-4249-9f27-3732d5e8ad06-Dairy_Brown_Good.png",
+      "images": [
+        "/images/p/daily-planner-2.jpg",
+        "/images/cat-diaries.jpg",
+        "/api/img?key=uploads%2F2026-10-26%2F30acd9ba-e8ba-4c4f-a04f-6d7bc6abb905-Dairy_Brown_Good.png"
+      ]
+    },
+    "executive-leather-diary": {
+      "image": "/api/img?key=uploads%2F2026-10-26%2F3badb95e-fabf-4bb1-8370-be27f0585719-Dairy_Brown_Good_2.png",
+      "images": [
+        "/images/p/executive-leather-diary-2.jpg",
+        "/images/cat-diaries.jpg",
+        "/api/img?key=uploads%2F2026-10-26%2Facd7128f-a99c-4b0c-aa38-b23470f704ad-Dairy_Brown_Good_2.png"
+      ]
+    },
     "business-cards": {
       "images": [
         "/images/p/business-cards-2.jpg",
