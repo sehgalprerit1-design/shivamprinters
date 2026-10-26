@@ -33,6 +33,26 @@
         "/api/img?key=uploads%2F2026-10-26%2Fd22b7748-20c7-4b20-bb7e-b450ff1187d0-Photo_8_x_10.png",
         "/api/img?key=uploads%2F2026-10-26%2F32e6dfbe-a50b-4064-9c9f-b4a21bc157f9-Photo_Dining_table_set_of_8.png",
         "/api/img?key=uploads%2F2026-10-26%2Fe571da53-5c8e-4ae3-ac9a-eaf5beeab26f-office_certificate.png"
+      ],
+      "variants": [
+        {
+          "sku": "PT-57-1",
+          "name": "5x7\" tile",
+          "price": 235,
+          "compareAt": 295
+        },
+        {
+          "sku": "PT-88-1",
+          "name": "8x8\" tile",
+          "price": 349,
+          "compareAt": 425
+        },
+        {
+          "sku": "PT-108-1",
+          "name": "10x8\" tile",
+          "price": 399,
+          "compareAt": 495
+        }
       ]
     },
     "photo-tile-set-4": {
@@ -71,6 +91,26 @@
         "/api/img?key=uploads%2F2026-10-26%2F73247a3c-e17c-4ea4-82d1-bf4d5a956ed0-Photo_8_x_10.png",
         "/api/img?key=uploads%2F2026-10-26%2Fe9231891-c4b4-486b-8ae5-88ca0a416a2a-Photo_Dining_table_set_of_8.png",
         "/api/img?key=uploads%2F2026-10-26%2F72a5021c-cfc3-4d77-ae14-91c2d1aa4206-photo_set_of_8.png"
+      ],
+      "variants": [
+        {
+          "sku": "PT-57-8",
+          "name": "5x7\" tiles, set of 8",
+          "price": 1449,
+          "compareAt": 1650
+        },
+        {
+          "sku": "PT-88-8",
+          "name": "8x8\" tiles, set of 8",
+          "price": 2099,
+          "compareAt": 2400
+        },
+        {
+          "sku": "PT-108-8",
+          "name": "10x8\" tiles, set of 8",
+          "price": 2499,
+          "compareAt": 2800
+        }
       ]
     },
     "designer-frame": {
