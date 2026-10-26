@@ -1,13 +1,13 @@
-// Business details used across legal pages. Fill these in before launch.
+// Business details used across legal pages.
 export const BIZ = {
   legalName: "Shivam Printers",
-  address: "[REGISTERED ADDRESS — fill in]",
-  city: "[City, State, PIN]",
-  gstin: "[GSTIN — fill in]",
+  address: "J-148, Kalkaji",
+  city: "New Delhi, Delhi 110019",
+  gstin: "07AATPS6287N1ZG",
   email: "support@shivamprinters.com",
   phone: "9910888217",
-  grievanceOfficer: "[Name of grievance officer — fill in]",
-  grievanceEmail: "grievance@shivamprinters.com",
+  grievanceOfficer: "Konark Sehgal (Proprietor)",
+  grievanceEmail: "support@shivamprinters.com",
   site: "shivamprinters.com",
-  updated: "21 October 2026",
+  updated: "26 October 2026",
 };
