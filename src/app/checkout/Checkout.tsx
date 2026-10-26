@@ -27,7 +27,7 @@ export function Checkout({ onlinePayments }: { onlinePayments: boolean }) {
   const t = cartTotals(lines, coupon, ship);
   const f = (k: keyof AddressT) => ({ value: a[k] ?? "", onChange: (e: React.ChangeEvent<HTMLInputElement>) => setA({ ...a, [k]: e.target.value }), className: `input ${errs[k] ? "!border-brand" : ""}` });
 
-  if (lines.length === 0) return <div className="container-x py-20 text-center text-ink-2">Your cart is empty.</div>;
+  if (lines.length === 0) return <div className="container-x py-20 text-center text-ink-2">Your cart is empty. <a href="/products" className="text-brand font-semibold">Browse products →</a></div>;
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();

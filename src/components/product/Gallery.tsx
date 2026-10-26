@@ -12,18 +12,19 @@ export function Gallery({ images, alt }: { images: Img[]; alt: string }) {
   const [open, setOpen] = useState(false);
   return (
     <div>
-      <button type="button" onClick={() => setOpen(true)} className="card aspect-square relative overflow-hidden w-full bg-white cursor-zoom-in group" aria-label="View larger image">
+      <button type="button" onClick={() => setOpen(true)} className="card block aspect-square relative overflow-hidden w-full max-w-full bg-white cursor-zoom-in group" aria-label="View larger image">
+        {/* Positioned so the photo's own size can never widen the box (a wide photo inside an auto-sized button did). */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={images[i].src} alt={alt} className="w-full h-full object-contain" fetchPriority="high" />
+        <img src={images[i].src} alt={alt} className="absolute inset-0 w-full h-full object-contain" fetchPriority="high" />
         <span className="chip bg-white/90 absolute bottom-3 left-3">{images[i].label}</span>
         <span className="absolute top-3 right-3 rounded-full bg-white/90 text-ink p-2 shadow-sm opacity-80 group-hover:opacity-100" aria-hidden><Maximize2 size={16} /></span>
       </button>
       {images.length > 1 && (
-        <div className="flex gap-2 mt-3 overflow-x-auto">
+        <div className="flex gap-2 mt-3 overflow-x-auto max-w-full">
           {images.map((im, k) => (
-            <button key={k} type="button" onClick={() => setI(k)} aria-label={`Show ${im.label}`} className={`w-16 h-16 shrink-0 rounded-lg overflow-hidden bg-white border-2 ${k === i ? "border-brand" : "border-line"}`}>
+            <button key={k} type="button" onClick={() => setI(k)} aria-label={`Show ${im.label}`} className={`relative w-16 h-16 shrink-0 rounded-lg overflow-hidden bg-white border-2 ${k === i ? "border-brand" : "border-line"}`}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={im.src} alt="" className="w-full h-full object-contain" />
+              <img src={im.src} alt="" className="absolute inset-0 w-full h-full object-contain" />
             </button>
           ))}
         </div>
