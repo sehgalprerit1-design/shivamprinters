@@ -47,15 +47,16 @@ export type Product = {
 const baseCategories: Category[] = [
   { slug: "photobooks", name: "Photobooks", tagline: "Your story, bound beautifully", description: "Hardcover, softcover and layflat photo books in sizes from 5.5\" to 10x8\". Choose a theme, drop in your photos and we handle the rest.", image: "/images/cat-photobooks.jpg", order: 1 },
   { slug: "framed-prints", name: "Framed Prints", tagline: "Ready to hang, ready to gift", description: "Designer, classic, coloured and premium frames with your photo printed and mounted. Delivered ready to hang.", image: "/images/cat-frames.jpg", order: 2 },
-  { slug: "calendars", name: "Calendars", tagline: "Twelve months of favourites", description: "Desktop, wall, magnet and poster calendars for 2027. Start on any month.", image: "/images/cat-calendars.jpg", order: 3 },
-  { slug: "diaries-planners", name: "Diaries & Planners", tagline: "Plan it, write it, keep it", description: "Dated daily planners, executive and leather diaries with name embossing, five-year memory diaries, boxed gift sets, and custom-printed diaries for your company.", image: "/images/cat-diaries.jpg", order: 4 },
-  { slug: "business-printing", name: "Business Printing", tagline: "Print for your business, delivered", description: "Business cards, custom stickers and labels, brochures and flyers, photo postcards, and flex banners and standees. Upload your design or build one in the editor, pick a quantity, and we print and ship across India.", image: "/images/cat-business.jpg", order: 5 },
-  { slug: "kids", name: "Kids", tagline: "Name it, label it, love it", description: "Personalised bottles, lunch boxes, labels, storybooks and stationery for school and play.", image: "/images/cat-kids.jpg", order: 6 },
-  { slug: "home-decor", name: "Décor", tagline: "Walls that tell your story", description: "Acrylic, canvas, fine-art and large-format prints plus designer wall clocks.", image: "/images/cat-decor.jpg", order: 7 },
-  { slug: "gifts", name: "Gifts", tagline: "Small things, big smiles", description: "Mugs, cushions, magnets, puzzles and bag tags printed with your photos.", image: "/images/cat-gifts.jpg", order: 8 },
-  { slug: "prints", name: "Photo Prints", tagline: "Print the ones you love", description: "Glossy photo prints, card-stock prints, retro and square formats in packs.", image: "/images/cat-prints.jpg", order: 9 },
-  { slug: "bags-stationery", name: "Bags & Stationery", tagline: "Everyday, personalised", description: "Tote bags, pouches, notebooks, planners and pencils with your name or photo.", image: "/images/cat-bags.jpg", order: 10 },
-  { slug: "accessories", name: "Accessories", tagline: "Little details, your way", description: "Keychains, pet tags, desk mats, laptop skins, stickers and photo-display clips.", image: "/images/cat-accessories.jpg", order: 11 },
+  { slug: "photo-tiles", name: "Photo Tiles", tagline: "Stick, restick, rearrange", description: "Your photos on ½\" EVA foam tiles with a matt laminated finish. Light enough to stick on any wall without nails, in 5x7\", 8x8\" and 10x8\". Single tiles or sets of 4 and 8 for a photo wall.", image: "https://d8j0ntlcm91z4.cloudfront.net/user_3AgmoO1kEvlZmppIBOozz4803o0/hf_20261026_070705_ab45f5f2-f139-4074-9847-47a0bde3a366.png", order: 3 },
+  { slug: "calendars", name: "Calendars", tagline: "Twelve months of favourites", description: "Desktop, wall, magnet and poster calendars for 2027. Start on any month.", image: "/images/cat-calendars.jpg", order: 4 },
+  { slug: "diaries-planners", name: "Diaries & Planners", tagline: "Plan it, write it, keep it", description: "Dated daily planners, executive and leather diaries with name embossing, five-year memory diaries, boxed gift sets, and custom-printed diaries for your company.", image: "/images/cat-diaries.jpg", order: 5 },
+  { slug: "business-printing", name: "Business Printing", tagline: "Print for your business, delivered", description: "Business cards, custom stickers and labels, brochures and flyers, photo postcards, and flex banners and standees. Upload your design or build one in the editor, pick a quantity, and we print and ship across India.", image: "/images/cat-business.jpg", order: 6 },
+  { slug: "kids", name: "Kids", tagline: "Name it, label it, love it", description: "Personalised bottles, lunch boxes, labels, storybooks and stationery for school and play.", image: "/images/cat-kids.jpg", order: 7 },
+  { slug: "home-decor", name: "Décor", tagline: "Walls that tell your story", description: "Acrylic, canvas, fine-art and large-format prints plus designer wall clocks.", image: "/images/cat-decor.jpg", order: 8 },
+  { slug: "gifts", name: "Gifts", tagline: "Small things, big smiles", description: "Mugs, cushions, magnets, puzzles and bag tags printed with your photos.", image: "/images/cat-gifts.jpg", order: 9 },
+  { slug: "prints", name: "Photo Prints", tagline: "Print the ones you love", description: "Glossy photo prints, card-stock prints, retro and square formats in packs.", image: "/images/cat-prints.jpg", order: 10 },
+  { slug: "bags-stationery", name: "Bags & Stationery", tagline: "Everyday, personalised", description: "Tote bags, pouches, notebooks, planners and pencils with your name or photo.", image: "/images/cat-bags.jpg", order: 11 },
+  { slug: "accessories", name: "Accessories", tagline: "Little details, your way", description: "Keychains, pet tags, desk mats, laptop skins, stickers and photo-display clips.", image: "/images/cat-accessories.jpg", order: 12 },
 ];
 
 const text = (key: string, label: string, max = 30) => ({ key, label, max });
@@ -81,6 +82,23 @@ const baseProducts: Product[] = [
   ], tags: ["wedding", "premium", "parents"], rating: 4.8, reviews: 640 },
 
   // ---------- Framed prints ----------
+  // --- Photo tiles
+  { slug: "photo-tile", category: "photo-tiles", name: "Photo Tile", description: "Your photo printed on a ½\" EVA foam tile with a matt laminated finish. Light enough to stick to any wall with the adhesive strip on the back, and to move around when you change your mind. No nails, no frames.", image: "https://d8j0ntlcm91z4.cloudfront.net/user_3AgmoO1kEvlZmppIBOozz4803o0/hf_20261026_070638_08387e04-1c6c-4083-bde4-5c1db3f0c044.png", images: ["https://d8j0ntlcm91z4.cloudfront.net/user_3AgmoO1kEvlZmppIBOozz4803o0/hf_20261026_070639_c59e4561-065b-4536-8c63-59b98fe09cca.png"], badges: ["New"], personalisation: "photo", template: { aspect: 1, photoSlots: 1, textFields: [] }, variants: [
+    { sku: "PT-57-1", name: "5x7\" tile", price: 235 },
+    { sku: "PT-88-1", name: "8x8\" tile", price: 349 },
+    { sku: "PT-108-1", name: "10x8\" tile", price: 399 },
+  ], tags: ["housewarming", "family", "couples", "anniversary", "under-499", "friends", "kids", "diwali", "festive", "return-gifts"], rating: 4.8, reviews: 0, featured: true },
+  { slug: "photo-tile-set-4", category: "photo-tiles", name: "Photo Tiles, Set of 4", description: "Four of your photos on ½\" EVA foam tiles, matt laminated, each with an adhesive strip on the back. Enough for a small grid above a desk or a line along the hallway. Mix the photos as you like; every tile in the set is the same size.", image: "https://d8j0ntlcm91z4.cloudfront.net/user_3AgmoO1kEvlZmppIBOozz4803o0/hf_20261026_070638_61224ad9-d538-46f6-bc52-7a0cc7828f8f.png", images: ["https://d8j0ntlcm91z4.cloudfront.net/user_3AgmoO1kEvlZmppIBOozz4803o0/hf_20261026_070639_c59e4561-065b-4536-8c63-59b98fe09cca.png"], badges: ["Popular"], personalisation: "multi-photo", template: { aspect: 1, photoSlots: 4, textFields: [] }, variants: [
+    { sku: "PT-57-4", name: "5x7\" tiles, set of 4", price: 799 },
+    { sku: "PT-88-4", name: "8x8\" tiles, set of 4", price: 1149 },
+    { sku: "PT-108-4", name: "10x8\" tiles, set of 4", price: 1349 },
+  ], tags: ["housewarming", "family", "couples", "anniversary", "wedding", "under-999", "premium", "diwali", "festive"], rating: 4.8, reviews: 0 },
+  { slug: "photo-tile-set-8", category: "photo-tiles", name: "Photo Tiles, Set of 8", description: "Eight of your photos on ½\" EVA foam tiles, matt laminated, with adhesive strips on the back. A full photo wall for the living room or a year of memories up the stairs, and you can restick them whenever you want a new arrangement.", image: "https://d8j0ntlcm91z4.cloudfront.net/user_3AgmoO1kEvlZmppIBOozz4803o0/hf_20261026_070639_c84c30da-d6bf-4f4e-9a3d-5fcd60f0668d.png", images: ["https://d8j0ntlcm91z4.cloudfront.net/user_3AgmoO1kEvlZmppIBOozz4803o0/hf_20261026_070639_c59e4561-065b-4536-8c63-59b98fe09cca.png"], badges: ["Best value"], personalisation: "multi-photo", template: { aspect: 1, photoSlots: 8, textFields: [] }, variants: [
+    { sku: "PT-57-8", name: "5x7\" tiles, set of 8", price: 1449 },
+    { sku: "PT-88-8", name: "8x8\" tiles, set of 8", price: 2099 },
+    { sku: "PT-108-8", name: "10x8\" tiles, set of 8", price: 2499 },
+  ], tags: ["housewarming", "family", "wedding", "anniversary", "premium", "parents", "grandparents", "diwali", "festive"], rating: 4.9, reviews: 0 },
+
   { slug: "designer-frame", legacyPath: "/framed-prints-regular/frame-designer-7.5x9.5-4x6", category: "framed-prints", name: "Designer Frame with Photo", description: "A 4x6 print in a 7.5x9.5\" designer moulding with a white mat. Tabletop stand and wall hook included.", image: "/images/p/designer-frame.jpg", images: ["/images/p/designer-frame-2.jpg", "/images/p/designer-frame-3.jpg"], badges: ["Bestseller"], personalisation: "photo", template: { aspect: 1.5, photoSlots: 1, textFields: [] }, variants: [
     { sku: "FR-DES-46", name: "7.5x9.5\" with 4x6 print", price: 499, compareAt: 699 },
     { sku: "FR-DES-MAT-810", name: "8x10\" mat frame with 4x6 print", price: 649, compareAt: 849 },

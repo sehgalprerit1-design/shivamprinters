@@ -22,9 +22,9 @@ type GroupDef = { slug: string; name?: string; tagline?: string; description?: s
 const GROUP_DEFS: GroupDef[] = [
   {
     slug: "photo", name: "Photo", tagline: "Print the ones you love",
-    description: "Everything printed from your photos: glossy and card-stock prints in packs, hardcover and layflat photobooks, and framed prints delivered ready to hang.",
+    description: "Everything printed from your photos: glossy and card-stock prints in packs, hardcover and layflat photobooks, framed prints delivered ready to hang, and restickable photo tiles.",
     image: "/images/cat-prints.jpg",
-    categories: ["prints", "photobooks", "framed-prints"],
+    categories: ["prints", "photobooks", "framed-prints", "photo-tiles"],
   },
   { slug: "business-printing", categories: ["business-printing", "bags-stationery"], highlight: true },
 ];

@@ -127,6 +127,7 @@ function baseOptionsFor(slug: string, category: string): OptionGroup[] {
   if (slug === "acrylic-print") return [ACRYLIC_THICK, ORIENTATION];
   if (slug === "large-photo-print" || slug === "fine-art-print" || slug === "photo-print-12x18") return [FINISH_PRINT, ORIENTATION];
   if (slug === "collage-poster") return [FINISH_PRINT, ORIENTATION];
+  if (category === "photo-tiles") return [ORIENTATION];
   if (slug === "coloured-frame") return [FRAME_COLOUR_FUN, FINISH_FRAME];
   if (slug === "classic-frame") return [FRAME_COLOUR, FINISH_FRAME];
   if (slug === "designer-frame") return [FRAME_COLOUR, FINISH_FRAME, ORIENTATION];
