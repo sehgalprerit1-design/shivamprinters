@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import { X, Trash2 } from "lucide-react";
+import { CouponBox } from "./CouponBox";
 import { useCart, cartTotals, inr } from "@/lib/cart";
 import { CallUs } from "@/components/ui/CallUs";
 
@@ -40,6 +41,7 @@ export function CartDrawer() {
           <div className="p-5 border-t border-line space-y-2 text-sm">
             <div className="flex justify-between"><span>Subtotal</span><span>{inr(t.subtotal)}</span></div>
             {t.discount > 0 && <div className="flex justify-between text-accent"><span>{coupon?.code}</span><span>−{inr(t.discount)}</span></div>}
+            <CouponBox compact />
             <div className="text-xs text-ink-3">{t.subtotal - t.discount >= 999 ? "Free economy shipping unlocked." : `Add ${inr(999 - (t.subtotal - t.discount))} more for free shipping.`}</div>
             <Link href="/checkout" onClick={() => setOpen(false)} className="btn btn-primary w-full mt-2">Checkout · {inr(t.subtotal - t.discount)}</Link>
             <Link href="/cart" onClick={() => setOpen(false)} className="block text-center text-ink-2 pt-1">View cart</Link>

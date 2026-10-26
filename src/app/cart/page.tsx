@@ -1,13 +1,13 @@
 "use client";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { CouponBox } from "@/components/cart/CouponBox";
 import { useCart, cartTotals, inr } from "@/lib/cart";
 import { Trash2 } from "lucide-react";
 import { CallUs } from "@/components/ui/CallUs";
 
 export default function CartPage() {
-  const { lines, remove, setQty, coupon, applyCoupon, removeCoupon } = useCart();
-  const [code, setCode] = useState(""); const [msg, setMsg] = useState("");
+  const { lines, remove, setQty, coupon } = useCart();
   const [online, setOnline] = useState<boolean | null>(null);
   useEffect(() => { fetch("/api/payments").then((r) => r.json()).then((j) => setOnline(!!j.online)).catch(() => setOnline(false)); }, []);
   const t = cartTotals(lines, coupon);
@@ -39,16 +39,10 @@ export default function CartPage() {
           <aside className="card p-5 h-fit space-y-3 text-sm lg:sticky lg:top-32">
             <div className="font-bold text-lg">Summary</div>
             <div className="flex justify-between"><span>Subtotal ({t.count})</span><span>{inr(t.subtotal)}</span></div>
-            {t.discount > 0 && <div className="flex justify-between text-accent"><span>{coupon?.code} <button onClick={removeCoupon} className="underline text-ink-3 ml-1">remove</button></span><span>−{inr(t.discount)}</span></div>}
+            {t.discount > 0 && <div className="flex justify-between text-accent"><span>{coupon?.code}</span><span>−{inr(t.discount)}</span></div>}
             <div className="flex justify-between"><span>Economy shipping</span><span>{t.shipping === 0 ? "Free" : inr(t.shipping)}</span></div>
             <div className="flex justify-between font-bold text-base border-t border-line pt-3"><span>Total</span><span>{inr(t.total)}</span></div>
-            {!coupon && (
-              <form onSubmit={async (e) => { e.preventDefault(); setMsg("Checking…"); setMsg((await applyCoupon(code)).message); }} className="flex gap-2 pt-2">
-                <input className="input !py-2" placeholder="Coupon code" value={code} onChange={(e) => setCode(e.target.value)} />
-                <button className="btn btn-ghost !py-2">Apply</button>
-              </form>
-            )}
-            {msg && <div className="text-xs text-ink-2">{msg}</div>}
+            <div className="pt-2"><CouponBox /></div>
             <Link href="/checkout" className="btn btn-primary w-full !py-3.5 text-base">Checkout</Link>
             <div className="text-xs text-ink-3 text-center">{online === false ? "Cash on delivery (UPI & cards coming soon)" : online ? "UPI · Cards · Net banking · Cash on delivery" : "Cash on delivery available"}</div>
             <div className="text-center pt-1"><CallUs /></div>

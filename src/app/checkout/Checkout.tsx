@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { CouponBox } from "@/components/cart/CouponBox";
 import { useCart, cartTotals, inr } from "@/lib/cart";
 import { z } from "zod";
 import { CallUs } from "@/components/ui/CallUs";
@@ -106,6 +107,7 @@ export function Checkout({ onlinePayments }: { onlinePayments: boolean }) {
           {t.discount > 0 && <div className="flex justify-between text-accent"><span>{coupon?.code}</span><span>−{inr(t.discount)}</span></div>}
           <div className="flex justify-between"><span>Shipping</span><span>{t.shipping === 0 ? "Free" : inr(t.shipping)}</span></div>
           <div className="flex justify-between font-bold text-base border-t border-line pt-3"><span>Total</span><span>{inr(t.total)}</span></div>
+          <CouponBox />
           {errs.form && <div className="text-brand text-xs">{errs.form}</div>}
           <button disabled={busy} className="btn btn-primary w-full !py-3.5 text-base">{busy ? "Placing order…" : pay === "COD" ? `Place order · ${inr(t.total)}` : `Pay ${inr(t.total)}`}</button>
           <p className="text-xs text-ink-3">By placing the order you agree to our terms. Personalised items are made to order and can&apos;t be cancelled once in production.</p>
