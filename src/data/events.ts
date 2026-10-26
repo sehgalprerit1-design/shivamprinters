@@ -51,7 +51,7 @@ export const events: SeasonalEvent[] = [
     tone: "from-amber-600 to-orange-800", tags: ["diwali", "festive", "family", "premium"] }),
   E({ id: "diwali-corporate", name: "Diwali corporate gifting", dayName: "Diwali", kind: "festival", audience: "corporate", leadDays: 60, priority: 90,
     dates: { 2026: "2026-11-08", 2027: "2027-10-29", 2028: "2028-10-17" },
-    headline: "Diwali gifts for your team and clients", sub: "Logo-embossed diaries, gift sets and {year} calendars. Free proof, GST invoice, bulk delivery.", cta: "Corporate gifting", href: "/corporate-gifting",
+    headline: "Diwali gifts for your team and clients", sub: "Logo-embossed diaries, gift sets and {year} calendars. Free proof, GST invoice, bulk delivery.", cta: "Corporate gifting", href: "/corporate-gifting", image: "/images/corporate-diwali.jpg",
     tone: "from-slate-800 to-slate-950", tags: ["corporate", "business"] }),
   E({ id: "bhai-dooj", name: "Bhai Dooj", kind: "festival", audience: "consumer", leadDays: 14, priority: 50,
     dates: { 2026: "2026-11-11", 2027: "2027-10-31", 2028: "2028-10-19" },

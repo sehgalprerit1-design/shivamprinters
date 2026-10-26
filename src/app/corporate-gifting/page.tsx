@@ -49,8 +49,11 @@ export default function CorporateGifting() {
   return (
     <div>
       <section className="container-x pt-8 md:pt-12">
-        <div className="rounded-3xl bg-ink text-white p-6 md:p-10 grid lg:grid-cols-[1.15fr_1fr] gap-8 items-start">
-          <div>
+        <div className="relative rounded-3xl overflow-hidden bg-ink text-white p-6 md:p-10 grid lg:grid-cols-[1.15fr_1fr] gap-8 items-start">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/images/corporate-diwali.jpg" alt="" className="absolute inset-0 w-full h-full object-cover" fetchPriority="high" />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/55 to-black/20" />
+          <div className="relative">
             <div className="chip bg-white/10 text-white mb-3">Diwali corporate gifting</div>
             <h1 className="text-3xl md:text-5xl font-bold leading-tight">Diwali gifts your team will actually use</h1>
             <p className="text-white/80 mt-4 text-lg leading-relaxed">
@@ -62,7 +65,7 @@ export default function CorporateGifting() {
                 <li key={t} className="flex items-center gap-2"><BadgeCheck size={16} className="text-[#7dd3c0]" />{t}</li>
               ))}
             </ul>
-            <div className="mt-6 rounded-2xl bg-white/10 p-4 flex gap-3 text-sm">
+            <div className="mt-6 rounded-2xl bg-white/10 backdrop-blur-sm p-4 flex gap-3 text-sm">
               <Clock size={18} className="shrink-0 mt-0.5" />
               <p><b>Diwali is on 8 November.</b> Bulk orders need time for proofing and printing, so send your enquiry as early as you can. We confirm the delivery date before you pay.</p>
             </div>
@@ -71,7 +74,7 @@ export default function CorporateGifting() {
               <a href="tel:+919910888217" className="btn bg-white text-ink hover:bg-white/90">Call 9910888217</a>
             </div>
           </div>
-          <div id="quote" className="text-ink scroll-mt-28"><EnquiryForm defaultKind="Corporate gifts" compact /></div>
+          <div id="quote" className="relative text-ink scroll-mt-28"><EnquiryForm defaultKind="Corporate gifts" compact /></div>
         </div>
       </section>
 
