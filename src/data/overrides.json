@@ -1,5 +1,10 @@
 {
-  "categories": {},
+  "categories": {
+    "business-printing": {
+      "name": "Standard Visiting Cards",
+      "description": "Standard Visiting Cards, Business cards, custom stickers and labels, brochures and flyers, photo postcards, and flex banners and standees. Upload your design or build one in the editor, pick a quantity, and we print and ship across India."
+    }
+  },
   "products": {
     "hardcover-photobook": {
       "images": [
@@ -183,6 +188,7 @@
       ]
     },
     "business-cards": {
+      "name": "Standard Visiting Cards",
       "images": [
         "/images/p/business-cards-2.jpg",
         "/images/cat-business.jpg",
