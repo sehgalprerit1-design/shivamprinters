@@ -21,7 +21,8 @@ import type { Product, Variant } from "@/data/catalog";
 import { optionsFor, optionDelta, defaultOptions, optionLabel } from "@/data/options";
 import { useCart, type CartLine } from "@/lib/cart";
 import { inr } from "@/lib/format";
-import { CallUs } from "@/components/ui/CallUs";
+import { CallUs, WhatsAppIcon, whatsappUrl } from "@/components/ui/CallUs";
+import { ENQUIRY_ONLY } from "@/lib/site";
 import { printSpec, printedFields, allowsOwnDesign, artworkRequirements } from "@/lib/print-spec";
 import {
   MM, PT, PROPS, ICONS, FONTS, GOOGLE_FONTS_URL, fontLabel, geo, T, R, C, Ring, Ln, P, Icon, QR, Frame, fillFrame, photoToFrame, fitPhoto, photoDpi,
@@ -548,6 +549,21 @@ export function Studio({ product, variant: initialVariant, initialOptions = {}, 
     for (let i = 0; i < n; i++) out.push({ label: spec.faces[i].label, url: await renderJSON(facesRef.current[i], spec, { width: 520, trim: true, format: "jpeg", quality: 0.85 }) });
     setBusy(null); setPreview(out);
   };
+  // Temporary WhatsApp/phone-only selling: send the chosen product, options and text to the shop on WhatsApp.
+  const orderOnWhatsApp = () => {
+    const label = optionLabel(groups, opts);
+    const text = Object.entries(values).filter(([, v]) => v?.trim()).map(([k, v]) => `${k}: ${v!.trim()}`);
+    const msg = [
+      "Hi Shivam Printers, I'd like to order this design:",
+      `• ${product.name}${product.variants.length > 1 ? ` — ${variant.name}` : ""}${label ? ` (${label})` : ""}`,
+      `• Qty: ${qty}`,
+      `• Price shown: ${inr(unitPrice)} each`,
+      ...(text.length ? ["• Text on the design:", ...text.map((t) => `   ${t}`)] : []),
+      "I designed it on your website — please tell me where to send my photos/files.",
+      typeof window !== "undefined" ? window.location.href : "",
+    ].join("\n");
+    window.open(whatsappUrl(msg), "_blank", "noopener,noreferrer");
+  };
   const addToCart = async () => {
     const c = cvRef.current; if (!c) return; c.discardActiveObject(); facesRef.current[faceRef.current] = snapshot();
     setError(null);
@@ -886,8 +902,17 @@ export function Studio({ product, variant: initialVariant, initialOptions = {}, 
               {low.slice(0, 4).map((l) => <div key={l} className="flex gap-1.5"><AlertTriangle size={14} className="shrink-0" />Photo may print soft · {l}</div>)}
             </div>)}
           {error && <div className="flex items-start gap-2 text-sm bg-brand-soft border border-brand/30 text-brand-ink rounded-xl p-3"><AlertTriangle size={16} className="mt-0.5 shrink-0" /><span>{error} <button type="button" className="underline" onClick={() => void addToCart()}>Try again</button></span></div>}
-          <button type="button" disabled={!ready || !approved || !!busy} onClick={() => void addToCart()} className="btn btn-primary w-full text-base !py-3.5">{busy && busy.startsWith("Upload") ? busy : <>{editLineId ? "Update cart" : `Add ${qty > 1 ? `${qty} ` : ""}to cart`} · {inr(unitPrice * qty)}</>}</button>
-          <p className="text-xs text-ink-3 flex gap-1.5"><Check size={14} className="text-accent shrink-0" />Your design is saved with the order, so reorders print the same file.</p>
+          {ENQUIRY_ONLY ? (
+            <>
+              <button type="button" disabled={!ready || !approved || !!busy} onClick={orderOnWhatsApp} className="btn btn-primary w-full text-base !py-3.5 !bg-[#25D366] hover:!bg-[#1ebe5b] !border-[#25D366]"><WhatsAppIcon size={18} className="mr-2" />Order on WhatsApp · {inr(unitPrice * qty)}</button>
+              <p className="text-xs text-ink-3 flex gap-1.5"><Check size={14} className="text-accent shrink-0" />We&apos;re taking orders on WhatsApp and phone right now. Send us this design and your photos in the chat and we&apos;ll confirm price and delivery.</p>
+            </>
+          ) : (
+            <>
+              <button type="button" disabled={!ready || !approved || !!busy} onClick={() => void addToCart()} className="btn btn-primary w-full text-base !py-3.5">{busy && busy.startsWith("Upload") ? busy : <>{editLineId ? "Update cart" : `Add ${qty > 1 ? `${qty} ` : ""}to cart`} · {inr(unitPrice * qty)}</>}</button>
+              <p className="text-xs text-ink-3 flex gap-1.5"><Check size={14} className="text-accent shrink-0" />Your design is saved with the order, so reorders print the same file.</p>
+            </>
+          )}
           <CallUs compact />
         </div>
       </aside>

@@ -4,6 +4,7 @@ import { navItems, type NavGroup } from "@/data/nav";
 import { giftPagesByGroup, giftPages } from "@/data/gifts";
 import { liveFor, countdownLine } from "@/lib/events";
 import { CartButton } from "@/components/cart/CartButton";
+import { ENQUIRY_ONLY } from "@/lib/site";
 import { MobileNav } from "./MobileNav";
 import { SearchBox } from "./SearchBox";
 import { describeCoupon, type CouponPublic } from "@/lib/coupons";
@@ -77,7 +78,7 @@ export function Header({ promo }: { promo?: CouponPublic | null }) {
   return (
     <header className="sticky top-0 z-40 bg-surface/95 backdrop-blur border-b border-line">
       <div className="bg-ink text-white text-xs text-center py-1.5 px-4">
-        {promo ? <><span className="font-semibold">{describeCoupon(promo)}</span> with code <span className="font-mono bg-white/15 px-1.5 py-0.5 rounded">{promo.code}</span><span className="hidden sm:inline"> · Free shipping over ₹999 · COD available</span></> : <><span className="font-semibold">Free shipping over ₹999</span> · COD available</>} · <a href="tel:+919910888217" className="underline underline-offset-2"><span className="hidden sm:inline">Questions? </span>Call<span className="hidden sm:inline"> us</span> 9910888217</a> · <a href="https://wa.me/919910888217?text=Hi%20Shivam%20Printers%2C%20I%20have%20a%20question." target="_blank" rel="noopener noreferrer" className="underline underline-offset-2">WhatsApp</a>
+        {ENQUIRY_ONLY ? <span className="font-semibold">Order on WhatsApp or by phone · Free shipping over ₹999</span> : promo ? <><span className="font-semibold">{describeCoupon(promo)}</span> with code <span className="font-mono bg-white/15 px-1.5 py-0.5 rounded">{promo.code}</span><span className="hidden sm:inline"> · Free shipping over ₹999 · COD available</span></> : <><span className="font-semibold">Free shipping over ₹999</span> · COD available</>} · <a href="tel:+919910888217" className="underline underline-offset-2"><span className="hidden sm:inline">Questions? </span>Call<span className="hidden sm:inline"> us</span> 9910888217</a> · <a href="https://wa.me/919910888217?text=Hi%20Shivam%20Printers%2C%20I%20have%20a%20question." target="_blank" rel="noopener noreferrer" className="underline underline-offset-2">WhatsApp</a>
       </div>
       <div className="container-x flex items-center gap-4 h-16">
         <MobileNav items={navItems} occasions={occasions} recipients={recipients} />
@@ -90,7 +91,7 @@ export function Header({ promo }: { promo?: CouponPublic | null }) {
         <div className="ml-auto flex items-center gap-1">
           <Link href="/wishlist" className="btn btn-ghost !px-3 hidden sm:inline-flex text-sm">Saved</Link>
           <Link href="/account" className="btn btn-ghost !px-3 hidden sm:inline-flex text-sm">Track order</Link>
-          <CartButton />
+          {!ENQUIRY_ONLY && <CartButton />}
         </div>
       </div>
       <nav className="hidden md:block border-t border-line relative">

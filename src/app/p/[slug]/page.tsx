@@ -14,6 +14,7 @@ import { Reviews } from "@/components/product/Reviews";
 import { Gallery } from "@/components/product/Gallery";
 import { RecentlyViewed } from "@/components/product/RecentlyViewed";
 import { StickyBuyBar } from "@/components/product/StickyBuyBar";
+import { ENQUIRY_ONLY } from "@/lib/site";
 import { CallUs } from "@/components/ui/CallUs";
 import { bannerCoupon, describeCoupon } from "@/lib/coupons";
 
@@ -70,7 +71,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
           <h1 className="text-3xl md:text-4xl font-bold">{p.name}</h1>
           <a href="#reviews" className="flex items-center gap-2 mt-2 text-sm hover:underline"><span className="flex items-center gap-1 text-gold"><Star size={14} className="fill-gold" />{sum.avg}</span><span className="text-ink-3">{p.reviews > 0 ? `${p.reviews.toLocaleString("en-IN")} ratings · ` : ""}{sum.total} reviews</span><span className="text-ink-3">·</span><span className="text-ink-2">{kind}</span></a>
           <p className="text-ink-2 mt-4 leading-relaxed">{p.description}</p>
-          <BuyBox product={p} promo={promo ? <><b>{promo.code}</b> for {describeCoupon(promo)} at checkout</> : null} />
+          <BuyBox product={p} promo={promo && !ENQUIRY_ONLY ? <><b>{promo.code}</b> for {describeCoupon(promo)} at checkout</> : null} />
 
           <div className="mt-8 border-t border-line pt-5">
             <div className="flex items-center gap-2 font-semibold mb-3"><Printer size={16} className="text-accent" />Specifications</div>
@@ -118,7 +119,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
         <ProductGrid products={related} />
       </div>
       <RecentlyViewed current={p.slug} />
-      <StickyBuyBar name={p.name} price={minPrice(p)} href={p.personalisation === "none" ? "#buy" : `/design/${p.slug}`} label={p.personalisation === "none" ? "Add to cart" : "Personalise"} />
+      <StickyBuyBar name={p.name} price={minPrice(p)} href={p.personalisation === "none" ? "#buy" : `/design/${p.slug}`} label={p.personalisation === "none" ? (ENQUIRY_ONLY ? "Order on WhatsApp" : "Add to cart") : "Personalise"} />
 
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
         "@context": "https://schema.org", "@type": "Product", name: p.name, description: p.description, image: p.image, brand: { "@type": "Brand", name: "Shivam Printers" }, sku: p.variants[0].sku,

@@ -1,13 +1,14 @@
 "use client";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Heart, Share2, MapPin } from "lucide-react";
+import { Heart, Share2, MapPin, Phone } from "lucide-react";
 import type { Product } from "@/data/catalog";
-import { optionsFor, optionDelta, defaultOptions } from "@/data/options";
+import { optionsFor, optionDelta, defaultOptions, optionLabel } from "@/data/options";
 import { inr } from "@/lib/format";
 import { useWishlist } from "@/lib/wishlist";
 import { useCart } from "@/lib/cart";
-import { CallUs } from "@/components/ui/CallUs";
+import { CallUs, WhatsAppIcon, whatsappUrl, SUPPORT_PHONE } from "@/components/ui/CallUs";
+import { ENQUIRY_ONLY } from "@/lib/site";
 import { allowsOwnDesign } from "@/lib/print-spec";
 
 export function BuyBox({ product, promo }: { product: Product; promo?: React.ReactNode }) {
@@ -24,6 +25,8 @@ export function BuyBox({ product, promo }: { product: Product; promo?: React.Rea
   const pct = v.compareAt ? Math.round(((v.compareAt - unit) / v.compareAt) * 100) : 0;
   const q = new URLSearchParams({ v: v.sku, qty: String(qty), ...opts }).toString();
   const wished = mounted && wish.has(product.slug);
+  const optLabel = optionLabel(groups, opts);
+  const orderMsg = `Hi Shivam Printers, I'd like to order:\n• ${product.name}${product.variants.length > 1 ? ` — ${v.name}` : ""}${optLabel ? ` (${optLabel})` : ""}\n• Qty: ${qty}\n• Price shown: ${inr(unit)} each\n${mounted ? location.href : ""}`;
 
   const checkPin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -76,7 +79,12 @@ export function BuyBox({ product, promo }: { product: Product; promo?: React.Rea
       {qty >= 10 && <div className="text-xs text-accent mt-2">Ordering {qty}? <Link href="/bulk-orders" className="underline">Bulk pricing</Link> starts at 25 units.</div>}
 
       <div className="flex gap-2 mt-5">
-        {readyMade
+        {ENQUIRY_ONLY
+          ? <>
+              <a href={whatsappUrl(orderMsg)} target="_blank" rel="noopener noreferrer" className="btn btn-primary flex-1 text-base !py-3.5 !bg-[#25D366] hover:!bg-[#1ebe5b] !border-[#25D366]"><WhatsAppIcon size={18} className="mr-2" />Order on WhatsApp</a>
+              <a href={`tel:+91${SUPPORT_PHONE}`} className="btn btn-ghost !px-4" aria-label="Call to order" title="Call to order"><Phone size={18} /></a>
+            </>
+          : readyMade
           ? <button onClick={() => { addLine({ productSlug: product.slug, productName: product.name, variantSku: v.sku, variantName: v.name, unitPrice: unit, qty, image: product.image }); setAdded(true); openCart(true); setTimeout(() => setAdded(false), 2500); }} className="btn btn-primary flex-1 text-base !py-3.5">{added ? "Added ✓" : `Add to cart · ${inr(unit * qty)}`}</button>
           : <Link href={`/design/${product.slug}?${q}`} className="btn btn-primary flex-1 text-base !py-3.5">Personalise this →</Link>}
         <button onClick={() => wish.toggle(product.slug)} aria-label="Save" className={`btn btn-ghost !px-4 ${wished ? "text-brand border-brand" : ""}`}><Heart size={18} className={wished ? "fill-brand" : ""} /></button>
@@ -84,6 +92,9 @@ export function BuyBox({ product, promo }: { product: Product; promo?: React.Rea
       </div>
       {!readyMade && allowsOwnDesign(product) && (
         <Link href={`/design/${product.slug}?${q}&mode=upload`} className="btn btn-ghost w-full mt-2 !py-2.5 text-sm">Have a print-ready file? Upload your design</Link>
+      )}
+      {ENQUIRY_ONLY && (
+        <p className="text-xs text-ink-2 text-center mt-3">We&apos;re taking orders on WhatsApp and phone right now — send us your size, quantity and design, and we&apos;ll confirm price and delivery.{!readyMade && <> Want to design it first? <Link href={`/design/${product.slug}?${q}`} className="underline font-semibold">Personalise it online</Link>, then share it with us.</>}</p>
       )}
       <p className="text-xs text-ink-3 text-center mt-2">{readyMade ? "No personalisation needed — ships as shown." : "You can still change size, finish and quantity while personalising."}</p>
       <div className="text-center mt-2"><CallUs whatsapp={`Hi Shivam Printers, I have a question about "${product.name}".`} /></div>

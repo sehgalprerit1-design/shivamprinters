@@ -6,6 +6,7 @@ import "./globals.css";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { CartDrawer } from "@/components/cart/CartDrawer";
+import { ENQUIRY_ONLY } from "@/lib/site";
 import { WhatsAppFloat } from "@/components/ui/WhatsAppFloat";
 import { bannerCoupon } from "@/lib/coupons";
 import { Analytics } from "@/components/analytics/Analytics";
@@ -33,7 +34,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <Header promo={promo} />
         <main className="flex-1">{children}</main>
         <Footer />
-        <CartDrawer />
+        {!ENQUIRY_ONLY && <CartDrawer />}
         <WhatsAppFloat />
         <Analytics />
       </body>
