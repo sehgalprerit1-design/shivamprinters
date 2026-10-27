@@ -1,10 +1,5 @@
 {
-  "categories": {
-    "business-printing": {
-      "name": "Standard Visiting Cards",
-      "description": "Standard Visiting Cards, Business cards, custom stickers and labels, brochures and flyers, photo postcards, and flex banners and standees. Upload your design or build one in the editor, pick a quantity, and we print and ship across India."
-    }
-  },
+  "categories": {},
   "products": {
     "hardcover-photobook": {
       "images": [
@@ -194,6 +189,102 @@
         "/images/cat-business.jpg",
         "/api/img?key=uploads%2F2026-10-22%2F1b285117-abd4-4016-86b2-66160657a0d4-gloss_matt_pearl.png",
         "/api/img?key=uploads%2F2026-10-22%2F4fae0c3f-348a-4a9a-a10a-2876c8374d2a-image.png"
+      ],
+      "variants": [
+        {
+          "sku": "BP-BC-100",
+          "name": "100 cards",
+          "price": 99,
+          "compareAt": 399
+        },
+        {
+          "sku": "BP-BC-250",
+          "name": "250 cards",
+          "price": 499,
+          "compareAt": 699
+        },
+        {
+          "sku": "BP-BC-500",
+          "name": "500 cards",
+          "price": 799,
+          "compareAt": 1099
+        },
+        {
+          "sku": "BP-BC-1000",
+          "name": "1,000 cards",
+          "price": 1299,
+          "compareAt": 1799
+        }
+      ],
+      "variantLabel": "Quantity",
+      "options": [
+        {
+          "id": "card-paper",
+          "key": "paper",
+          "label": "Card stock",
+          "choices": [
+            {
+              "id": "300",
+              "label": "Standard"
+            },
+            {
+              "id": "350t",
+              "label": "Textured",
+              "delta": 100
+            },
+            {
+              "id": "600",
+              "label": "Extra thick",
+              "hint": "Layered, luxury feel",
+              "delta": 300
+            }
+          ]
+        },
+        {
+          "id": "card-finish",
+          "key": "finish",
+          "label": "Finish",
+          "choices": [
+            {
+              "id": "standard",
+              "label": "Standard"
+            },
+            {
+              "id": "matte",
+              "label": "Matte lamination"
+            },
+            {
+              "id": "gloss",
+              "label": "Gloss lamination"
+            },
+            {
+              "id": "spotuv",
+              "label": "Spot UV on logo",
+              "delta": 150
+            },
+            {
+              "id": "velvet",
+              "label": "Velvet touch",
+              "delta": 200
+            }
+          ]
+        },
+        {
+          "id": "card-corners",
+          "key": "corners",
+          "label": "Corners",
+          "choices": [
+            {
+              "id": "square",
+              "label": "Square"
+            },
+            {
+              "id": "rounded",
+              "label": "Rounded",
+              "delta": 50
+            }
+          ]
+        }
       ]
     },
     "custom-stickers": {
