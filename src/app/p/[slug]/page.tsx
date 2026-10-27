@@ -61,7 +61,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
         <div className="md:sticky md:top-32 self-start min-w-0">
           <Gallery images={gallery} alt={p.name} />
           <div className="grid grid-cols-3 gap-3 mt-4 text-xs text-ink-2">
-            <div className="flex items-center gap-2"><Truck size={16} className="text-accent" />Express 4–6 days</div>
+            <div className="flex items-center gap-2"><Truck size={16} className="text-accent" /><span><b className="text-ink">Same day in Delhi NCR</b> · 4–6 days India</span></div>
             <div className="flex items-center gap-2"><RotateCcw size={16} className="text-accent" />Reprint or refund</div>
             <div className="flex items-center gap-2"><ShieldCheck size={16} className="text-accent" />COD available</div>
           </div>

@@ -145,10 +145,18 @@ function baseOptionsFor(slug: string, category: string): OptionGroup[] {
 }
 
 import overrides from "./overrides.json";
-const OPT: Record<string, number> = (overrides as { options?: Record<string, number> }).options ?? {};
-/** Option groups for a product, with surcharges overridden from overrides.json (edited in /admin/pricing). */
+type Ov = { options?: Record<string, number>; products?: Record<string, { options?: OptionGroup[] }>; added?: { slug: string; options?: OptionGroup[] }[] };
+const OV = overrides as Ov;
+const OPT: Record<string, number> = OV.options ?? {};
+/** Code defaults for a product with the per-choice surcharge overrides applied (no per-product list). Used by the admin sheet to compute diffs. */
+export function defaultOptionsFor(slug: string, category: string, surcharges: Record<string, number> = OPT): OptionGroup[] {
+  return baseOptionsFor(slug, category).map((g) => ({ ...g, choices: g.choices.map((c) => { const k = `${g.id}:${c.id}`; return k in surcharges ? { ...c, delta: surcharges[k] } : c; }) }));
+}
+/** Option groups for a product. A per-product list set in /admin/pricing replaces the code defaults entirely; otherwise code defaults with surcharge overrides. */
 export function optionsFor(slug: string, category: string): OptionGroup[] {
-  return baseOptionsFor(slug, category).map((g) => ({ ...g, choices: g.choices.map((c) => { const k = `${g.id}:${c.id}`; return k in OPT ? { ...c, delta: OPT[k] } : c; }) }));
+  const own = OV.products?.[slug]?.options ?? OV.added?.find((a) => a.slug === slug)?.options;
+  if (own) return own.map((g) => ({ ...g, choices: g.choices.map((c) => ({ ...c })) }));
+  return defaultOptionsFor(slug, category);
 }
 /** Every option group in the catalog (for the pricing sheet). */
 export const ALL_OPTION_GROUPS: OptionGroup[] = [FINISH_PRINT, FINISH_FRAME, FRAME_COLOUR, FRAME_COLOUR_FUN, PAPER_BOOK, COVER_BOOK, ORIENTATION, CANVAS_EDGE, ACRYLIC_THICK, MUG_HANDLE, CUSHION_BACK, CAL_START, BOTTLE_COLOUR, THEME_KIDS, BORDER, DIARY_COLOUR, EMBOSS, PAPER_DIARY, PLANNER_LAYOUT, PEN_FINISH, LOGO_METHOD, INSIDE_PAGE, CARD_PAPER, CARD_FINISH, CARD_CORNERS, STICKER_SHAPE, STICKER_MATERIAL, STICKER_FINISH, FLYER_PAPER, FLYER_FINISH, FLYER_SIDES, POSTCARD_PAPER, POSTCARD_BACK, BANNER_MATERIAL, BANNER_FINISH, ID_MATERIAL, ID_SIDES, ID_LANYARD, ID_HOLDER, BAG_MATERIAL, BAG_HANDLE, BAG_PRINT];

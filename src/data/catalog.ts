@@ -38,6 +38,7 @@ export type Product = {
     textFields: { key: string; label: string; max: number }[];
   };
   variants: Variant[];
+  variantLabel?: string; // heading above the variant picker (default "Size"); editable in /admin/pricing
   tags: string[]; // used by gift landing pages
   rating: number;
   reviews: number;
@@ -308,16 +309,16 @@ export const products: Product[] = [
     const q = clone(p);
     if (o.name) q.name = o.name; if (o.description) q.description = o.description; if (o.category) q.category = o.category; if (o.image) q.image = o.image; if (o.images) q.images = o.images;
     if (o.badges) q.badges = o.badges; if (o.tags) q.tags = o.tags;
-    if (o.variants) q.variants = o.variants.map((v) => ({ sku: v.sku, name: v.name, price: v.price, ...(v.compareAt ? { compareAt: v.compareAt } : {}) }));
+    if (o.variants) q.variants = o.variants.map((v) => ({ sku: v.sku, name: v.name, price: v.price, ...(v.compareAt ? { compareAt: v.compareAt } : {}) })); if (o.variantLabel) q.variantLabel = o.variantLabel;
     return Object.assign(q, { hidden: o.hidden });
   }),
-  ...OV.added.map((a) => ({ slug: a.slug, category: a.category, name: a.name, description: a.description, image: a.image, images: a.images, badges: a.badges, personalisation: a.personalisation, template: a.template, variants: a.variants.map((v) => ({ sku: v.sku, name: v.name, price: v.price, ...(v.compareAt ? { compareAt: v.compareAt } : {}) })), tags: a.tags, rating: 4.7, reviews: 0, hidden: a.hidden } as Product & { hidden?: boolean })),
+  ...OV.added.map((a) => ({ slug: a.slug, category: a.category, name: a.name, description: a.description, image: a.image, images: a.images, badges: a.badges, personalisation: a.personalisation, template: a.template, variants: a.variants.map((v) => ({ sku: v.sku, name: v.name, price: v.price, ...(v.compareAt ? { compareAt: v.compareAt } : {}) })), variantLabel: a.variantLabel, tags: a.tags, rating: 4.7, reviews: 0, hidden: a.hidden } as Product & { hidden?: boolean })),
 ].filter((p) => !(p as { hidden?: boolean }).hidden && categories.some((c) => c.slug === p.category));
 
 /** Every product including hidden ones (admin only). */
 export const allProductsIncludingHidden = (): (Product & { hidden?: boolean; added?: boolean })[] => [
-  ...baseProducts.map((p) => { const o = OV.products[p.slug]; const q = clone(p); if (o) { if (o.name) q.name = o.name; if (o.description) q.description = o.description; if (o.category) q.category = o.category; if (o.image) q.image = o.image; if (o.images) q.images = o.images; if (o.badges) q.badges = o.badges; if (o.tags) q.tags = o.tags; if (o.variants) q.variants = o.variants.map((v) => ({ sku: v.sku, name: v.name, price: v.price, ...(v.compareAt ? { compareAt: v.compareAt } : {}) })); } return { ...q, hidden: o?.hidden }; }),
-  ...OV.added.map((a) => ({ slug: a.slug, category: a.category, name: a.name, description: a.description, image: a.image, images: a.images, badges: a.badges, personalisation: a.personalisation, template: a.template, variants: a.variants.map((v) => ({ sku: v.sku, name: v.name, price: v.price, ...(v.compareAt ? { compareAt: v.compareAt } : {}) })), tags: a.tags, rating: 4.7, reviews: 0, hidden: a.hidden, added: true })),
+  ...baseProducts.map((p) => { const o = OV.products[p.slug]; const q = clone(p); if (o) { if (o.name) q.name = o.name; if (o.description) q.description = o.description; if (o.category) q.category = o.category; if (o.image) q.image = o.image; if (o.images) q.images = o.images; if (o.badges) q.badges = o.badges; if (o.tags) q.tags = o.tags; if (o.variants) q.variants = o.variants.map((v) => ({ sku: v.sku, name: v.name, price: v.price, ...(v.compareAt ? { compareAt: v.compareAt } : {}) })); if (o.variantLabel) q.variantLabel = o.variantLabel; } return { ...q, hidden: o?.hidden }; }),
+  ...OV.added.map((a) => ({ slug: a.slug, category: a.category, name: a.name, description: a.description, image: a.image, images: a.images, badges: a.badges, personalisation: a.personalisation, template: a.template, variants: a.variants.map((v) => ({ sku: v.sku, name: v.name, price: v.price, ...(v.compareAt ? { compareAt: v.compareAt } : {}) })), variantLabel: a.variantLabel, tags: a.tags, rating: 4.7, reviews: 0, hidden: a.hidden, added: true })),
 ];
 export const currentOverrides = (): Overrides => clone(OV);
 

@@ -7,6 +7,12 @@ export const TextFieldZ = z.object({ key: z.string().trim().min(1).max(30).regex
 export const TemplateZ = z.object({ aspect: z.number().min(0.2).max(6), photoSlots: z.number().int().min(0).max(100), textFields: z.array(TextFieldZ).max(10) });
 export const KindZ = z.enum(["photo", "text", "photo+text", "multi-photo", "none"]);
 
+// Per-product option groups (Finish, Card stock, Corners…). When present, the list replaces the code defaults for that product.
+export const OptionChoiceZ = z.object({ id: z.string().trim().min(1).max(30).regex(/^[a-z0-9][a-z0-9_-]*$/), label: z.string().trim().min(1).max(60), hint: z.string().trim().max(120).optional(), delta: z.number().int().min(-100_000).max(100_000).optional() });
+export const OptionGroupZ = z.object({ id: z.string().trim().min(1).max(60), key: z.string().trim().min(1).max(30).regex(/^[a-z][a-z0-9_-]*$/), label: z.string().trim().min(1).max(40), choices: z.array(OptionChoiceZ).min(1).max(30) });
+const uniqueKeys = (gs: { key: string; choices: { id: string }[] }[]) => new Set(gs.map((g) => g.key)).size === gs.length && gs.every((g) => new Set(g.choices.map((c) => c.id)).size === g.choices.length);
+export const OptionGroupsZ = z.array(OptionGroupZ).max(8).refine(uniqueKeys, "Option groups and choices must have unique keys");
+
 export const ProductPatchZ = z.object({
   name: z.string().trim().min(2).max(80).optional(),
   description: z.string().trim().min(10).max(1000).optional(),
@@ -17,6 +23,8 @@ export const ProductPatchZ = z.object({
   tags: z.array(z.string().trim().min(1).max(30)).max(20).optional(),
   hidden: z.boolean().optional(),
   variants: z.array(VariantZ).min(1).max(30).optional(), // full list — replaces the code variants
+  variantLabel: z.string().trim().min(1).max(30).optional(), // heading above the variant picker, default "Size"
+  options: OptionGroupsZ.optional(), // full list — replaces the code option groups
 });
 
 export const AddedProductZ = z.object({
@@ -30,6 +38,8 @@ export const AddedProductZ = z.object({
   personalisation: KindZ,
   template: TemplateZ,
   variants: z.array(VariantZ).min(1).max(30),
+  variantLabel: z.string().trim().min(1).max(30).optional(),
+  options: OptionGroupsZ.optional(),
   tags: z.array(z.string().trim().min(1).max(30)).max(20),
   hidden: z.boolean().optional(),
 });

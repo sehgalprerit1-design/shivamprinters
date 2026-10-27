@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Star } from "lucide-react";
+import { Star, Zap } from "lucide-react";
 import { minPrice, maxCompare, type Product } from "@/data/catalog";
 import { inr } from "@/lib/format";
 
@@ -19,6 +19,7 @@ export function ProductCard({ p, priority = false }: { p: Product; priority?: bo
         <div className="font-semibold leading-tight line-clamp-2">{p.name}</div>
         <div className="flex items-center gap-1 text-xs text-ink-3 mt-1"><Star size={12} className="fill-gold text-gold" />{p.rating} · {p.reviews.toLocaleString("en-IN")}</div>
         <div className="mt-1.5 flex items-baseline gap-2"><span className="font-bold">From {inr(price)}</span>{compare && <span className="price-strike text-xs">{inr(compare)}</span>}</div>
+        <div className="mt-1.5 inline-flex items-center gap-1 text-[11px] font-semibold text-accent"><Zap size={11} className="fill-accent" />Same day delivery in Delhi NCR</div>
       </div>
     </Link>
   );

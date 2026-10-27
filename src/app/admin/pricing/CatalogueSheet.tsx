@@ -1,11 +1,13 @@
 "use client";
 import { useMemo, useRef, useState } from "react";
-import { Download, Upload, Search, Save, AlertTriangle, CheckCircle2, Plus, Trash2, ChevronDown, ChevronRight, EyeOff, Eye, ImagePlus } from "lucide-react";
+import { Download, Upload, Search, Save, AlertTriangle, CheckCircle2, Plus, Trash2, ChevronDown, ChevronRight, EyeOff, Eye, ImagePlus, RotateCcw, ArrowUp, ArrowDown } from "lucide-react";
 import type { CatalogueState } from "@/lib/catalogue";
 
 type Cat = CatalogueState["categories"][number];
 type Prod = CatalogueState["products"][number];
-type Props = { initial: CatalogueState & { baseSlugs: string[]; optionGroups: { key: string; group: string; groupId: string; name: string; delta: number }[]; aspectPresets: [string, number][] }; mode: "github" | "local" | "none" };
+type OptGroup = NonNullable<Prod["options"]>[number];
+type OptChoice = OptGroup["choices"][number];
+type Props = { initial: CatalogueState & { baseSlugs: string[]; defaultOptions: Record<string, OptGroup[]>; optionGroups: { key: string; group: string; groupId: string; name: string; delta: number }[]; aspectPresets: [string, number][] }; mode: "github" | "local" | "none" };
 
 const num = (s: string) => { const n = Math.round(Number(String(s).replace(/[₹,\s]/g, ""))); return Number.isFinite(n) ? n : NaN; };
 const csvCell = (s: string | number | null | undefined) => { const t = s == null ? "" : String(s); return /[",\n]/.test(t) ? `"${t.replace(/"/g, '""')}"` : t; };
@@ -89,7 +91,7 @@ export function CatalogueSheet({ initial, mode }: Props) {
 
   return (
     <div>
-      <p className="text-ink-2 text-sm mb-4">Edit names, variants, SKUs and prices like a spreadsheet, add variants or whole products, or download the CSV, change it in Excel and upload it back. Changes go live ~2–3 minutes after you press <b>Save &amp; publish</b>. Prices are inclusive of GST. {mode === "none" && <span className="text-brand font-semibold">Publishing isn&apos;t configured yet — add GITHUB_TOKEN in Vercel.</span>}</p>
+      <p className="text-ink-2 text-sm mb-4">Edit names, variants, SKUs and prices like a spreadsheet, add variants or whole products, open a product (▸) to rename or add/remove its options like Finish or Corners, or download the CSV, change it in Excel and upload it back. Changes go live ~2–3 minutes after you press <b>Save &amp; publish</b>. Prices are inclusive of GST. {mode === "none" && <span className="text-brand font-semibold">Publishing isn&apos;t configured yet — add GITHUB_TOKEN in Vercel.</span>}</p>
       <div className="flex flex-wrap items-center gap-2 mb-4 sticky top-[7.5rem] z-10 bg-bg/95 backdrop-blur py-2">
         <div className="relative"><Search size={14} className="absolute left-3 top-2.5 text-ink-3" /><input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search product, variant, SKU…" className="rounded-xl border border-line bg-surface pl-8 pr-3 py-2 text-sm w-64" /></div>
         <div className="flex rounded-xl border border-line overflow-hidden text-sm">
@@ -132,7 +134,7 @@ export function CatalogueSheet({ initial, mode }: Props) {
                         {i === p.variants.length - 1 && <button onClick={() => addVariant(p.slug)} className="text-brand text-xs font-semibold inline-flex items-center gap-1"><Plus size={12} />variant</button>}
                       </td>
                     </tr>
-                  )), isOpen ? <tr key={`${p.slug}-details`} className={ch ? "bg-amber-50" : ""}><td /><td colSpan={7} className="p-2 pr-3"><ProductDetails p={p} cats={cats} presets={initial.aspectPresets} setP={setP} uploadImage={uploadImage} isBase={baseSlugs.has(p.slug)} /></td></tr> : null]; })}
+                  )), isOpen ? <tr key={`${p.slug}-details`} className={ch ? "bg-amber-50" : ""}><td /><td colSpan={7} className="p-2 pr-3"><ProductDetails p={p} cats={cats} presets={initial.aspectPresets} setP={setP} uploadImage={uploadImage} isBase={baseSlugs.has(p.slug)} defaults={initial.defaultOptions[p.slug] ?? []} /></td></tr> : null]; })}
                   {items.length === 0 && <tr><td colSpan={8} className="p-4 text-ink-3 text-sm">No products here yet.</td></tr>}
                 </tbody>
               </table></div>
@@ -154,7 +156,7 @@ export function CatalogueSheet({ initial, mode }: Props) {
               ); })}
             </tbody>
           </table>
-          <p className="p-3 text-xs text-ink-3">Surcharges are added per unit on top of the variant price when a customer picks that choice. 0 = included, negative = discount.</p>
+          <p className="p-3 text-xs text-ink-3">Surcharges are added per unit on top of the variant price when a customer picks that choice. 0 = included, negative = discount. These are the defaults; a product whose options were customised (▸ on the Products tab) uses its own list instead.</p>
         </div>
       )}
 
@@ -189,7 +191,7 @@ export function CatalogueSheet({ initial, mode }: Props) {
   );
 }
 
-function ProductDetails({ p, cats, presets, setP, uploadImage, isBase }: { p: Prod; cats: Cat[]; presets: [string, number][]; setP: (slug: string, patch: Partial<Prod>) => void; uploadImage: (f: File) => Promise<string>; isBase: boolean }) {
+function ProductDetails({ p, cats, presets, setP, uploadImage, isBase, defaults }: { p: Prod; cats: Cat[]; presets: [string, number][]; setP: (slug: string, patch: Partial<Prod>) => void; uploadImage: (f: File) => Promise<string>; isBase: boolean; defaults: OptGroup[] }) {
   const [imgErr, setImgErr] = useState(""); const [uploading, setUploading] = useState(false);
   void cats;
   return (
@@ -224,10 +226,69 @@ function ProductDetails({ p, cats, presets, setP, uploadImage, isBase }: { p: Pr
           <label className="block col-span-3"><span className="text-ink-3">Text fields the customer fills in (one per line, e.g. &quot;Name on cover&quot;)</span><textarea className={`${inp} w-full mt-1`} rows={2} value={p.template.textFields.map((f) => f.label).join("\n")} onChange={(e) => setP(p.slug, { template: { ...p.template, textFields: e.target.value.split("\n").map((l) => l.trim()).filter(Boolean).slice(0, 10).map((label, i) => ({ key: slugify(label).replace(/-/g, "_").slice(0, 30) || `field${i + 1}`, label, max: 40 })) } })} /></label>
         </div>
       )}
+      <label className="block w-64"><span className="text-ink-3">Heading above the size / variant picker</span><input className={`${inp} w-full mt-1`} placeholder="Size" value={p.variantLabel ?? ""} onChange={(e) => setP(p.slug, { variantLabel: e.target.value })} /></label>
+      <OptionsEditor p={p} defaults={defaults} setP={setP} />
       <div className="flex items-center gap-2 pt-1">
         <button onClick={() => setP(p.slug, { hidden: !p.hidden })} className="btn btn-ghost !py-1.5 text-xs">{p.hidden ? <><Eye size={14} />Show on site</> : <><EyeOff size={14} />Hide from site</>}</button>
         {!isBase && <button onClick={() => setP(p.slug, { deleted: true })} className="btn btn-ghost !py-1.5 text-xs text-brand"><Trash2 size={14} />Delete product</button>}
         <span className="text-ink-3">URL: /p/{p.slug}</span>
+      </div>
+    </div>
+  );
+}
+
+const keyify = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").replace(/^[^a-z]+/, "").slice(0, 30);
+const uniq = (want: string, taken: string[], fallback: string) => { const base = want || fallback; let k = base, n = 2; while (taken.includes(k)) k = `${base}-${n++}`; return k; };
+
+/** Option groups (Finish, Card stock, Corners…) for one product: rename, reorder, add or remove groups and choices, set surcharges. */
+function OptionsEditor({ p, defaults, setP }: { p: Prod; defaults: OptGroup[]; setP: (slug: string, patch: Partial<Prod>) => void }) {
+  const groups: OptGroup[] = p.options ?? [];
+  const set = (gs: OptGroup[]) => setP(p.slug, { options: gs });
+  const setG = (gi: number, patch: Partial<OptGroup>) => set(groups.map((g, i) => (i === gi ? { ...g, ...patch } : g)));
+  const setC = (gi: number, ci: number, patch: Partial<OptChoice>) => setG(gi, { choices: groups[gi].choices.map((c, i) => (i === ci ? { ...c, ...patch } : c)) });
+  const move = (gi: number, dir: -1 | 1) => { const j = gi + dir; if (j < 0 || j >= groups.length) return; const gs = [...groups]; [gs[gi], gs[j]] = [gs[j], gs[gi]]; set(gs); };
+  const moveC = (gi: number, ci: number, dir: -1 | 1) => { const cs = [...groups[gi].choices]; const j = ci + dir; if (j < 0 || j >= cs.length) return; [cs[ci], cs[j]] = [cs[j], cs[ci]]; setG(gi, { choices: cs }); };
+  const addGroup = () => { const key = uniq("option", groups.map((g) => g.key), "option"); set([...groups, { id: `${p.slug}-${key}`, key, label: "New option", choices: [{ id: "standard", label: "Standard" }] }]); };
+  const addChoice = (gi: number) => { const g = groups[gi]; const id = uniq("choice", g.choices.map((c) => c.id), "choice"); setG(gi, { choices: [...g.choices, { id, label: "", delta: 0 }] }); };
+  const renameGroup = (gi: number, label: string) => { const g = groups[gi]; const auto = g.key === keyify(g.label) || g.label === "New option"; const key = auto ? uniq(keyify(label), groups.filter((_, i) => i !== gi).map((x) => x.key), "option") : g.key; setG(gi, { label, key, id: auto ? `${p.slug}-${key}` : g.id }); };
+  const renameChoice = (gi: number, ci: number, label: string) => { const c = groups[gi].choices[ci]; const auto = c.id === keyify(c.label) || c.label === "" || /^choice(-\d+)?$/.test(c.id); const id = auto ? uniq(keyify(label), groups[gi].choices.filter((_, i) => i !== ci).map((x) => x.id), "choice") : c.id; setC(gi, ci, { label, id }); };
+  const isDefault = JSON.stringify(groups) === JSON.stringify(defaults);
+  return (
+    <div>
+      <div className="flex items-center justify-between mb-1">
+        <span className="text-ink-3">Options the customer picks on the product page (e.g. Finish, Card stock, Corners). Drag order with the arrows; the first choice in each group is the default.</span>
+        {!isDefault && defaults.length > 0 && <button type="button" onClick={() => set(defaults)} className="text-brand text-xs font-semibold inline-flex items-center gap-1 shrink-0"><RotateCcw size={12} />Reset to default</button>}
+      </div>
+      <div className="space-y-2">
+        {groups.map((g, gi) => (
+          <div key={gi} className="rounded-lg border border-line bg-surface p-2">
+            <div className="flex items-center gap-2 mb-1.5">
+              <input className={`${inp} w-48 font-semibold`} value={g.label} placeholder="Option name, e.g. Finish" onChange={(e) => renameGroup(gi, e.target.value)} />
+              <span className="text-ink-3 font-mono text-[10px]">{g.key}</span>
+              <span className="ml-auto flex items-center gap-1">
+                <button type="button" onClick={() => move(gi, -1)} className="text-ink-3 hover:text-ink disabled:opacity-30" disabled={gi === 0} title="Move up"><ArrowUp size={13} /></button>
+                <button type="button" onClick={() => move(gi, 1)} className="text-ink-3 hover:text-ink disabled:opacity-30" disabled={gi === groups.length - 1} title="Move down"><ArrowDown size={13} /></button>
+                <button type="button" onClick={() => set(groups.filter((_, i) => i !== gi))} className="text-ink-3 hover:text-brand ml-1" title="Remove this option"><Trash2 size={14} /></button>
+              </span>
+            </div>
+            <table className="w-full text-xs"><thead className="text-ink-3"><tr><th className="text-left font-normal pb-1 pl-1">Choice</th><th className="text-left font-normal pb-1">Note shown under it (optional)</th><th className="text-right font-normal pb-1">Extra ₹ / unit</th><th className="w-20" /></tr></thead>
+              <tbody>{g.choices.map((c, ci) => (
+                <tr key={ci}>
+                  <td className="pr-2 pb-1 w-56"><input className={`${inp} w-full`} value={c.label} placeholder="e.g. Matte lamination" onChange={(e) => renameChoice(gi, ci, e.target.value)} /></td>
+                  <td className="pr-2 pb-1"><input className={`${inp} w-full`} value={c.hint ?? ""} placeholder="e.g. No glare, soft look" onChange={(e) => setC(gi, ci, { hint: e.target.value || undefined })} /></td>
+                  <td className="pb-1 text-right"><input className={numInp} inputMode="numeric" value={c.delta ?? 0} onChange={(e) => { const n = num(e.target.value); setC(gi, ci, { delta: Number.isNaN(n) ? 0 : n }); }} /></td>
+                  <td className="pb-1 pl-2 whitespace-nowrap text-right">
+                    <button type="button" onClick={() => moveC(gi, ci, -1)} className="text-ink-3 hover:text-ink disabled:opacity-30" disabled={ci === 0} title="Move up"><ArrowUp size={12} /></button>
+                    <button type="button" onClick={() => moveC(gi, ci, 1)} className="text-ink-3 hover:text-ink disabled:opacity-30 ml-1" disabled={ci === g.choices.length - 1} title="Move down"><ArrowDown size={12} /></button>
+                    {g.choices.length > 1 && <button type="button" onClick={() => setG(gi, { choices: g.choices.filter((_, i) => i !== ci) })} className="text-ink-3 hover:text-brand ml-1" title="Remove choice"><Trash2 size={13} /></button>}
+                  </td>
+                </tr>))}
+              </tbody></table>
+            <button type="button" onClick={() => addChoice(gi)} className="text-brand text-xs font-semibold inline-flex items-center gap-1 mt-1"><Plus size={12} />Add choice</button>
+          </div>
+        ))}
+        {groups.length === 0 && <div className="text-ink-3">No options — customers only pick a size / variant and quantity.</div>}
+        <button type="button" onClick={addGroup} className="btn btn-ghost !py-1.5 text-xs"><Plus size={14} />Add option (e.g. Finish, Corners)</button>
       </div>
     </div>
   );
@@ -248,7 +309,7 @@ function NewProductForm({ category, presets, existing, uploadImage, onCancel, on
     if (variants.some((v) => !v.sku || !v.name || v.price <= 0)) return setErr("Each variant needs a SKU, a name and a price.");
     const n = kind === "none" || kind === "text" ? 0 : kind === "multi-photo" ? Math.max(2, slots) : 1;
     const tf = kind === "none" || kind === "photo" ? [] : fields.split("\n").map((l) => l.trim()).filter(Boolean).slice(0, 10).map((label, i) => ({ key: slugify(label).replace(/-/g, "_").slice(0, 30) || `field${i + 1}`, label, max: 40 }));
-    onCreate({ slug, added: true, hidden: false, category, name: name.trim(), description: desc.trim(), image, badges: [], tags: tags.split(",").map((s) => s.trim().toLowerCase()).filter(Boolean), personalisation: kind, template: { aspect, photoSlots: n, textFields: tf }, variants: variants.map((v) => ({ ...v, sku: v.sku.toUpperCase() })) });
+    onCreate({ slug, added: true, hidden: false, category, name: name.trim(), description: desc.trim(), image, badges: [], tags: tags.split(",").map((s) => s.trim().toLowerCase()).filter(Boolean), personalisation: kind, template: { aspect, photoSlots: n, textFields: tf }, variants: variants.map((v) => ({ ...v, sku: v.sku.toUpperCase() })), variantLabel: "", options: [] });
   };
   return (
     <div className="p-4 border-b border-line bg-brand-soft/40 text-sm space-y-3" data-testid="new-product-form">

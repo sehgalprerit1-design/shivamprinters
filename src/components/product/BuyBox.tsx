@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Heart, Share2, MapPin, Phone } from "lucide-react";
+import { Heart, Share2, MapPin, Phone, Zap } from "lucide-react";
 import type { Product } from "@/data/catalog";
 import { optionsFor, optionDelta, defaultOptions, optionLabel } from "@/data/options";
 import { inr } from "@/lib/format";
@@ -39,7 +39,7 @@ export function BuyBox({ product, promo }: { product: Product; promo?: React.Rea
     <div className="mt-6" id="buy">
       {product.variants.length > 1 && (
         <div>
-          <div className="text-sm font-semibold mb-2">Size</div>
+          <div className="text-sm font-semibold mb-2">{product.variantLabel ?? "Size"}</div>
           <div className="flex flex-wrap gap-2">
             {product.variants.map((x) => (
               <button key={x.sku} onClick={() => setV(x)} className={`rounded-xl border px-3 py-2 text-sm text-left ${x.sku === v.sku ? "border-brand bg-brand-soft" : "border-line hover:border-ink-3"}`}>
@@ -75,6 +75,10 @@ export function BuyBox({ product, promo }: { product: Product; promo?: React.Rea
           <div className="text-xs font-semibold mb-1">Qty</div>
           <div className="inline-flex border border-line rounded-full"><button className="px-3 py-1.5" onClick={() => setQty(Math.max(1, qty - 1))}>−</button><span className="px-1 py-1.5 text-sm w-6 text-center">{qty}</span><button className="px-3 py-1.5" onClick={() => setQty(Math.min(99, qty + 1))}>+</button></div>
         </div>
+      </div>
+      <div className="mt-4 flex items-center gap-2.5 rounded-xl border border-accent/40 bg-accent-soft px-3 py-2.5 text-sm">
+        <span className="grid place-items-center w-7 h-7 rounded-full bg-accent text-white shrink-0"><Zap size={15} className="fill-white" /></span>
+        <div><div className="font-bold text-ink">Same Day Express Delivery in Delhi NCR</div><div className="text-xs text-ink-2">Order on WhatsApp or call us before 2 pm and get it today.</div></div>
       </div>
       {qty >= 10 && <div className="text-xs text-accent mt-2">Ordering {qty}? <Link href="/bulk-orders" className="underline">Bulk pricing</Link> starts at 25 units.</div>}
 

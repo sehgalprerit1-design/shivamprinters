@@ -883,7 +883,7 @@ export function Studio({ product, variant: initialVariant, initialOptions = {}, 
           <details className="text-sm group" open={product.variants.length > 1 || groups.length > 0}>
             <summary className="cursor-pointer list-none flex justify-between font-semibold">Size, finish & quantity<span className="text-ink-3 group-open:rotate-45 transition-transform">+</span></summary>
             {product.variants.length > 1 && (
-              <div className="mt-3"><div className="text-xs font-semibold text-ink-3 mb-1">Size</div>
+              <div className="mt-3"><div className="text-xs font-semibold text-ink-3 mb-1">{product.variantLabel ?? "Size"}</div>
                 <select className="input !py-2" value={variant.sku} onChange={(e) => setVariant(product.variants.find((x) => x.sku === e.target.value)!)}>
                   {product.variants.map((x) => <option key={x.sku} value={x.sku}>{x.name} — {inr(x.price)}</option>)}
                 </select></div>)}

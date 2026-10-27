@@ -3,8 +3,8 @@
 // (Vercel rebuilds, ~2–3 min); in local dev it is written to disk directly.
 import { z } from "zod";
 import { base, categories, allProductsIncludingHidden, type Product } from "@/data/catalog";
-import { ALL_OPTION_GROUPS } from "@/data/options";
-import { OverridesZ, VariantZ, TemplateZ, KindZ, type Overrides } from "@/data/overrides-schema";
+import { ALL_OPTION_GROUPS, optionsFor, defaultOptionsFor, type OptionGroup } from "@/data/options";
+import { OverridesZ, VariantZ, TemplateZ, KindZ, OptionGroupsZ, type Overrides } from "@/data/overrides-schema";
 
 export const ASPECT_PRESETS: [string, number][] = [["Square (1:1)", 1], ["Landscape 4:3", 1.333], ["Landscape 3:2", 1.5], ["Wide 2:1", 2], ["Banner 3:1", 3], ["Portrait 3:4", 0.75], ["Portrait 2:3", 0.667], ["A4 portrait", 0.707], ["Business card", 1.75], ["Mug wrap", 2.4]];
 
@@ -16,18 +16,20 @@ const ProductRowZ = z.object({
   image: z.string().trim().min(1).max(400), images: z.array(z.string().trim().min(1).max(400)).max(6).optional(),
   badges: z.array(z.string().trim().min(1).max(20)).max(3).optional(), tags: z.array(z.string().trim().min(1).max(30)).max(20),
   personalisation: KindZ, template: TemplateZ, variants: z.array(VariantZ).min(1).max(30),
+  variantLabel: z.string().trim().max(30).optional(), options: OptionGroupsZ.optional(),
 });
 export const CatalogueStateZ = z.object({ categories: z.array(CategoryRowZ), products: z.array(ProductRowZ), options: z.record(z.string(), z.number().int().min(-100_000).max(100_000)) });
 export type CatalogueState = z.infer<typeof CatalogueStateZ>;
 
 /** Everything the sheet needs, as it currently is (code + overrides). */
-export function catalogueState(): CatalogueState & { baseSlugs: string[]; optionGroups: { key: string; group: string; groupId: string; name: string; delta: number }[]; aspectPresets: [string, number][] } {
+export function catalogueState(): CatalogueState & { baseSlugs: string[]; defaultOptions: Record<string, OptionGroup[]>; optionGroups: { key: string; group: string; groupId: string; name: string; delta: number }[]; aspectPresets: [string, number][] } {
   const prods = allProductsIncludingHidden();
   return {
     categories: categories.map((c) => ({ slug: c.slug, name: c.name, tagline: c.tagline, description: c.description, image: c.image })),
-    products: prods.map((p) => ({ slug: p.slug, added: !!p.added, hidden: !!p.hidden, category: p.category, name: p.name, description: p.description, image: p.image, images: p.images, badges: p.badges, tags: p.tags, personalisation: p.personalisation, template: p.template, variants: p.variants.map((v) => ({ sku: v.sku, name: v.name, price: v.price, compareAt: v.compareAt ?? null })) })),
+    products: prods.map((p) => ({ slug: p.slug, added: !!p.added, hidden: !!p.hidden, category: p.category, name: p.name, description: p.description, image: p.image, images: p.images, badges: p.badges, tags: p.tags, personalisation: p.personalisation, template: p.template, variants: p.variants.map((v) => ({ sku: v.sku, name: v.name, price: v.price, compareAt: v.compareAt ?? null })), variantLabel: p.variantLabel ?? "", options: optionsFor(p.slug, p.category) })),
     options: Object.fromEntries(ALL_OPTION_GROUPS.flatMap((g) => g.choices.map((c) => [`${g.id}:${c.id}`, c.delta ?? 0]))),
     baseSlugs: base.products.map((p) => p.slug),
+    defaultOptions: Object.fromEntries(prods.map((p) => [p.slug, defaultOptionsFor(p.slug, p.category)])),
     optionGroups: ALL_OPTION_GROUPS.flatMap((g) => g.choices.map((c) => ({ key: `${g.id}:${c.id}`, group: g.label, groupId: g.id, name: c.label, delta: c.delta ?? 0 }))),
     aspectPresets: ASPECT_PRESETS,
   };
@@ -36,6 +38,9 @@ export function catalogueState(): CatalogueState & { baseSlugs: string[]; option
 const sameVariants = (a: { sku: string; name: string; price: number; compareAt?: number | null }[], b: { sku: string; name: string; price: number; compareAt?: number | null }[]) =>
   a.length === b.length && a.every((v, i) => v.sku === b[i].sku && v.name === b[i].name && v.price === b[i].price && (v.compareAt ?? null) === (b[i].compareAt ?? null));
 const sameList = (a?: string[], b?: string[]) => JSON.stringify(a ?? []) === JSON.stringify(b ?? []);
+type OG = { id: string; key: string; label: string; choices: { id: string; label: string; hint?: string; delta?: number }[] };
+const normGroups = (gs: OG[]) => gs.map((g) => ({ id: g.id, key: g.key, label: g.label, choices: g.choices.map((c) => ({ id: c.id, label: c.label, hint: c.hint || undefined, delta: c.delta || undefined })) }));
+const sameGroups = (a: OG[], b: OG[]) => JSON.stringify(normGroups(a)) === JSON.stringify(normGroups(b));
 
 /** Turn the full sheet state into a minimal overrides file, validating as we go. */
 export function buildOverrides(state: CatalogueState): Overrides {
@@ -60,13 +65,16 @@ export function buildOverrides(state: CatalogueState): Overrides {
   }
   for (const p of state.products) {
     const b = base.products.find((x) => x.slug === p.slug);
-    if (!b) { if (!p.deleted) ov.added.push({ slug: p.slug, category: p.category, name: p.name, description: p.description, image: p.image, images: p.images, badges: p.badges, personalisation: p.personalisation, template: p.template, variants: p.variants, tags: p.tags, hidden: p.hidden || undefined }); continue; }
+    if (!b) { if (!p.deleted) ov.added.push({ slug: p.slug, category: p.category, name: p.name, description: p.description, image: p.image, images: p.images, badges: p.badges, personalisation: p.personalisation, template: p.template, variants: p.variants, variantLabel: p.variantLabel || undefined, options: p.options && p.options.length ? normGroups(p.options) : undefined, tags: p.tags, hidden: p.hidden || undefined }); continue; }
     const patch: NonNullable<Overrides["products"][string]> = {};
     if (p.name !== b.name) patch.name = p.name; if (p.description !== b.description) patch.description = p.description; if (p.category !== b.category) patch.category = p.category; if (p.image !== b.image) patch.image = p.image;
     if (!sameList(p.badges, b.badges)) patch.badges = p.badges ?? []; if (!sameList(p.tags, b.tags)) patch.tags = p.tags;
     if (!sameList(p.images, b.images)) patch.images = p.images ?? [];
     if (p.hidden || p.deleted) patch.hidden = true;
     if (!sameVariants(p.variants, b.variants)) patch.variants = p.variants.map((v) => ({ sku: v.sku, name: v.name, price: v.price, compareAt: v.compareAt ?? null }));
+    if ((p.variantLabel ?? "").trim()) patch.variantLabel = p.variantLabel!.trim();
+    // Customised only if it matches neither the code defaults as currently published nor the defaults with the surcharges being saved now.
+    if (p.options && !sameGroups(p.options, defaultOptionsFor(p.slug, p.category)) && !sameGroups(p.options, defaultOptionsFor(p.slug, p.category, state.options))) patch.options = normGroups(p.options);
     if (Object.keys(patch).length) ov.products[p.slug] = patch;
   }
   const baseOpt = Object.fromEntries(ALL_OPTION_GROUPS.flatMap((g) => g.choices.map((c) => [`${g.id}:${c.id}`, c.delta ?? 0])));
