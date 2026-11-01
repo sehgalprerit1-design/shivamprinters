@@ -3,7 +3,8 @@
 // a single variant plus surcharges.
 //
 // Prices are full-order totals in INR (GST inclusive) per quantity tier, taken
-// from Vistaprint India's public configurators on 1 Nov 2026. The grids live in
+// from Vistaprint India's public configurators on 1 Nov 2026 and multiplied by
+// PRICE_FACTOR below (we sell 5% under Vistaprint). The grids live in
 // print-configs.data.json (regenerate rather than hand-edit). They are NOT read
 // from /admin/pricing — change them here.
 //
@@ -33,7 +34,11 @@ export type PrintConfig = {
   note?: string;
 };
 
-const D = data as unknown as Record<string, ConfigRow[]>;
+/** Our price vs the Vistaprint India MRP the grids were taken from (0.95 = 5% cheaper). Totals round to the nearest rupee. */
+export const PRICE_FACTOR = 0.95;
+const D = Object.fromEntries(
+  Object.entries(data as unknown as Record<string, ConfigRow[]>).map(([k, rows]) => [k, rows.map((r) => ({ ...r, tiers: r.tiers.map(([q, t]) => [q, Math.round(t * PRICE_FACTOR)] as Tier) }))]),
+) as Record<string, ConfigRow[]>;
 const BROCHURE_FLAT: Record<string, string> = { "bi-A5": "297 x 210 mm", "bi-DL": "198 x 210 mm", "bi-A6": "210 x 148 mm", "tri-DL": "297 x 210 mm", "tri-A6": "315 x 148 mm" };
 
 export const PRINT_CONFIGS: Record<string, PrintConfig> = {
