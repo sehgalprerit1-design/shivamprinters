@@ -20,7 +20,7 @@ import data from "./print-configs.data.json";
 export type Tier = [qty: number, total: number];
 export type ConfigRow = { sel: Record<string, string>; tiers: Tier[] };
 export type ConfigField = { key: string; label: string; hint?: Record<string, string> };
-export type ConfigExtra = { key: string; label: string; choices: string[]; when?: Record<string, string> };
+export type ConfigExtra = { key: string; label: string; choices: string[]; when?: Record<string, string>; /** Hide when sel[key] is one of these values. */ unless?: Record<string, string[]> };
 export type PrintConfig = {
   fields: ConfigField[];
   extras?: ConfigExtra[];
@@ -41,7 +41,46 @@ const D = Object.fromEntries(
 ) as Record<string, ConfigRow[]>;
 const BROCHURE_FLAT: Record<string, string> = { "bi-A5": "297 x 210 mm", "bi-DL": "198 x 210 mm", "bi-A6": "210 x 148 mm", "tri-DL": "297 x 210 mm", "tri-A6": "315 x 148 mm" };
 
+const CARD_SIZE: Record<string, string> = { Classic: "91 x 55 mm", "Custom Shape": "91 x 55 mm", Square: "63.5 x 63.5 mm", Circle: "63.5 x 63.5 mm", Transparent: "85 x 54 mm", Magnetic: "87 x 49 mm" };
+const CARD_HINT: Record<string, string> = {
+  Standard: "Our everyday card: 89 × 51 mm on 300 gsm board, full colour both sides.",
+  Classic: "Slightly larger 91 × 55 mm card on thick 350 gsm board.",
+  "Premium Plus": "Extra-thick 400 gsm board with a soft matte laminate.",
+  Matte: "Smooth matte laminate, no glare. Also in square or with rounded corners.",
+  Glossy: "High-gloss laminate for vivid colour. Also in square or with rounded corners.",
+  "Velvet Touch": "Soft-touch velvet laminate that feels like suede.",
+  "Spot UV": "Glossy raised UV highlights on a matte card: logo, name or pattern.",
+  "Raised Gold Foil": "Raised metallic gold foil on your logo or text, on 350 gsm board.",
+  Pearl: "Shimmering pearlescent 250 gsm paper.",
+  Kraft: "Natural brown kraft board, 250 gsm, with a rustic feel.",
+  Transparent: "Frosted clear plastic card, 85 × 54 mm.",
+  "Non-Tearable": "Waterproof, tear-proof 260 micron synthetic card.",
+  Magnetic: "Flexible fridge magnet card, 87 × 49 mm: stays on the fridge, not in a drawer.",
+  "QR Code": "Standard card with a scannable QR code to your website, UPI or vCard.",
+  "Rounded Corner": "Standard 89 × 51 mm card with softly rounded corners.",
+  Square: "Square 63.5 × 63.5 mm card on 350 gsm board.",
+  Circle: "Round 63.5 mm card on 350 gsm board.",
+  Oval: "Oval die-cut card, 89 × 51 mm, on 350 gsm board.",
+  Leaf: "Leaf-shaped die-cut card, 89 × 51 mm, on 350 gsm board.",
+  Diamond: "Diamond-shaped die-cut card, 89 × 51 mm.",
+  "Custom Shape": "Die-cut to your own outline (send us the shape), 91 × 55 mm area, 350 gsm.",
+  Bulk: "Standard 89 × 51 mm cards at trade prices for 1,500 or more.",
+};
+
 export const PRINT_CONFIGS: Record<string, PrintConfig> = {
+  "business-cards": {
+    fields: [
+      { key: "type", label: "Card type", hint: CARD_HINT },
+      { key: "shape", label: "Shape" },
+      { key: "corners", label: "Corners" },
+      { key: "stock", label: "Card stock" },
+    ],
+    extras: [{ key: "orientation", label: "Orientation", choices: ["Horizontal", "Vertical"], unless: { type: ["Square", "Circle", "Custom Shape"], shape: ["Square (63.5 × 63.5 mm)"] } }],
+    rows: D["business-cards"],
+    unit: "cards",
+    printSize: (s) => (s.shape?.startsWith("Square") ? "63.5 x 63.5 mm" : CARD_SIZE[s.type] ?? "89 x 51 mm"),
+    note: "Printed full colour on both sides. Prices include GST; delivery is free on orders over ₹999.",
+  },
   "sheet-stickers": {
     fields: [
       { key: "shape", label: "Shape" },
@@ -133,7 +172,7 @@ export function resolveConfig(cfg: PrintConfig, input: Partial<ConfigState> = {}
     fields.push({ field: f, values });
   }
   const row = pool[0];
-  const extras = (cfg.extras ?? []).filter((x) => !x.when || Object.entries(x.when).every(([k, v]) => sel[k] === v));
+  const extras = (cfg.extras ?? []).filter((x) => (!x.when || Object.entries(x.when).every(([k, v]) => sel[k] === v)) && (!x.unless || Object.entries(x.unless).every(([k, vs]) => !vs.includes(sel[k]))));
   for (const x of extras) sel[x.key] = x.choices.includes(want[x.key]) ? want[x.key] : x.choices[0];
   const qtys = row.tiers.map((t) => t[0]);
   const q = input.qty && qtys.includes(input.qty) ? input.qty : nearestTier(qtys, input.qty);

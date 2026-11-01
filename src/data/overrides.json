@@ -183,7 +183,7 @@
       ]
     },
     "business-cards": {
-      "name": "Standard Visiting Cards",
+      "name": "Visiting Cards",
       "images": [
         "/images/p/business-cards-2.jpg",
         "/images/cat-business.jpg",
@@ -192,98 +192,10 @@
       ],
       "variants": [
         {
-          "sku": "BP-BC-100",
-          "name": "100 cards",
-          "price": 99,
-          "compareAt": 399
-        },
-        {
-          "sku": "BP-BC-250",
-          "name": "250 cards",
-          "price": 499,
-          "compareAt": 699
-        },
-        {
-          "sku": "BP-BC-500",
-          "name": "500 cards",
-          "price": 799,
-          "compareAt": 1099
-        },
-        {
-          "sku": "BP-BC-1000",
-          "name": "1,000 cards",
-          "price": 1299,
-          "compareAt": 1799
-        }
-      ],
-      "variantLabel": "Quantity",
-      "options": [
-        {
-          "id": "card-paper",
-          "key": "paper",
-          "label": "Card stock",
-          "choices": [
-            {
-              "id": "300",
-              "label": "Standard"
-            },
-            {
-              "id": "350t",
-              "label": "Textured",
-              "delta": 100
-            },
-            {
-              "id": "600",
-              "label": "Extra thick",
-              "hint": "Layered, luxury feel",
-              "delta": 300
-            }
-          ]
-        },
-        {
-          "id": "card-finish",
-          "key": "finish",
-          "label": "Finish",
-          "choices": [
-            {
-              "id": "standard",
-              "label": "Standard"
-            },
-            {
-              "id": "matte",
-              "label": "Matte lamination"
-            },
-            {
-              "id": "gloss",
-              "label": "Gloss lamination"
-            },
-            {
-              "id": "spotuv",
-              "label": "Spot UV on logo",
-              "delta": 150
-            },
-            {
-              "id": "velvet",
-              "label": "Velvet touch",
-              "delta": 200
-            }
-          ]
-        },
-        {
-          "id": "card-corners",
-          "key": "corners",
-          "label": "Corners",
-          "choices": [
-            {
-              "id": "square",
-              "label": "Square"
-            },
-            {
-              "id": "rounded",
-              "label": "Rounded",
-              "delta": 50
-            }
-          ]
+          "sku": "BP-BC-CFG",
+          "name": "Standard visiting cards × 100",
+          "price": 190,
+          "compareAt": null
         }
       ]
     },

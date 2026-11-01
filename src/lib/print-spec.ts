@@ -33,7 +33,7 @@ const PAPER: Record<string, [number, number]> = { A3: [297, 420], A4: [210, 297]
 
 /** Sizes for products whose variant names don't state one (trim, in mm). */
 const FIXED: Record<string, [number, number]> = {
-  "business-cards": [89, 51], "event-id-cards": [54, 86], "custom-stickers": [51, 51],
+  "event-id-cards": [54, 86], "custom-stickers": [51, 51],
   "lunch-box": [130, 100], "snack-box": [130, 100], "name-stickers": [60, 20], "iron-on-labels": [45, 15], "name-slips": [100, 50],
   "name-tag": [75, 50], "letter-charms": [40, 40], "drawstring-bag": [280, 350], "pencil-pouch": [200, 100],
   "personalised-pencils": [150, 30], "doms-pencils": [150, 30], "crayon-box": [140, 100], "exam-board": [230, 330],
