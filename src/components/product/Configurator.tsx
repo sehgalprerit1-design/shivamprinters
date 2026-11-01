@@ -1,7 +1,17 @@
 "use client";
+import { useEffect, useState } from "react";
 import { ChevronDown } from "lucide-react";
+import { useGalleryOverride } from "@/lib/gallery-override";
 import { inr } from "@/lib/format";
 import { perPiece, type ConfigState, type Resolved, type PrintConfig } from "@/data/print-configs";
+
+/** Image with a fallback source; also catches images that failed before React attached its handlers. */
+function Pic({ src, fallback, alt, className }: { src: string; fallback: string; alt: string; className: string }) {
+  const [cur, setCur] = useState(src);
+  const check = (el: HTMLImageElement | null) => { if (el && el.complete && el.naturalWidth === 0 && el.src.endsWith(src)) setCur(fallback); };
+  // eslint-disable-next-line @next/next/no-img-element
+  return <img key={src} ref={check} src={cur} onError={() => { if (cur !== fallback) setCur(fallback); }} alt={alt} loading="lazy" className={className} />;
+}
 
 function Select({ id, label, value, onChange, children, compact }: { id: string; label: string; value: string | number; onChange: (v: string) => void; children: React.ReactNode; compact?: boolean }) {
   return (
@@ -20,6 +30,16 @@ function Select({ id, label, value, onChange, children, compact }: { id: string;
 /** Cascading dropdowns + quantity/price dropdown for a PrintConfig. Controlled: pass the resolved state, get a new state back. */
 export function Configurator({ cfg, value, onChange, compact = false, idPrefix = "cfg" }: { cfg: PrintConfig; value: Resolved; onChange: (s: ConfigState) => void; compact?: boolean; idPrefix?: string }) {
   const set = (key: string, v: string) => onChange({ sel: { ...value.sel, [key]: v }, qty: value.qty });
+  // Show the chosen type's photo as the main product image.
+  const pictured = value.fields.find(({ field }) => field.images);
+  const picturedKey = pictured?.field.key, picturedVal = picturedKey ? value.sel[picturedKey] : undefined;
+  const picturedImg = pictured && picturedVal ? pictured.field.images![picturedVal] : undefined;
+  const setGallery = useGalleryOverride((s) => s.set);
+  useEffect(() => {
+    if (compact || !picturedImg || !picturedVal) return;
+    setGallery({ src: picturedImg.photo, fallback: picturedImg.art, label: picturedVal });
+    return () => setGallery(null);
+  }, [compact, picturedImg, picturedVal, setGallery]);
   const hint = value.fields.map(({ field }) => field.hint?.[value.sel[field.key]]).filter(Boolean);
   return (
     <div className={compact ? "space-y-3" : "space-y-4"}>
@@ -32,8 +52,8 @@ export function Configurator({ cfg, value, onChange, compact = false, idPrefix =
                 const on = value.sel[field.key] === v;
                 return (
                   <button key={v} type="button" role="radio" aria-checked={on} onClick={() => set(field.key, v)} title={field.hint?.[v]} className={`rounded-xl border overflow-hidden text-left bg-white transition-shadow ${on ? "border-brand ring-2 ring-brand/30" : "border-line hover:border-ink-3"}`}>
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={field.images![v]} alt={`${v} visiting card`} loading="lazy" className="w-full aspect-[4/3] object-cover block" />
+                    <Pic src={field.images![v].photo} fallback={field.images![v].art} alt={`${v} visiting card`} className="w-full aspect-[4/3] object-cover block" />
+                    <span className={`block text-center text-[11px] sm:text-xs font-semibold leading-tight px-1 py-1.5 ${on ? "bg-brand text-white" : "bg-surface-2 text-ink"}`}>{v}</span>
                   </button>
                 );
               })}

@@ -2,20 +2,31 @@
 import { useCallback, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { ChevronLeft, ChevronRight, X, Maximize2 } from "lucide-react";
+import { useGalleryOverride } from "@/lib/gallery-override";
 
 type Img = { src: string; label: string };
 
 /** Product photos. Images are shown whole (never cropped) and open full-screen on click/tap,
  *  with arrows, swipe and keyboard navigation. */
-export function Gallery({ images, alt }: { images: Img[]; alt: string }) {
+export function Gallery({ images: base, alt }: { images: Img[]; alt: string }) {
   const [i, setI] = useState(0);
   const [open, setOpen] = useState(false);
+  // An option picker (visiting-card type) can push its photo to the front of the gallery.
+  const override = useGalleryOverride((s) => s.image);
+  // Photos that fail to load (e.g. not fetched at build time) fall back to the illustration.
+  const [failed, setFailed] = useState<Record<string, true>>({});
+  const [shownFor, setShownFor] = useState(override);
+  if (shownFor !== override) { setShownFor(override); setI(0); } // reset to the pushed photo when the selection changes
+  const overrideSrc = override ? (failed[override.src] && override.fallback ? override.fallback : override.src) : null;
+  const images = override && overrideSrc ? [{ src: overrideSrc, label: override.label }, ...base] : base;
+  const onErr = (src: string) => { if (override && src === override.src && override.fallback && !failed[src]) setFailed((f) => ({ ...f, [src]: true })); };
+  const mainRef = (el: HTMLImageElement | null) => { if (el && el.complete && el.naturalWidth === 0) onErr(el.getAttribute("src") ?? ""); };
   return (
     <div>
       <button type="button" onClick={() => setOpen(true)} className="card block aspect-square relative overflow-hidden w-full max-w-full bg-white cursor-zoom-in group" aria-label="View larger image">
         {/* Positioned so the photo's own size can never widen the box (a wide photo inside an auto-sized button did). */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={images[i].src} alt={alt} className="absolute inset-0 w-full h-full object-contain" fetchPriority="high" />
+        <img ref={mainRef} src={images[i].src} alt={alt} onError={() => onErr(images[i].src)} className="absolute inset-0 w-full h-full object-contain" fetchPriority="high" />
         <span className="chip bg-white/90 absolute bottom-3 left-3">{images[i].label}</span>
         <span className="absolute top-3 right-3 rounded-full bg-white/90 text-ink p-2 shadow-sm opacity-80 group-hover:opacity-100" aria-hidden><Maximize2 size={16} /></span>
       </button>
@@ -24,7 +35,7 @@ export function Gallery({ images, alt }: { images: Img[]; alt: string }) {
           {images.map((im, k) => (
             <button key={k} type="button" onClick={() => setI(k)} aria-label={`Show ${im.label}`} className={`relative w-16 h-16 shrink-0 rounded-lg overflow-hidden bg-white border-2 ${k === i ? "border-brand" : "border-line"}`}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={im.src} alt="" className="absolute inset-0 w-full h-full object-contain" />
+              <img src={im.src} alt="" onError={() => onErr(im.src)} className="absolute inset-0 w-full h-full object-contain" />
             </button>
           ))}
         </div>

@@ -1,24 +1,90 @@
 {
-  "Standard": "/images/cards/standard.svg",
-  "Classic": "/images/cards/classic.svg",
-  "Premium Plus": "/images/cards/premium-plus.svg",
-  "Matte": "/images/cards/matte.svg",
-  "Glossy": "/images/cards/glossy.svg",
-  "Velvet Touch": "/images/cards/velvet-touch.svg",
-  "Spot UV": "/images/cards/spot-uv.svg",
-  "Raised Gold Foil": "/images/cards/raised-gold-foil.svg",
-  "Pearl": "/images/cards/pearl.svg",
-  "Kraft": "/images/cards/kraft.svg",
-  "Transparent": "/images/cards/transparent.svg",
-  "Non-Tearable": "/images/cards/non-tearable.svg",
-  "Magnetic": "/images/cards/magnetic.svg",
-  "QR Code": "/images/cards/qr-code.svg",
-  "Rounded Corner": "/images/cards/rounded-corner.svg",
-  "Square": "/images/cards/square.svg",
-  "Circle": "/images/cards/circle.svg",
-  "Oval": "/images/cards/oval.svg",
-  "Leaf": "/images/cards/leaf.svg",
-  "Diamond": "/images/cards/diamond.svg",
-  "Custom Shape": "/images/cards/custom-shape.svg",
-  "Bulk": "/images/cards/bulk.svg"
+  "Standard": {
+    "photo": "/images/cards/photos/standard.jpg",
+    "art": "/images/cards/standard.svg"
+  },
+  "Classic": {
+    "photo": "/images/cards/photos/classic.jpg",
+    "art": "/images/cards/classic.svg"
+  },
+  "Premium Plus": {
+    "photo": "/images/cards/photos/premium-plus.jpg",
+    "art": "/images/cards/premium-plus.svg"
+  },
+  "Matte": {
+    "photo": "/images/cards/photos/matte.jpg",
+    "art": "/images/cards/matte.svg"
+  },
+  "Glossy": {
+    "photo": "/images/cards/photos/glossy.jpg",
+    "art": "/images/cards/glossy.svg"
+  },
+  "Velvet Touch": {
+    "photo": "/images/cards/photos/velvet-touch.jpg",
+    "art": "/images/cards/velvet-touch.svg"
+  },
+  "Spot UV": {
+    "photo": "/images/cards/photos/spot-uv.jpg",
+    "art": "/images/cards/spot-uv.svg"
+  },
+  "Raised Gold Foil": {
+    "photo": "/images/cards/photos/raised-gold-foil.jpg",
+    "art": "/images/cards/raised-gold-foil.svg"
+  },
+  "Pearl": {
+    "photo": "/images/cards/photos/pearl.jpg",
+    "art": "/images/cards/pearl.svg"
+  },
+  "Kraft": {
+    "photo": "/images/cards/photos/kraft.jpg",
+    "art": "/images/cards/kraft.svg"
+  },
+  "Transparent": {
+    "photo": "/images/cards/photos/transparent.jpg",
+    "art": "/images/cards/transparent.svg"
+  },
+  "Non-Tearable": {
+    "photo": "/images/cards/photos/non-tearable.jpg",
+    "art": "/images/cards/non-tearable.svg"
+  },
+  "Magnetic": {
+    "photo": "/images/cards/photos/magnetic.jpg",
+    "art": "/images/cards/magnetic.svg"
+  },
+  "QR Code": {
+    "photo": "/images/cards/photos/qr-code.jpg",
+    "art": "/images/cards/qr-code.svg"
+  },
+  "Rounded Corner": {
+    "photo": "/images/cards/photos/rounded-corner.jpg",
+    "art": "/images/cards/rounded-corner.svg"
+  },
+  "Square": {
+    "photo": "/images/cards/photos/square.jpg",
+    "art": "/images/cards/square.svg"
+  },
+  "Circle": {
+    "photo": "/images/cards/photos/circle.jpg",
+    "art": "/images/cards/circle.svg"
+  },
+  "Oval": {
+    "photo": "/images/cards/photos/oval.jpg",
+    "art": "/images/cards/oval.svg"
+  },
+  "Leaf": {
+    "photo": "/images/cards/photos/leaf.jpg",
+    "art": "/images/cards/leaf.svg"
+  },
+  "Diamond": {
+    "photo": "/images/cards/photos/diamond.jpg",
+    "art": "/images/cards/diamond.svg"
+  },
+  "Custom Shape": {
+    "photo": "/images/cards/photos/custom-shape.jpg",
+    "art": "/images/cards/custom-shape.svg"
+  },
+  "Bulk": {
+    "photo": "/images/cards/photos/bulk.jpg",
+    "art": "/images/cards/bulk.svg"
+  }
 }

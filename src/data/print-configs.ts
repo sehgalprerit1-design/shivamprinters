@@ -20,7 +20,8 @@ import cardArt from "../../public/images/cards/index.json";
 
 export type Tier = [qty: number, total: number];
 export type ConfigRow = { sel: Record<string, string>; tiers: Tier[] };
-export type ConfigField = { key: string; label: string; hint?: Record<string, string>; /** Picture per value: shown as a clickable tile grid instead of a plain dropdown. */ images?: Record<string, string> };
+export type CardImage = { photo: string; art: string };
+export type ConfigField = { key: string; label: string; hint?: Record<string, string>; /** Picture per value (photo + illustration fallback): shown as a clickable tile grid instead of a plain dropdown, and swapped into the product gallery. */ images?: Record<string, CardImage> };
 export type ConfigExtra = { key: string; label: string; choices: string[]; when?: Record<string, string>; /** Hide when sel[key] is one of these values. */ unless?: Record<string, string[]> };
 export type PrintConfig = {
   fields: ConfigField[];
@@ -71,7 +72,7 @@ const CARD_HINT: Record<string, string> = {
 export const PRINT_CONFIGS: Record<string, PrintConfig> = {
   "business-cards": {
     fields: [
-      { key: "type", label: "Card type", hint: CARD_HINT, images: cardArt as Record<string, string> },
+      { key: "type", label: "Card type", hint: CARD_HINT, images: cardArt as Record<string, CardImage> },
       { key: "shape", label: "Shape" },
       { key: "corners", label: "Corners" },
       { key: "stock", label: "Card stock" },

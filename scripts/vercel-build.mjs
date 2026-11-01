@@ -16,4 +16,5 @@ if (process.env.DATABASE_URL) {
 } else {
   console.log("DATABASE_URL not set — skipping prisma generate/db push (orders use in-memory store).");
 }
+try { run("node scripts/fetch-card-photos.mjs", { timeout: 300_000 }); } catch (e) { console.warn("card photo fetch failed (continuing):", e?.message?.split("\n")[0]); }
 run("npx next build");
