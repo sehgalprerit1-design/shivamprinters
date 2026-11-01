@@ -17,7 +17,7 @@ export function CustomPrintingSection({ full = false }: { full?: boolean }) {
           </ul>
           <div className="mt-6 flex flex-wrap gap-3 text-sm">
             <a href="tel:+919910888217" className="btn bg-white text-ink hover:bg-white/90">Call 9910888217</a>
-            <a href="https://wa.me/919910888217?text=Hi%20Shivam%20Printers%2C%20I%20need%20a%20quote%20for%20custom%20printing." target="_blank" rel="noopener noreferrer" className="btn bg-[#25D366] text-white hover:bg-[#1ebe5b]">WhatsApp us</a>
+            <a href="https://wa.me/917292074770?text=Hi%20Shivam%20Printers%2C%20I%20need%20a%20quote%20for%20custom%20printing." target="_blank" rel="noopener noreferrer" className="btn bg-[#25D366] text-white hover:bg-[#1ebe5b]">WhatsApp us</a>
             {!full && <Link href="/custom-printing" className="btn bg-white/10 text-white hover:bg-white/20">More about custom printing →</Link>}
           </div>
         </div>

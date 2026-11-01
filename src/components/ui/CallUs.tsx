@@ -1,7 +1,7 @@
 import { Phone } from "lucide-react";
 
 export const SUPPORT_PHONE = "9910888217";
-export const WHATSAPP_NUMBER = "919910888217"; // country code + number, no "+"
+export const WHATSAPP_NUMBER = "917292074770"; // country code + number, no "+"
 
 export function whatsappUrl(message = "Hi Shivam Printers, I have a question.") {
   return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
