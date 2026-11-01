@@ -16,10 +16,11 @@
 //  - Quantity is a dropdown of the matching row's tiers.
 
 import data from "./print-configs.data.json";
+import cardArt from "../../public/images/cards/index.json";
 
 export type Tier = [qty: number, total: number];
 export type ConfigRow = { sel: Record<string, string>; tiers: Tier[] };
-export type ConfigField = { key: string; label: string; hint?: Record<string, string> };
+export type ConfigField = { key: string; label: string; hint?: Record<string, string>; /** Picture per value: shown as a clickable tile grid instead of a plain dropdown. */ images?: Record<string, string> };
 export type ConfigExtra = { key: string; label: string; choices: string[]; when?: Record<string, string>; /** Hide when sel[key] is one of these values. */ unless?: Record<string, string[]> };
 export type PrintConfig = {
   fields: ConfigField[];
@@ -70,7 +71,7 @@ const CARD_HINT: Record<string, string> = {
 export const PRINT_CONFIGS: Record<string, PrintConfig> = {
   "business-cards": {
     fields: [
-      { key: "type", label: "Card type", hint: CARD_HINT },
+      { key: "type", label: "Card type", hint: CARD_HINT, images: cardArt as Record<string, string> },
       { key: "shape", label: "Shape" },
       { key: "corners", label: "Corners" },
       { key: "stock", label: "Card stock" },

@@ -24,7 +24,22 @@ export function Configurator({ cfg, value, onChange, compact = false, idPrefix =
   return (
     <div className={compact ? "space-y-3" : "space-y-4"}>
       <div className={`grid gap-3 ${compact ? "" : "sm:grid-cols-2"}`}>
-        {value.fields.map(({ field, values }) => (
+        {value.fields.map(({ field, values }) => field.images && !compact ? (
+          <div key={field.key} className="sm:col-span-2">
+            <div className="text-sm font-semibold mb-2">{field.label}</div>
+            <div role="radiogroup" aria-label={field.label} className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+              {values.map((v) => {
+                const on = value.sel[field.key] === v;
+                return (
+                  <button key={v} type="button" role="radio" aria-checked={on} onClick={() => set(field.key, v)} title={field.hint?.[v]} className={`rounded-xl border overflow-hidden text-left bg-white transition-shadow ${on ? "border-brand ring-2 ring-brand/30" : "border-line hover:border-ink-3"}`}>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={field.images![v]} alt={`${v} visiting card`} loading="lazy" className="w-full aspect-[4/3] object-cover block" />
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        ) : (
           <Select key={field.key} id={`${idPrefix}-${field.key}`} label={field.label} value={value.sel[field.key]} onChange={(v) => set(field.key, v)} compact={compact}>
             {values.map((v) => <option key={v} value={v}>{v}</option>)}
           </Select>
