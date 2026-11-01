@@ -69,7 +69,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
         <div>
           <div className="flex gap-2 mb-2">{p.badges?.map((b) => <span key={b} className="chip bg-brand-soft text-brand-ink">{b}</span>)}</div>
           <h1 className="text-3xl md:text-4xl font-bold">{p.name}</h1>
-          <a href="#reviews" className="flex items-center gap-2 mt-2 text-sm hover:underline"><span className="flex items-center gap-1 text-gold"><Star size={14} className="fill-gold" />{sum.avg}</span><span className="text-ink-3">{p.reviews > 0 ? `${p.reviews.toLocaleString("en-IN")} ratings · ` : ""}{sum.total} reviews</span><span className="text-ink-3">·</span><span className="text-ink-2">{kind}</span></a>
+          {sum.total > 0 && <a href="#reviews" className="flex items-center gap-2 mt-2 text-sm hover:underline"><span className="flex items-center gap-1 text-gold"><Star size={14} className="fill-gold" />{sum.avg}</span><span className="text-ink-3">{p.reviews > 0 ? `${p.reviews.toLocaleString("en-IN")} ratings · ` : ""}{sum.total} reviews</span><span className="text-ink-3">·</span><span className="text-ink-2">{kind}</span></a>}
           <p className="text-ink-2 mt-4 leading-relaxed">{p.description}</p>
           <BuyBox product={p} promo={promo && !ENQUIRY_ONLY ? <><b>{promo.code}</b> for {describeCoupon(promo)} at checkout</> : null} />
 
@@ -123,7 +123,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
 
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
         "@context": "https://schema.org", "@type": "Product", name: p.name, description: p.description, image: p.image, brand: { "@type": "Brand", name: "Shivam Printers" }, sku: p.variants[0].sku,
-        aggregateRating: { "@type": "AggregateRating", ratingValue: sum.avg, reviewCount: sum.total },
+        ...(sum.total > 0 ? { aggregateRating: { "@type": "AggregateRating", ratingValue: sum.avg, reviewCount: sum.total } } : {}),
         review: reviews.slice(0, 5).map((r) => ({ "@type": "Review", author: { "@type": "Person", name: r.author }, datePublished: r.date, reviewBody: r.body, name: r.title, reviewRating: { "@type": "Rating", ratingValue: r.rating } })),
         offers: { "@type": "AggregateOffer", priceCurrency: "INR", lowPrice: minPrice(p), highPrice: Math.max(...p.variants.map((v) => v.price)), offerCount: p.variants.length, availability: "https://schema.org/InStock" },
       }) }} />

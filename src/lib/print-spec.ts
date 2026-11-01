@@ -29,7 +29,7 @@ export type PrintSpec = {
 };
 
 const IN = 25.4;
-const PAPER: Record<string, [number, number]> = { A3: [297, 420], A4: [210, 297], A5: [148, 210], A6: [105, 148], B5: [176, 250] };
+const PAPER: Record<string, [number, number]> = { A3: [297, 420], A4: [210, 297], A5: [148, 210], A6: [105, 148], B5: [176, 250], DL: [99, 210] };
 
 /** Sizes for products whose variant names don't state one (trim, in mm). */
 const FIXED: Record<string, [number, number]> = {
@@ -50,7 +50,7 @@ const MUG: [number, number] = [228, 95];
 function parseSize(name: string): [number, number] | null {
   const withPrint = name.match(/with\s+(\d+(?:\.\d+)?)\s*[x×]\s*(\d+(?:\.\d+)?)\s*print/i);
   if (withPrint) return [Number(withPrint[1]) * IN, Number(withPrint[2]) * IN];
-  const paper = name.match(/\b(A[3-6]|B5)\b/);
+  const paper = name.match(/\b(A[3-6]|B5|DL)\b/);
   const pair = name.match(/(\d+(?:\.\d+)?)\s*[x×]\s*(\d+(?:\.\d+)?)(?:\s*[x×]\s*\d+(?:\.\d+)?)?\s*(ft|cm|mm|"|in)?/i);
   if (pair) {
     const unit = (pair[3] ?? '"').toLowerCase();
@@ -103,6 +103,7 @@ function facesFor(product: Product, variant: Variant, opts: Record<string, strin
   if (slug === "business-cards") return two("Front", "Back");
   if (slug === "photo-postcards") return two("Front", "Back", opts.back === "postcard" || !opts.back ? "postcard-back" : "back");
   if (slug === "event-id-cards") return opts.sides === "double" ? two("Front", "Back") : one("front", "Front", 1);
+  if (slug === "brochures") return two("Outside", "Inside", "back", 1);
   if (slug === "brochures-flyers") return opts.sides === "single" ? one("front", "Front", 1) : two("Front", "Back", "back", 1);
   if (slug === "gift-paper-bags") return opts.sides === "two" ? two("Side A", "Side B", "back", 1) : one("front", "Side A", 1);
   if (slug.startsWith("photo-cushion")) return opts.back === "photo" ? two("Front", "Back", "back", 1) : opts.back === "message" ? two("Front", "Back") : one("front", "Front", 1);

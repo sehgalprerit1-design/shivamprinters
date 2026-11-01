@@ -163,6 +163,7 @@ function fill(s: string, r: () => number, p: Product, variant?: string) {
 }
 
 export function reviewsFor(p: Product): Review[] {
+  if (p.reviews === 0) return []; // new product: no reviews yet
   const r = rng(p.slug);
   const pool = [...(BY_CAT[p.category] ?? []), ...COMMON];
   const n = Math.min(pool.length, 15 + Math.floor(r() * 8)); // 15–22, never more than the pool

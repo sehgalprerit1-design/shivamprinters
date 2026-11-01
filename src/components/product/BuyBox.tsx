@@ -10,6 +10,8 @@ import { useCart } from "@/lib/cart";
 import { CallUs, WhatsAppIcon, whatsappUrl, SUPPORT_PHONE } from "@/components/ui/CallUs";
 import { ENQUIRY_ONLY } from "@/lib/site";
 import { allowsOwnDesign } from "@/lib/print-spec";
+import { configFor, resolveConfig, encodeConfig, perPiece, type ConfigState } from "@/data/print-configs";
+import { Configurator } from "./Configurator";
 
 export function BuyBox({ product, promo }: { product: Product; promo?: React.ReactNode }) {
   const [v, setV] = useState(product.variants[0]);
@@ -21,12 +23,19 @@ export function BuyBox({ product, promo }: { product: Product; promo?: React.Rea
   const addLine = useCart((s) => s.add); const openCart = useCart((s) => s.setOpen); const [added, setAdded] = useState(false); const [copied, setCopied] = useState(false);
   const readyMade = product.personalisation === "none";
   useEffect(() => setMounted(true), []);
-  const unit = v.price + optionDelta(groups, opts);
-  const pct = v.compareAt ? Math.round(((v.compareAt - unit) / v.compareAt) * 100) : 0;
-  const q = new URLSearchParams({ v: v.sku, qty: String(qty), ...opts }).toString();
+  // Products priced by a dropdown grid (shape × size × material × quantity) instead of variant + surcharges.
+  const cfg = configFor(product.slug);
+  const [cfgState, setCfgState] = useState<ConfigState>({ sel: {}, qty: 0 });
+  const res = cfg ? resolveConfig(cfg, cfgState) : null;
+  const unit = res ? res.each : v.price + optionDelta(groups, opts);
+  const lineQty = res ? res.qty : qty;
+  const pct = !res && v.compareAt ? Math.round(((v.compareAt - unit) / v.compareAt) * 100) : 0;
+  const q = new URLSearchParams(res ? { v: v.sku, cfg: encodeConfig(res) } : { v: v.sku, qty: String(qty), ...opts }).toString();
   const wished = mounted && wish.has(product.slug);
-  const optLabel = optionLabel(groups, opts);
-  const orderMsg = `Hi Shivam Printers, I'd like to order:\n• ${product.name}${product.variants.length > 1 ? ` — ${v.name}` : ""}${optLabel ? ` (${optLabel})` : ""}\n• Qty: ${qty}\n• Price shown: ${inr(unit)} each\n${mounted ? location.href : ""}`;
+  const optLabel = res ? res.label : optionLabel(groups, opts);
+  const orderMsg = res
+    ? `Hi Shivam Printers, I'd like to order:\n• ${product.name} (${res.label})\n• Qty: ${res.qty.toLocaleString("en-IN")} ${cfg!.unit}\n• Price shown: ${inr(res.total)} total (${perPiece(res.each)} each)\n${mounted ? location.href : ""}`
+    : `Hi Shivam Printers, I'd like to order:\n• ${product.name}${product.variants.length > 1 ? ` — ${v.name}` : ""}${optLabel ? ` (${optLabel})` : ""}\n• Qty: ${qty}\n• Price shown: ${inr(unit)} each\n${mounted ? location.href : ""}`;
 
   const checkPin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,7 +46,8 @@ export function BuyBox({ product, promo }: { product: Product; promo?: React.Rea
 
   return (
     <div className="mt-6" id="buy">
-      {product.variants.length > 1 && (
+      {cfg && res && <Configurator cfg={cfg} value={res} onChange={setCfgState} />}
+      {!cfg && product.variants.length > 1 && (
         <div>
           <div className="text-sm font-semibold mb-2">{product.variantLabel ?? "Size"}</div>
           <div className="flex flex-wrap gap-2">
@@ -49,7 +59,7 @@ export function BuyBox({ product, promo }: { product: Product; promo?: React.Rea
           </div>
         </div>
       )}
-      {groups.map((g) => (
+      {!cfg && groups.map((g) => (
         <div key={g.key} className="mt-4">
           <div className="text-sm font-semibold mb-2">{g.label}</div>
           <div className="flex flex-wrap gap-2">
@@ -63,6 +73,12 @@ export function BuyBox({ product, promo }: { product: Product; promo?: React.Rea
         </div>
       ))}
 
+      {res ? (
+        <div className="mt-6">
+          <div className="flex items-baseline gap-3"><span className="text-3xl font-bold">{inr(res.total)}</span><span className="text-sm text-ink-2">for {res.qty.toLocaleString("en-IN")} {cfg!.unit} · {perPiece(res.each)} each</span></div>
+          <div className="text-xs text-ink-3 mt-1">Inclusive of GST{promo ? <> · {promo}</> : null}</div>
+        </div>
+      ) : (
       <div className="flex items-end gap-4 mt-6">
         <div>
           <div className="flex items-baseline gap-3">
@@ -76,11 +92,12 @@ export function BuyBox({ product, promo }: { product: Product; promo?: React.Rea
           <div className="inline-flex border border-line rounded-full"><button className="px-3 py-1.5" onClick={() => setQty(Math.max(1, qty - 1))}>−</button><span className="px-1 py-1.5 text-sm w-6 text-center">{qty}</span><button className="px-3 py-1.5" onClick={() => setQty(Math.min(99, qty + 1))}>+</button></div>
         </div>
       </div>
+      )}
       <div className="mt-4 flex items-center gap-2.5 rounded-xl border border-accent/40 bg-accent-soft px-3 py-2.5 text-sm">
         <span className="grid place-items-center w-7 h-7 rounded-full bg-accent text-white shrink-0"><Zap size={15} className="fill-white" /></span>
         <div><div className="font-bold text-ink">Same Day Express Delivery in Delhi NCR</div><div className="text-xs text-ink-2">Order on WhatsApp or call us before 2 pm and get it today.</div></div>
       </div>
-      {qty >= 10 && <div className="text-xs text-accent mt-2">Ordering {qty}? <Link href="/bulk-orders" className="underline">Bulk pricing</Link> starts at 25 units.</div>}
+      {!cfg && qty >= 10 && <div className="text-xs text-accent mt-2">Ordering {qty}? <Link href="/bulk-orders" className="underline">Bulk pricing</Link> starts at 25 units.</div>}
 
       <div className="flex gap-2 mt-5">
         {ENQUIRY_ONLY
@@ -89,7 +106,7 @@ export function BuyBox({ product, promo }: { product: Product; promo?: React.Rea
               <a href={`tel:+91${SUPPORT_PHONE}`} className="btn btn-ghost !px-4" aria-label="Call to order" title="Call to order"><Phone size={18} /></a>
             </>
           : readyMade
-          ? <button onClick={() => { addLine({ productSlug: product.slug, productName: product.name, variantSku: v.sku, variantName: v.name, unitPrice: unit, qty, image: product.image }); setAdded(true); openCart(true); setTimeout(() => setAdded(false), 2500); }} className="btn btn-primary flex-1 text-base !py-3.5">{added ? "Added ✓" : `Add to cart · ${inr(unit * qty)}`}</button>
+          ? <button onClick={() => { addLine({ productSlug: product.slug, productName: product.name, variantSku: v.sku, variantName: res ? res.label : v.name, unitPrice: unit, qty: lineQty, image: product.image }); setAdded(true); openCart(true); setTimeout(() => setAdded(false), 2500); }} className="btn btn-primary flex-1 text-base !py-3.5">{added ? "Added ✓" : `Add to cart · ${inr(res ? res.total : unit * qty)}`}</button>
           : <Link href={`/design/${product.slug}?${q}`} className="btn btn-primary flex-1 text-base !py-3.5">Personalise this →</Link>}
         <button onClick={() => wish.toggle(product.slug)} aria-label="Save" className={`btn btn-ghost !px-4 ${wished ? "text-brand border-brand" : ""}`}><Heart size={18} className={wished ? "fill-brand" : ""} /></button>
         <button onClick={() => { if (navigator.share) navigator.share({ title: product.name, url: location.href }).catch(() => {}); else { navigator.clipboard?.writeText(location.href); setCopied(true); setTimeout(() => setCopied(false), 2000); } }} aria-label="Share" title={copied ? "Link copied" : "Share"} className="btn btn-ghost !px-4 relative"><Share2 size={18} />{copied && <span className="absolute -top-8 right-0 text-xs bg-ink text-white rounded-md px-2 py-1 whitespace-nowrap">Link copied</span>}</button>

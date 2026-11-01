@@ -24,6 +24,8 @@ import { inr } from "@/lib/format";
 import { CallUs, WhatsAppIcon, whatsappUrl } from "@/components/ui/CallUs";
 import { ENQUIRY_ONLY } from "@/lib/site";
 import { printSpec, printedFields, allowsOwnDesign, artworkRequirements } from "@/lib/print-spec";
+import { configFor, resolveConfig, perPiece, type ConfigState } from "@/data/print-configs";
+import { Configurator } from "@/components/product/Configurator";
 import {
   MM, PT, PROPS, ICONS, FONTS, GOOGLE_FONTS_URL, fontLabel, geo, T, R, C, Ring, Ln, P, Icon, QR, Frame, fillFrame, photoToFrame, fitPhoto, photoDpi,
   renderJSON, withJSON, walk, loadImage, type Obj,
@@ -37,14 +39,23 @@ const INK = ["#1D1A17", "#FFFFFF", "#E2573F", "#1F6F78", "#C8962E", "#1F2A44", "
 const uid = () => Math.random().toString(36).slice(2, 10);
 const LOW_DPI = 150, GOOD_DPI = 220;
 
-export function Studio({ product, variant: initialVariant, initialOptions = {}, initialQty = 1, editLineId, initialMode }: { initialMode?: string; product: Product; variant: Variant; initialOptions?: Record<string, string>; initialQty?: number; editLineId?: string }) {
+export function Studio({ product, variant: initialVariant, initialOptions = {}, initialQty = 1, initialConfig, editLineId, initialMode }: { initialMode?: string; product: Product; variant: Variant; initialOptions?: Record<string, string>; initialQty?: number; initialConfig?: Partial<ConfigState>; editLineId?: string }) {
   const router = useRouter();
   const add = useCart((s) => s.add); const replace = useCart((s) => s.replace);
-  const groups = useMemo(() => optionsFor(product.slug, product.category), [product.slug, product.category]);
-  const [variant, setVariant] = useState<Variant>(initialVariant);
-  const [opts, setOpts] = useState<Record<string, string>>({ ...defaultOptions(groups), ...initialOptions });
-  const [qty, setQty] = useState(initialQty);
-  const unitPrice = variant.price + optionDelta(groups, opts);
+  // Grid-priced products (sheet stickers, brochures, postcards, banners) use dropdowns instead of variant + option chips.
+  const pcfg = configFor(product.slug);
+  const [cfgState, setCfgState] = useState<ConfigState>({ sel: initialConfig?.sel ?? {}, qty: initialConfig?.qty ?? 0 });
+  const cres = useMemo(() => (pcfg ? resolveConfig(pcfg, cfgState) : null), [pcfg, cfgState]);
+  const groups = useMemo(() => (pcfg ? [] : optionsFor(product.slug, product.category)), [pcfg, product.slug, product.category]);
+  const [baseVariant, setVariant] = useState<Variant>(initialVariant);
+  const cfgSize = cres ? pcfg!.printSize(cres.sel) : null;
+  const variant = useMemo<Variant>(() => (cfgSize ? { ...baseVariant, name: cfgSize } : baseVariant), [baseVariant, cfgSize]);
+  const [rawOpts, setOpts] = useState<Record<string, string>>({ ...defaultOptions(groups), ...initialOptions });
+  const cfgOrient = cres ? pcfg!.orient?.(cres.sel) ?? (cres.sel.orientation ? (cres.sel.orientation === "Vertical" ? "portrait" : "landscape") : undefined) : undefined;
+  const opts = useMemo(() => (cfgOrient ? { ...rawOpts, orientation: cfgOrient } : rawOpts), [rawOpts, cfgOrient]);
+  const [rawQty, setQty] = useState(initialQty);
+  const qty = cres ? cres.qty : rawQty;
+  const unitPrice = cres ? cres.each : variant.price + optionDelta(groups, opts);
   const spec = useMemo(() => printSpec(product, variant, opts), [product, variant, opts]);
   const specKey = useMemo(() => JSON.stringify([spec.wMM, spec.hMM, spec.bleedMM, spec.faces.map((f) => [f.id, f.role, f.month?.month, f.month?.year])]), [spec]);
   const styleKey = `${opts.colour ?? ""}|${opts.theme ?? ""}|${opts.emboss ?? ""}`;
@@ -555,9 +566,15 @@ export function Studio({ product, variant: initialVariant, initialOptions = {}, 
     const text = Object.entries(values).filter(([, v]) => v?.trim()).map(([k, v]) => `${k}: ${v!.trim()}`);
     const msg = [
       "Hi Shivam Printers, I'd like to order this design:",
-      `• ${product.name}${product.variants.length > 1 ? ` — ${variant.name}` : ""}${label ? ` (${label})` : ""}`,
-      `• Qty: ${qty}`,
-      `• Price shown: ${inr(unitPrice)} each`,
+      ...(cres ? [
+        `• ${product.name} (${cres.label})`,
+        `• Qty: ${cres.qty.toLocaleString("en-IN")} ${pcfg!.unit}`,
+        `• Price shown: ${inr(cres.total)} total (${perPiece(cres.each)} each)`,
+      ] : [
+        `• ${product.name}${product.variants.length > 1 ? ` — ${variant.name}` : ""}${label ? ` (${label})` : ""}`,
+        `• Qty: ${qty}`,
+        `• Price shown: ${inr(unitPrice)} each`,
+      ]),
       ...(text.length ? ["• Text on the design:", ...text.map((t) => `   ${t}`)] : []),
       "I designed it on your website — please tell me where to send my photos/files.",
       typeof window !== "undefined" ? window.location.href : "",
@@ -607,7 +624,7 @@ export function Studio({ product, variant: initialVariant, initialOptions = {}, 
     const text = Object.fromEntries(Object.entries(values).filter(([, v]) => v?.trim()));
     const label = optionLabel(groups, opts);
     const line = {
-      productSlug: product.slug, productName: product.name, variantSku: variant.sku, variantName: label ? `${variant.name} · ${label}` : variant.name, unitPrice, qty, image: product.image,
+      productSlug: product.slug, productName: product.name, variantSku: variant.sku, variantName: cres ? cres.label : label ? `${variant.name} · ${label}` : variant.name, unitPrice, qty, image: product.image,
       design: { preview: previewUrl, text, photoCount: used.size, options: opts, slots, ...(files.length ? { files } : {}), canvas: { w: g.W, h: g.H, aspect: spec.wMM / spec.hMM },
         studio: { v: 1, spec: { wMM: spec.wMM, hMM: spec.hMM, bleedMM: spec.bleedMM, safeMM: spec.safeMM }, faces: spec.faces.map((f, i) => ({ id: f.id, label: f.label, json: faces[i] })) } },
     };
@@ -877,9 +894,15 @@ export function Studio({ product, variant: initialVariant, initialOptions = {}, 
           <div>
             <div className="text-xs font-semibold uppercase tracking-wide text-ink-3">Designing</div>
             <div className="font-bold text-lg leading-snug">{product.name}</div>
-            <div className="text-sm text-ink-2">{inr(unitPrice)} each{qty > 1 ? ` · ${inr(unitPrice * qty)} for ${qty}` : ""}</div>
+            <div className="text-sm text-ink-2">{cres ? `${inr(cres.total)} for ${cres.qty.toLocaleString("en-IN")} ${pcfg!.unit} · ${perPiece(cres.each)} each` : <>{inr(unitPrice)} each{qty > 1 ? ` · ${inr(unitPrice * qty)} for ${qty}` : ""}</>}</div>
             <div className="text-xs text-ink-3 mt-0.5 tabular-nums">Print size {spec.label}{multiFace ? ` · ${spec.faces.length} ${spec.faces[1]?.role === "back" || spec.faces[1]?.role === "postcard-back" ? "sides" : "pages"}` : ""}</div>
           </div>
+          {pcfg && cres ? (
+          <details className="text-sm group" open>
+            <summary className="cursor-pointer list-none flex justify-between font-semibold">Size, material & quantity<span className="text-ink-3 group-open:rotate-45 transition-transform">+</span></summary>
+            <div className="mt-3"><Configurator cfg={pcfg} value={cres} onChange={setCfgState} compact idPrefix="studio-cfg" /></div>
+          </details>
+          ) : (
           <details className="text-sm group" open={product.variants.length > 1 || groups.length > 0}>
             <summary className="cursor-pointer list-none flex justify-between font-semibold">Size, finish & quantity<span className="text-ink-3 group-open:rotate-45 transition-transform">+</span></summary>
             {product.variants.length > 1 && (
@@ -894,6 +917,7 @@ export function Studio({ product, variant: initialVariant, initialOptions = {}, 
             <div className="mt-3 flex items-center justify-between"><div className="text-xs font-semibold text-ink-3">Quantity</div>
               <div className="inline-flex border border-line rounded-full"><button type="button" className="px-3" onClick={() => setQty(Math.max(1, qty - 1))}>−</button><span className="px-1 py-1 w-6 text-center">{qty}</span><button type="button" className="px-3" onClick={() => setQty(Math.min(99, qty + 1))}>+</button></div></div>
           </details>
+          )}
 
           <label className="flex gap-2 text-sm items-start"><input type="checkbox" className="mt-1" checked={approved} onChange={(e) => setApproved(e.target.checked)} /><span>I&apos;ve checked spelling, photos and layout. Print it as shown.</span></label>
           {approved && (low.length > 0 || empty > 0) && (
@@ -904,12 +928,12 @@ export function Studio({ product, variant: initialVariant, initialOptions = {}, 
           {error && <div className="flex items-start gap-2 text-sm bg-brand-soft border border-brand/30 text-brand-ink rounded-xl p-3"><AlertTriangle size={16} className="mt-0.5 shrink-0" /><span>{error} <button type="button" className="underline" onClick={() => void addToCart()}>Try again</button></span></div>}
           {ENQUIRY_ONLY ? (
             <>
-              <button type="button" disabled={!ready || !approved || !!busy} onClick={orderOnWhatsApp} className="btn btn-primary w-full text-base !py-3.5 !bg-[#25D366] hover:!bg-[#1ebe5b] !border-[#25D366]"><WhatsAppIcon size={18} className="mr-2" />Order on WhatsApp · {inr(unitPrice * qty)}</button>
+              <button type="button" disabled={!ready || !approved || !!busy} onClick={orderOnWhatsApp} className="btn btn-primary w-full text-base !py-3.5 !bg-[#25D366] hover:!bg-[#1ebe5b] !border-[#25D366]"><WhatsAppIcon size={18} className="mr-2" />Order on WhatsApp · {inr(cres ? cres.total : unitPrice * qty)}</button>
               <p className="text-xs text-ink-3 flex gap-1.5"><Check size={14} className="text-accent shrink-0" />We&apos;re taking orders on WhatsApp and phone right now. Send us this design and your photos in the chat and we&apos;ll confirm price and delivery.</p>
             </>
           ) : (
             <>
-              <button type="button" disabled={!ready || !approved || !!busy} onClick={() => void addToCart()} className="btn btn-primary w-full text-base !py-3.5">{busy && busy.startsWith("Upload") ? busy : <>{editLineId ? "Update cart" : `Add ${qty > 1 ? `${qty} ` : ""}to cart`} · {inr(unitPrice * qty)}</>}</button>
+              <button type="button" disabled={!ready || !approved || !!busy} onClick={() => void addToCart()} className="btn btn-primary w-full text-base !py-3.5">{busy && busy.startsWith("Upload") ? busy : <>{editLineId ? "Update cart" : `Add ${qty > 1 ? `${qty} ` : ""}to cart`} · {inr(cres ? cres.total : unitPrice * qty)}</>}</button>
               <p className="text-xs text-ink-3 flex gap-1.5"><Check size={14} className="text-accent shrink-0" />Your design is saved with the order, so reorders print the same file.</p>
             </>
           )}
