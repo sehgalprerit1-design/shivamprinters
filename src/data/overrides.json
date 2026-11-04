@@ -142,6 +142,16 @@
         "/api/img?key=uploads%2F2026-10-22%2Fe78606d4-3403-4de1-aef7-616bc9dd141e-image.png"
       ]
     },
+    "poster-calendar": {
+      "variants": [
+        {
+          "sku": "CAL-POS-1218",
+          "name": "12x18\" poster",
+          "price": 99,
+          "compareAt": 199
+        }
+      ]
+    },
     "daily-planner": {
       "image": "/api/img?key=uploads%2F2026-10-26%2Ff52e0c0f-cc0c-4249-9f27-3732d5e8ad06-Dairy_Brown_Good.png",
       "images": [
@@ -183,20 +193,11 @@
       ]
     },
     "business-cards": {
-      "name": "Visiting Cards",
       "images": [
         "/images/p/business-cards-2.jpg",
         "/images/cat-business.jpg",
         "/api/img?key=uploads%2F2026-10-22%2F1b285117-abd4-4016-86b2-66160657a0d4-gloss_matt_pearl.png",
         "/api/img?key=uploads%2F2026-10-22%2F4fae0c3f-348a-4a9a-a10a-2876c8374d2a-image.png"
-      ],
-      "variants": [
-        {
-          "sku": "BP-BC-CFG",
-          "name": "Standard visiting cards × 100",
-          "price": 190,
-          "compareAt": null
-        }
       ]
     },
     "custom-stickers": {
