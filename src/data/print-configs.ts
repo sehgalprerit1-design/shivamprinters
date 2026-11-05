@@ -41,6 +41,20 @@ export const PRICE_FACTOR = 0.95;
 const D = Object.fromEntries(
   Object.entries(data as unknown as Record<string, ConfigRow[]>).map(([k, rows]) => [k, rows.map((r) => ({ ...r, tiers: r.tiers.map(([q, t]) => [q, Math.round(t * PRICE_FACTOR)] as Tier) }))]),
 ) as Record<string, ConfigRow[]>;
+
+/** Fixed prices that replace the grid price for one combination: Rs 1 under the cheapest competitor (checked 4 Nov 2026).
+ *  `each` sets every quantity tier to each × qty; `tiers` sets only the listed quantities. */
+const PINNED: Record<string, { sel: Record<string, string>; each?: number; tiers?: Record<number, number> }[]> = {
+  "business-cards": [{ sel: { type: "Standard" }, tiers: { 100: 178 } }], // PrintStop 100 standard cards ₹179
+  "banners-standees": [{ sel: { type: "Flex banner", size: "1 x 2 ft" }, each: 117 }], // PrintStop 3x1 ft flex ₹177, scaled by area
+};
+for (const [slug, pins] of Object.entries(PINNED)) {
+  for (const pin of pins) {
+    const row = D[slug]?.find((r) => Object.keys(r.sel).length === Object.keys(pin.sel).length && Object.entries(pin.sel).every(([k, v]) => r.sel[k] === v));
+    if (!row) continue;
+    row.tiers = row.tiers.map(([q, t]) => [q, pin.each != null ? pin.each * q : pin.tiers?.[q] ?? t] as Tier);
+  }
+}
 const BROCHURE_FLAT: Record<string, string> = { "bi-A5": "297 x 210 mm", "bi-DL": "198 x 210 mm", "bi-A6": "210 x 148 mm", "tri-DL": "297 x 210 mm", "tri-A6": "315 x 148 mm" };
 
 const CARD_SIZE: Record<string, string> = { Classic: "91 x 55 mm", "Custom Shape": "91 x 55 mm", Square: "63.5 x 63.5 mm", Circle: "63.5 x 63.5 mm", Transparent: "85 x 54 mm", Magnetic: "87 x 49 mm" };
