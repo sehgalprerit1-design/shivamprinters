@@ -16,7 +16,7 @@ export const OrderInput = z.object({
   lines: z.array(z.object({ productSlug: z.string(), variantSku: z.string(), variantName: z.string().optional(), qty: z.number().int().min(1).max(99), design: z.any().optional() })).min(1),
   coupon: z.string().optional(),
   shipMethod: z.enum(["economy", "express"]),
-  paymentMethod: z.enum(["RAZORPAY", "COD"]),
+  paymentMethod: z.enum(["RAZORPAY", "PAYTM", "COD"]),
   giftMessage: z.string().max(200).optional(),
   marketingOptIn: z.boolean().optional(), // "keep me posted about offers" at checkout
 });
@@ -89,10 +89,16 @@ export async function getOrder(id: string) {
   return memStore().orders.get(id) ?? null;
 }
 
-export async function markPaid(id: string, razorpayPaymentId: string) {
+/** Marks an online order paid and sends the confirmation emails. Safe to call twice (Paytm can report the same payment via the browser and the callback). */
+export async function markPaid(id: string, ref: string, gateway: "RAZORPAY" | "PAYTM" = "RAZORPAY") {
+  const field = gateway === "PAYTM" ? "paytmTxnId" : "razorpayPaymentId";
   const prisma = await getPrisma();
-  if (prisma) { await prisma.order.update({ where: { id }, data: { status: "PAID", razorpayPaymentId } }); }
-  else { const o = memStore().orders.get(id); if (o) { o.status = "PAID"; o.razorpayPaymentId = razorpayPaymentId; } }
+  if (prisma) {
+    const r = await prisma.order.updateMany({ where: { id, status: "PENDING_PAYMENT" }, data: { status: "PAID", [field]: ref } });
+    if (r.count === 0) return; // already marked paid (or not awaiting payment)
+  } else {
+    const o = memStore().orders.get(id); if (!o || o.status !== "PENDING_PAYMENT") return; o.status = "PAID"; o[field] = ref;
+  }
   const full = await getOrder(id); if (full) { await sendOrderEmails(full as any); await orderAlert(full as any); await recordCustomer({ email: (full as any).email, phone: (full as any).phone, source: "order", order: { total: Number((full as any).total) } }); }
 }
 

@@ -68,7 +68,7 @@ export default async function AdminOrder({ params }: { params: Promise<{ id: str
             {Number(o.discount) > 0 && <div className="flex justify-between"><span>Discount {String(o.couponCode ?? "")}</span><span>−{inr(Number(o.discount))}</span></div>}
             <div className="flex justify-between"><span>Shipping ({String(o.shipMethod)})</span><span>{inr(Number(o.shipping))}</span></div>
             <div className="flex justify-between font-bold border-t border-line pt-1"><span>Total</span><span>{inr(Number(o.total))}</span></div>
-            <div className="text-ink-3">{String(o.paymentMethod)}{o.razorpayPaymentId ? ` · ${String(o.razorpayPaymentId)}` : ""}</div>
+            <div className="text-ink-3">{String(o.paymentMethod)}{o.razorpayPaymentId ? ` · ${String(o.razorpayPaymentId)}` : ""}{o.paytmTxnId ? ` · Paytm txn ${String(o.paytmTxnId)}` : ""}</div>
           </div>
           <StatusButtons id={String(o.id)} status={String(o.status)} trackingUrl={(o.trackingUrl as string) ?? ""} />
         </aside>

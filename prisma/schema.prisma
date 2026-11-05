@@ -131,6 +131,7 @@ enum OrderStatus {
 
 enum PaymentMethod {
   RAZORPAY
+  PAYTM
   COD
 }
 
@@ -153,6 +154,7 @@ model Order {
   couponCode    String?
   razorpayOrderId   String?   @unique
   razorpayPaymentId String?
+  paytmTxnId    String?
   shipMethod    String // express | economy
   giftMessage   String?
   trackingUrl   String?

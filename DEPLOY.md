@@ -31,6 +31,15 @@ Env: `S3_BUCKET=shivam-uploads`, `S3_REGION=auto`, `S3_ENDPOINT=https://<account
 Dashboard → Settings → API Keys → Generate. Start with **Test** keys, switch to **Live** after one real test order.
 Env: `RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET`.
 
+## 4b. Paytm Payment Gateway
+Sign up at business.paytm.com (Paytm for Business) → finish KYC → Developer settings → API Keys (dashboard.paytmpayments.com/next/apikeys).
+Test first with the **Test API Details**, then swap to the **Production** keys once the account is activated.
+- Test: `PAYTM_MID=<test MID>`, `PAYTM_MERCHANT_KEY="<test key>"`, `PAYTM_ENV=staging`
+- Live: `PAYTM_MID=<live MID>`, `PAYTM_MERCHANT_KEY="<live key>"`, and remove `PAYTM_ENV` (or set it to `production`)
+- Optional: `PAYTM_WEBSITE` (defaults to `WEBSTAGING` on staging, `DEFAULT` live — only change if your dashboard shows a different website name); `PAYTM_HOST` to override the gateway host.
+Put the key in double quotes: keys can contain `#`. Redeploy after adding them — "Paytm · UPI, cards, net banking" then appears at checkout.
+Payments are always re-checked with Paytm's Transaction Status API before an order is marked paid; Paytm's redirect lands on `/api/payments/paytm/callback`.
+
 ## 5. Resend — order emails (10 min)
 resend.com → Domains → Add `shivamprinters.com` → add the 3 DNS records it shows → verify.
 API Keys → Create. Env: `RESEND_API_KEY`, `EMAIL_FROM="Shivam Printers <orders@shivamprinters.com>"`, `ORDER_NOTIFY_EMAIL=<your inbox>`.
@@ -69,6 +78,7 @@ At your registrar add the records Vercel shows (A `76.76.21.21` for root, CNAME 
 - [ ] Fill in `src/data/legal.ts` (registered address, GSTIN, grievance officer) — required by the Consumer Protection (E-Commerce) Rules, 2020.
 - [ ] Place one real order with Razorpay **test** card `4111 1111 1111 1111`, check it in `/admin`, download the original photo.
 - [ ] Switch Razorpay to live keys. Redeploy.
+- [ ] Paytm: place one order on staging keys (`PAYTM_ENV=staging`), check it shows PAID with a Paytm txn id in `/admin`, then switch to live keys.
 - [ ] Google Search Console → add property → submit `https://www.shivamprinters.com/sitemap.xml`.
 - [ ] Replace the three homepage testimonials with real ones when you have them.
 

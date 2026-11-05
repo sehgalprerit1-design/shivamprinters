@@ -11,15 +11,20 @@ const Address = z.object({
   line1: z.string().min(4, "Address"), line2: z.string().optional(), city: z.string().min(2, "City"), state: z.string().min(2, "State"), pincode: z.string().regex(/^\d{6}$/, "6-digit PIN"),
 });
 type AddressT = z.infer<typeof Address>;
+const OFFLINE = "Online payment isn't available right now — please choose Cash on delivery.";
 const STATES = ["Andhra Pradesh","Arunachal Pradesh","Assam","Bihar","Chhattisgarh","Goa","Gujarat","Haryana","Himachal Pradesh","Jharkhand","Karnataka","Kerala","Madhya Pradesh","Maharashtra","Manipur","Meghalaya","Mizoram","Nagaland","Odisha","Punjab","Rajasthan","Sikkim","Tamil Nadu","Telangana","Tripura","Uttar Pradesh","Uttarakhand","West Bengal","Andaman and Nicobar Islands","Chandigarh","Dadra and Nagar Haveli and Daman and Diu","Delhi","Jammu and Kashmir","Ladakh","Lakshadweep","Puducherry"];
 
-declare global { interface Window { Razorpay?: new (o: Record<string, unknown>) => { open: () => void } } }
+type PaytmCheckout = { onLoad?: (cb: () => void) => void; init: (c: Record<string, unknown>) => Promise<void>; invoke: () => void; close: () => void };
+declare global { interface Window { Razorpay?: new (o: Record<string, unknown>) => { open: () => void }; Paytm?: { CheckoutJS: PaytmCheckout } } }
+type Pay = "PAYTM" | "RAZORPAY" | "COD";
+const loadScript = (src: string) => new Promise<void>((ok, bad) => { const s = document.createElement("script"); s.src = src; s.onload = () => ok(); s.onerror = () => bad(new Error("Payment script failed to load — check your connection and try again.")); document.body.appendChild(s); });
 
-export function Checkout({ onlinePayments }: { onlinePayments: boolean }) {
+export function Checkout({ razorpay, paytm }: { razorpay: boolean; paytm: boolean }) {
+  const onlinePayments = razorpay || paytm;
   const router = useRouter();
   const { lines, coupon, clear } = useCart();
   const [ship, setShip] = useState<"economy" | "express">("economy");
-  const [pay, setPay] = useState<"RAZORPAY" | "COD">(onlinePayments ? "RAZORPAY" : "COD");
+  const [pay, setPay] = useState<Pay>(paytm ? "PAYTM" : razorpay ? "RAZORPAY" : "COD");
   const [a, setA] = useState<AddressT>({ name: "", phone: "", email: "", line1: "", line2: "", city: "", state: "", pincode: "" });
   const [errs, setErrs] = useState<Record<string, string>>({});
   const [busy, setBusy] = useState(false);
@@ -40,18 +45,54 @@ export function Checkout({ onlinePayments }: { onlinePayments: boolean }) {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "Could not place order");
       if (pay === "COD") { clear(); router.push(`/orders/${data.orderId}?placed=1`); return; }
-      if (!data.razorpay) throw new Error("Online payment isn't available right now — please choose Cash on delivery.");
+      const unpaid = `Payment was not completed. Your cart is intact — try again, or choose Cash on delivery. (Order #${data.number} will be held unpaid for a few hours.)`;
+      const verifyFail = "We received the payment but couldn't verify it automatically. Don't pay again — call us on 9910888217 with order #" + data.number + ".";
+      if (pay === "PAYTM") {
+        if (!data.paytm) throw new Error(OFFLINE);
+        const p = data.paytm as { mid: string; host: string; orderId: string; txnToken: string; amount: string };
+        if (!window.Paytm?.CheckoutJS) {
+          await loadScript(`${p.host}/merchantpgpui/checkoutjs/merchants/${encodeURIComponent(p.mid)}.js`);
+          // Paytm's onLoad fires once, right after its script boots; fall back after 4s in case it already fired.
+          await new Promise<void>((ok) => { const t = setTimeout(ok, 4000); window.Paytm?.CheckoutJS.onLoad?.(() => { clearTimeout(t); ok(); }); });
+        }
+        if (!window.Paytm?.CheckoutJS) throw new Error("Paytm checkout couldn't start — please try again, or choose Cash on delivery.");
+        const cj = window.Paytm!.CheckoutJS;
+        let settled = false;
+        const confirm = async () => {
+          if (settled) return; settled = true;
+          try { cj.close(); } catch { /* already closed */ }
+          setBusy(true);
+          const c = await fetch(`/api/orders/${data.orderId}/confirm`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ gateway: "paytm", paytmOrderId: p.orderId }) });
+          setBusy(false);
+          if (c.ok) { clear(); router.push(`/orders/${data.orderId}?placed=1`); return; }
+          const j = await c.json().catch(() => ({}));
+          if (c.status === 202) { clear(); router.push(`/orders/${data.orderId}?payment=pending`); return; }
+          setErrs({ form: c.status === 502 ? verifyFail : `${j.error ?? "Payment failed"}. ${unpaid}` });
+        };
+        await cj.init({
+          root: "", flow: "DEFAULT",
+          data: { orderId: p.orderId, token: p.txnToken, tokenType: "TXN_TOKEN", amount: p.amount },
+          merchant: { name: "Shivam Printers", redirect: false },
+          handler: {
+            transactionStatus: () => { void confirm(); },
+            notifyMerchant: (event: string) => { if (event === "APP_CLOSED" && !settled) setErrs({ form: unpaid }); if (event === "SESSION_EXPIRED") { settled = true; setErrs({ form: "The payment session expired. " + unpaid }); } },
+          },
+        });
+        cj.invoke();
+        return;
+      }
+      if (!data.razorpay) throw new Error(OFFLINE);
       // Razorpay checkout (script loaded lazily)
-      if (!window.Razorpay) await new Promise<void>((ok, bad) => { const s = document.createElement("script"); s.src = "https://checkout.razorpay.com/v1/checkout.js"; s.onload = () => ok(); s.onerror = () => bad(new Error("Payment script failed")); document.body.appendChild(s); });
+      if (!window.Razorpay) await loadScript("https://checkout.razorpay.com/v1/checkout.js");
       const rz = new window.Razorpay!({
         key: data.razorpay.key, amount: data.razorpay.amount, currency: "INR", name: "Shivam Printers", description: `Order #${data.number}`, order_id: data.razorpay.orderId,
         prefill: { name: a.name, email: a.email, contact: a.phone }, theme: { color: "#e2573f" },
         handler: async (resp: Record<string, string>) => {
           const c = await fetch(`/api/orders/${data.orderId}/confirm`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(resp) });
-          if (!c.ok) { setErrs({ form: "We received the payment but couldn't verify it automatically. Don't pay again — call us on 9910888217 with order #" + data.number + "." }); return; }
+          if (!c.ok) { setErrs({ form: verifyFail }); return; }
           clear(); router.push(`/orders/${data.orderId}?placed=1`);
         },
-        modal: { ondismiss: () => setErrs({ form: `Payment was not completed. Your cart is intact — try again, or choose Cash on delivery. (Order #${data.number} will be held unpaid for a few hours.)` }) },
+        modal: { ondismiss: () => setErrs({ form: unpaid }) },
       });
       rz.open();
     } catch (err) { setErrs({ form: (err as Error).message }); } finally { setBusy(false); }
@@ -92,7 +133,7 @@ export function Checkout({ onlinePayments }: { onlinePayments: boolean }) {
           </section>
           <section className="card p-5">
             <h2 className="font-bold text-lg mb-4">Payment</h2>
-            {([["RAZORPAY", "UPI, cards, net banking, wallets", "Secure payment via Razorpay"], ["COD", "Cash on delivery", "Pay when it arrives. Available on most pincodes."]] as const).filter(([k]) => k !== "RAZORPAY" || onlinePayments).map(([k, l, d]) => (
+            {([["PAYTM", "Paytm · UPI, cards, net banking", "Pay with the Paytm app, any UPI app, or your card — secured by Paytm"], ["RAZORPAY", "UPI, cards, net banking, wallets", "Secure payment via Razorpay"], ["COD", "Cash on delivery", "Pay when it arrives. Available on most pincodes."]] as const).filter(([k]) => (k !== "RAZORPAY" || razorpay) && (k !== "PAYTM" || paytm)).map(([k, l, d]) => (
               <label key={k} className={`flex items-center gap-3 p-3 rounded-xl border mb-2 cursor-pointer ${pay === k ? "border-brand bg-brand-soft" : "border-line"}`}>
                 <input type="radio" name="pay" checked={pay === k} onChange={() => setPay(k)} /><div><div className="font-semibold">{l}</div><div className="text-xs text-ink-3">{d}</div></div>
               </label>
