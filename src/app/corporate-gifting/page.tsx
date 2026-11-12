@@ -63,7 +63,7 @@ export default function CorporateGifting() {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={siteImage("corporate.hero", "/images/corporate-diwali.jpg")} alt="" className="absolute inset-0 w-full h-full object-cover" fetchPriority="high" />
           <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/55 to-black/20" />
-          <div className="relative">
+          <div className="relative min-w-0">
             <div className="chip bg-white/10 text-white mb-3">{season.label}</div>
             <h1 className="text-3xl md:text-5xl font-bold leading-tight">{season.headline}</h1>
             <p className="text-white/80 mt-4 text-lg leading-relaxed">
@@ -84,7 +84,7 @@ export default function CorporateGifting() {
               <a href="tel:+919910888217" className="btn bg-white text-ink hover:bg-white/90">Call 9910888217</a>
             </div>
           </div>
-          <div id="quote" className="relative text-ink scroll-mt-28"><EnquiryForm defaultKind="Corporate gifts" compact /></div>
+          <div id="quote" className="relative min-w-0 text-ink scroll-mt-28"><EnquiryForm defaultKind="Corporate gifts" compact /></div>
         </div>
       </section>
 
