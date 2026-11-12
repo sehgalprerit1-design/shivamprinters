@@ -39,16 +39,19 @@ export function EnquiryForm({ defaultKind, compact = false }: { defaultKind?: st
   );
 
   const inp = "w-full rounded-xl border border-line bg-surface px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand/30";
+  // Compact (narrow side-panel) layout: two equal columns, with the long-placeholder fields on a row of their own
+  // so their text is never clipped.
+  const wide = compact ? "md:col-span-2" : "";
   return (
-    <form onSubmit={submit} className={`card p-5 md:p-6 grid gap-3 ${compact ? "" : "md:grid-cols-2"}`}>
+    <form onSubmit={submit} className="card p-5 md:p-6 grid grid-cols-1 md:grid-cols-2 gap-3 min-w-0">
       <input className={inp} placeholder="Your name *" required value={f.name} onChange={set("name")} />
       <input className={inp} placeholder="10-digit mobile *" required inputMode="numeric" pattern="[6-9][0-9]{9}" value={f.phone} onChange={set("phone")} />
-      <input className={inp} type="email" placeholder="Email (for the written quote)" value={f.email} onChange={set("email")} />
-      <input className={inp} placeholder="Company / shop (optional)" value={f.company} onChange={set("company")} />
+      <input className={`${inp} ${wide}`} type="email" placeholder="Email (for the written quote)" value={f.email} onChange={set("email")} />
+      <input className={`${inp} ${wide}`} placeholder="Company / shop (optional)" value={f.company} onChange={set("company")} />
       <select className={inp} value={f.kind} onChange={set("kind")}>{KINDS.map((k) => <option key={k}>{k}</option>)}</select>
       <input className={inp} placeholder="Quantity (e.g. 500)" value={f.quantity} onChange={set("quantity")} />
-      <input className={inp} placeholder="Needed by (date)" value={f.deadline} onChange={set("deadline")} />
-      <label className={`${inp} flex items-center gap-2 cursor-pointer text-ink-2`}><Paperclip size={14} className="shrink-0" /><span className="truncate">{file ? file.name : "Attach artwork / logo (JPG, PNG, PDF)"}</span><input type="file" accept="image/*,application/pdf" className="hidden" onChange={(e) => setFile(e.target.files?.[0] ?? null)} /></label>
+      <input className={`${inp} ${wide}`} placeholder="Needed by (date)" value={f.deadline} onChange={set("deadline")} />
+      <label className={`${inp} ${wide} min-w-0 flex items-center gap-2 cursor-pointer text-ink-2`}><Paperclip size={14} className="shrink-0" /><span className="truncate">{file ? file.name : "Attach logo or artwork (image / PDF)"}</span><input type="file" accept="image/*,application/pdf" className="hidden" onChange={(e) => setFile(e.target.files?.[0] ?? null)} /></label>
       <textarea className={`${inp} md:col-span-2`} rows={4} required placeholder="Tell us what you need: size, paper, finish, single/double side, delivery city… *" value={f.message} onChange={set("message")} />
       <input className="hidden" tabIndex={-1} autoComplete="off" value={f.website} onChange={set("website")} aria-hidden />
       {err && <div className="md:col-span-2 flex items-start gap-2 text-sm bg-brand-soft border border-brand/30 text-brand-ink rounded-xl p-3"><AlertTriangle size={16} className="mt-0.5 shrink-0" />{err}</div>}

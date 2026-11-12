@@ -9,13 +9,20 @@ import { CallUs, whatsappUrl, WhatsAppIcon } from "@/components/ui/CallUs";
 import { BIZ } from "@/data/legal";
 import { siteImage } from "@/data/site-images";
 import { inr } from "@/lib/format";
+import { corporateSeason } from "@/lib/events";
 
-export const metadata: Metadata = {
-  title: "Corporate Diwali Gifts in Delhi — Branded Diaries, Gift Sets & Calendars",
-  description:
-    "Diwali gifts for employees and clients, printed with your logo in our Kalkaji, New Delhi unit. Branded diaries, executive gift sets, 2027 calendars and mugs. Volume pricing, free proof in one working day, GST invoice, delivery to one or many addresses.",
-  alternates: { canonical: "/corporate-gifting" },
-};
+// The wording follows the events calendar (src/data/events.ts), same as the homepage card that links here.
+// Re-rendered hourly so it switches over on the same day the homepage does.
+export const revalidate = 3600;
+
+export function generateMetadata(): Metadata {
+  const { occasion, year } = corporateSeason();
+  return {
+    title: `Corporate ${occasion ? `${occasion} ` : ""}Gifts in Delhi — Branded Diaries, Gift Sets & Calendars`,
+    description: `${occasion ? `${occasion} gifts` : "Gifts"} for employees and clients, printed with your logo in our Kalkaji, New Delhi unit. Branded diaries, executive gift sets, ${year} calendars and mugs. Volume pricing, free proof in one working day, GST invoice, delivery to one or many addresses.`,
+    alternates: { canonical: "/corporate-gifting" },
+  };
+}
 
 const PICKS = [
   "custom-corporate-printing",
@@ -47,6 +54,8 @@ const WHY = [
 
 export default function CorporateGifting() {
   const picks = PICKS.map(getProduct).filter(Boolean) as Product[];
+  const season = corporateSeason();
+  const giftsFor = season.occasion ? `${season.occasion} corporate gifts` : "corporate gifts";
   return (
     <div>
       <section className="container-x pt-8 md:pt-12">
@@ -54,11 +63,11 @@ export default function CorporateGifting() {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={siteImage("corporate.hero", "/images/corporate-diwali.jpg")} alt="" className="absolute inset-0 w-full h-full object-cover" fetchPriority="high" />
           <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/55 to-black/20" />
-          <div className="relative">
-            <div className="chip bg-white/10 text-white mb-3">Diwali corporate gifting</div>
-            <h1 className="text-3xl md:text-5xl font-bold leading-tight">Diwali gifts your team will actually use</h1>
+          <div className="relative min-w-0">
+            <div className="chip bg-white/10 text-white mb-3">{season.label}</div>
+            <h1 className="text-3xl md:text-5xl font-bold leading-tight">{season.headline}</h1>
             <p className="text-white/80 mt-4 text-lg leading-relaxed">
-              Branded diaries, executive gift sets, 2027 desk calendars and mugs, printed with your logo in our Delhi unit.
+              Branded diaries, executive gift sets, {season.year} desk calendars and mugs, printed with your logo in our Delhi unit.
               Tell us how many people and your budget per gift; we&apos;ll send options and a quote within one working day.
             </p>
             <ul className="mt-6 grid sm:grid-cols-2 gap-3 text-sm">
@@ -68,18 +77,18 @@ export default function CorporateGifting() {
             </ul>
             <div className="mt-6 rounded-2xl bg-white/10 backdrop-blur-sm p-4 flex gap-3 text-sm">
               <Clock size={18} className="shrink-0 mt-0.5" />
-              <p><b>Diwali is on 8 November.</b> Bulk orders need time for proofing and printing, so send your enquiry as early as you can. We confirm the delivery date before you pay.</p>
+              <p><b>{season.countdown ? `${season.countdown}.` : "Ordering in bulk?"}</b> Bulk orders need time for proofing and printing, so send your enquiry as early as you can. We confirm the delivery date before you pay.</p>
             </div>
             <div className="mt-6 flex flex-wrap gap-3 text-sm">
-              <a href={whatsappUrl("Hi Shivam Printers, I'm looking for Diwali corporate gifts. Quantity: __, budget per gift: ₹__")} target="_blank" rel="noopener noreferrer" className="btn bg-[#25D366] text-white hover:bg-[#1ebe5b] inline-flex items-center gap-2"><WhatsAppIcon size={16} />WhatsApp for a quote</a>
+              <a href={whatsappUrl(`Hi Shivam Printers, I'm looking for ${giftsFor}. Quantity: __, budget per gift: ₹__`)} target="_blank" rel="noopener noreferrer" className="btn bg-[#25D366] text-white hover:bg-[#1ebe5b] inline-flex items-center gap-2"><WhatsAppIcon size={16} />WhatsApp for a quote</a>
               <a href="tel:+919910888217" className="btn bg-white text-ink hover:bg-white/90">Call 9910888217</a>
             </div>
           </div>
-          <div id="quote" className="relative text-ink scroll-mt-28"><EnquiryForm defaultKind="Corporate gifts" compact /></div>
+          <div id="quote" className="relative min-w-0 text-ink scroll-mt-28"><EnquiryForm defaultKind="Corporate gifts" compact /></div>
         </div>
       </section>
 
-      <Section title="Popular corporate Diwali gifts" subtitle="Every item can carry your logo or each person's name. Prices shown are for single units; bulk prices are lower.">
+      <Section title={`Popular ${giftsFor}`} subtitle="Every item can carry your logo or each person's name. Prices shown are for single units; bulk prices are lower.">
         <ProductGrid products={picks} />
       </Section>
 
@@ -114,9 +123,9 @@ export default function CorporateGifting() {
       <section className="container-x pb-14">
         <div className="card p-6 md:p-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <h2 className="text-xl md:text-2xl font-bold">Ready to sort this year&apos;s Diwali gifts?</h2>
+            <h2 className="text-xl md:text-2xl font-bold">Ready to sort your {giftsFor}?</h2>
             <p className="text-ink-2 mt-1">{BIZ.legalName}, {BIZ.address}, {BIZ.city} · GSTIN {BIZ.gstin}</p>
-            <div className="mt-2"><CallUs whatsapp="Hi Shivam Printers, I'm looking for Diwali corporate gifts." /></div>
+            <div className="mt-2"><CallUs whatsapp={`Hi Shivam Printers, I'm looking for ${giftsFor}.`} /></div>
           </div>
           <a href="#quote" className="btn btn-primary whitespace-nowrap">Get a quote</a>
         </div>
