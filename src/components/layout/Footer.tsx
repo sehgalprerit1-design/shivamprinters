@@ -3,10 +3,12 @@ import { navItems } from "@/data/nav";
 import { giftPagesByGroup } from "@/data/gifts";
 import { CallUs } from "@/components/ui/CallUs";
 import { SubscribeForm } from "./SubscribeForm";
+import { corporateSeason } from "@/lib/events";
 
 export function Footer() {
   const recipients = giftPagesByGroup("recipient").filter((g) => !g.slug.includes("-gifts-for-")).slice(0, 10);
   const occasions = giftPagesByGroup("occasion").slice(0, 10);
+  const { occasion } = corporateSeason();
   return (
     <footer className="bg-surface-2 border-t border-line mt-20">
       <div className="container-x py-12 grid grid-cols-2 md:grid-cols-5 gap-8 text-sm">
@@ -38,7 +40,7 @@ export function Footer() {
         </div>
         <div>
           <div className="font-semibold mb-3">Help</div>
-          {[["/about", "About Shivam Printers"], ["/about#promise", "Our promise"], ["/help", "Help desk"], ["/returns", "Returns & refunds"], ["/bulk-orders", "Bulk & corporate orders"], ["/corporate-gifting", "Corporate Diwali gifts"], ["/refer", "Refer a friend"], ["/blog", "Ideas & inspiration"], ["/careers", "Careers"]].map(([h, t]) => (
+          {[["/about", "About Shivam Printers"], ["/about#promise", "Our promise"], ["/help", "Help desk"], ["/returns", "Returns & refunds"], ["/bulk-orders", "Bulk & corporate orders"], ["/corporate-gifting", occasion ? `Corporate ${occasion} gifts` : "Corporate gifting"], ["/refer", "Refer a friend"], ["/blog", "Ideas & inspiration"], ["/careers", "Careers"]].map(([h, t]) => (
             <Link key={h} href={h} className="block py-1 text-ink-2 hover:text-brand">{t}</Link>
           ))}
         </div>

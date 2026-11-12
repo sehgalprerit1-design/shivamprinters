@@ -111,3 +111,30 @@ export function countdownLine(l: LiveEvent): string | null {
 
 /** Inside the last 10 days, nudge the customer to confirm delivery with the shop instead of promising a cut-off we can't guarantee. */
 export const needsDeliveryCheck = (l: LiveEvent) => l.daysLeft !== undefined && l.daysLeft <= 10;
+
+/** Copy for /corporate-gifting and the links that point at it, taken from the same corporate event
+ *  the homepage card shows, so the two never disagree. Falls back to evergreen wording when no
+ *  corporate event is open (roughly January to early September). */
+export type CorporateSeason = {
+  /** "Diwali", "New Year" — null outside a corporate season. */
+  occasion: string | null;
+  label: string;
+  headline: string;
+  sub: string;
+  countdown: string | null;
+  /** Year the diaries and calendars are for. */
+  year: number;
+};
+
+export function corporateSeason(today = todayIST()): CorporateSeason {
+  const year = Number(today.slice(0, 4)) + (Number(today.slice(5, 7)) >= 10 ? 1 : 0);
+  const live = liveFor("corporate", today)[0];
+  if (!live) {
+    return {
+      occasion: null, label: "Corporate gifting", headline: "Corporate gifts your team will actually use",
+      sub: `Logo-embossed diaries, gift sets and ${year} calendars. Free proof, GST invoice, bulk delivery.`, countdown: null, year,
+    };
+  }
+  const e = live.event;
+  return { occasion: e.dayName ?? e.name, label: e.name, headline: e.headline, sub: e.sub, countdown: countdownLine(live), year };
+}
