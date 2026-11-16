@@ -60,6 +60,9 @@ const mug = products.find((p) => p.slug === "coffee-mug-white")!;
   // group landing pages + grouped breadcrumbs
   const photo = await (await fetch(`${BASE}/c/photo`)).text(); ok(photo.includes("Photobooks") && photo.includes("Framed Prints") && photo.includes("Photo Prints"), "/c/photo lists its three sub-categories");
   const biz = await (await fetch(`${BASE}/c/business-printing`)).text(); ok(biz.includes("Bags &amp; Stationery") && biz.includes("Custom printing"), "/c/business-printing includes Bags & Stationery");
+  const wed = await (await fetch(`${BASE}/c/wedding`)).text(); ok(wed.includes("Wedding Cards &amp; Invites") && wed.includes("Venue &amp; Day-of Stationery") && wed.includes("Shagun, Favours &amp; Thank-you") && wed.includes("Everything we print for a wedding"), "/c/wedding lists its three sub-categories and the print checklist");
+  const wedInv = await (await fetch(`${BASE}/c/wedding-invitations`)).text(); ok(/Breadcrumb[\s\S]*href="\/c\/wedding"/.test(wedInv), "/c/wedding-invitations breadcrumb goes through Wedding");
+  const home = await (await fetch(`${BASE}/`)).text(); ok(/<a[^>]*(bg-rose-600[^>]*href="\/c\/wedding"|href="\/c\/wedding"[^>]*bg-rose-600)/.test(home) && home.includes("Shop wedding printing"), "home: highlighted Wedding button in the nav and the wedding band");
   const bags = await (await fetch(`${BASE}/c/bags-stationery`)).text(); ok(/Breadcrumb[\s\S]*Business Printing[\s\S]*Bags &amp; Stationery/.test(bags), "/c/bags-stationery breadcrumb goes through Business Printing");
   const pb = await (await fetch(`${BASE}/c/photobooks`)).text(); ok(/Breadcrumb[\s\S]*href="\/c\/photo"/.test(pb), "/c/photobooks breadcrumb goes through Photo");
 

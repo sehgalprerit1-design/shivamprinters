@@ -44,6 +44,9 @@ Deploy target: Vercel or any Node host. Set `NEXT_PUBLIC_SITE_URL`, `DATABASE_UR
 
 ```
 src/data/catalog.ts      9 categories, 90 products, 120+ variants, tags  (seed source)
+src/data/wedding-prices.ts  Wedding section prices: competitor price lists + "Rs 1 under" rule (variants and configurator rows)
+src/data/wedding-images.json  Wedding category/product photos (Higgsfield CDN URLs; swap any of them in /admin/images)
+src/data/nav.ts          Header groups (Photo, Wedding, Business Printing), wedding checklist for /c/wedding
 src/data/gifts.ts        111 gift landing pages (occasion/recipient/festival/collection)
 src/data/blog.ts         Blog posts (migrate the rest from the old CMS)
 src/lib/redirects.ts     Every old shivamprinters.com URL → new URL (301), wired into next.config.ts

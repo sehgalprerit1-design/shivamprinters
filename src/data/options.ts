@@ -110,7 +110,17 @@ const BAG_MATERIAL: OptionGroup = { id: "bag-material", key: "material", label: 
 const BAG_HANDLE: OptionGroup = { id: "bag-handle", key: "handle", label: "Handles", choices: [{ id: "twisted", label: "Twisted paper" }, { id: "ribbon", label: "Satin ribbon", delta: 125 }, { id: "rope", label: "Cotton rope", delta: 200 }] };
 const BAG_PRINT: OptionGroup = { id: "bag-print", key: "sides", label: "Printing", choices: [{ id: "one", label: "Logo on one side" }, { id: "two", label: "Both sides", delta: 150 }, { id: "full", label: "Full-colour photo print", delta: 400 }] };
 
+// Wedding: choices that don't change the price (the pack price is the variant).
+const WED_FINISH: OptionGroup = { id: "wed-finish", key: "finish", label: "Paper", choices: [{ id: "matte", label: "Premium matte 350 gsm" }, { id: "glossy", label: "Premium glossy 350 gsm" }] };
+const WED_LANGUAGE: OptionGroup = { id: "wed-language", key: "language", label: "Card language", choices: [{ id: "english", label: "English" }, { id: "hindi", label: "Hindi" }, { id: "punjabi", label: "Punjabi" }, { id: "urdu", label: "Urdu" }, { id: "two", label: "Two languages", hint: "Tell us which two in the notes" }] };
+const WED_TABLE_CARD: OptionGroup = { id: "wed-table-card", key: "type", label: "Card type", choices: [{ id: "numbers", label: "Table numbers" }, { id: "names", label: "Place cards with guest names" }, { id: "counters", label: "Food counter labels" }] };
+const WED_SEAL_FINISH: OptionGroup = { id: "wed-seal-finish", key: "finish", label: "Finish", choices: [{ id: "glossy", label: "Glossy" }, { id: "matte", label: "Matte" }] };
+
 function baseOptionsFor(slug: string, category: string): OptionGroup[] {
+  if (slug === "gold-foil-wedding-cards" || slug === "wedding-card-packages" || slug === "digital-wedding-invite") return [WED_LANGUAGE];
+  if (slug === "wedding-thank-you-cards" || slug === "wedding-gift-tags") return [WED_FINISH];
+  if (slug === "table-numbers-place-cards") return [WED_TABLE_CARD];
+  if (slug === "wedding-envelope-seals") return [WED_SEAL_FINISH];
   if (slug === "business-cards") return [CARD_PAPER, CARD_FINISH, CARD_CORNERS];
   if (slug === "custom-stickers") return [STICKER_SHAPE, STICKER_MATERIAL, STICKER_FINISH];
   if (slug === "brochures-flyers") return [FLYER_PAPER, FLYER_FINISH, FLYER_SIDES];
@@ -159,7 +169,7 @@ export function optionsFor(slug: string, category: string): OptionGroup[] {
   return defaultOptionsFor(slug, category);
 }
 /** Every option group in the catalog (for the pricing sheet). */
-export const ALL_OPTION_GROUPS: OptionGroup[] = [FINISH_PRINT, FINISH_FRAME, FRAME_COLOUR, FRAME_COLOUR_FUN, PAPER_BOOK, COVER_BOOK, ORIENTATION, CANVAS_EDGE, ACRYLIC_THICK, MUG_HANDLE, CUSHION_BACK, CAL_START, BOTTLE_COLOUR, THEME_KIDS, BORDER, DIARY_COLOUR, EMBOSS, PAPER_DIARY, PLANNER_LAYOUT, PEN_FINISH, LOGO_METHOD, INSIDE_PAGE, CARD_PAPER, CARD_FINISH, CARD_CORNERS, STICKER_SHAPE, STICKER_MATERIAL, STICKER_FINISH, FLYER_PAPER, FLYER_FINISH, FLYER_SIDES, POSTCARD_PAPER, POSTCARD_BACK, BANNER_MATERIAL, BANNER_FINISH, ID_MATERIAL, ID_SIDES, ID_LANYARD, ID_HOLDER, BAG_MATERIAL, BAG_HANDLE, BAG_PRINT];
+export const ALL_OPTION_GROUPS: OptionGroup[] = [FINISH_PRINT, FINISH_FRAME, FRAME_COLOUR, FRAME_COLOUR_FUN, PAPER_BOOK, COVER_BOOK, ORIENTATION, CANVAS_EDGE, ACRYLIC_THICK, MUG_HANDLE, CUSHION_BACK, CAL_START, BOTTLE_COLOUR, THEME_KIDS, BORDER, DIARY_COLOUR, EMBOSS, PAPER_DIARY, PLANNER_LAYOUT, PEN_FINISH, LOGO_METHOD, INSIDE_PAGE, CARD_PAPER, CARD_FINISH, CARD_CORNERS, STICKER_SHAPE, STICKER_MATERIAL, STICKER_FINISH, FLYER_PAPER, FLYER_FINISH, FLYER_SIDES, POSTCARD_PAPER, POSTCARD_BACK, BANNER_MATERIAL, BANNER_FINISH, ID_MATERIAL, ID_SIDES, ID_LANYARD, ID_HOLDER, BAG_MATERIAL, BAG_HANDLE, BAG_PRINT, WED_FINISH, WED_LANGUAGE, WED_TABLE_CARD, WED_SEAL_FINISH];
 
 export function optionDelta(groups: OptionGroup[], selected: Record<string, string>) {
   return groups.reduce((a, g) => a + (g.choices.find((c) => c.id === selected[g.key])?.delta ?? 0), 0);

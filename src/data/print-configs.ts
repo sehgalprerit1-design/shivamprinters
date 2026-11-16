@@ -14,9 +14,13 @@
 //    (e.g. A5 tri-fold) can never be picked. A field a row doesn't use is hidden.
 //  - `extras` are dropdowns that don't change the price (orientation, eyelets).
 //  - Quantity is a dropdown of the matching row's tiers.
+//
+// The wedding products at the bottom of PRINT_CONFIGS are the exception to the pricing rule:
+// their rows come from wedding-prices.ts, already priced Rs 1 under the competitor (no PRICE_FACTOR).
 
 import data from "./print-configs.data.json";
 import cardArt from "../../public/images/cards/index.json";
+import { WEDDING_CONFIG_ROWS } from "./wedding-prices";
 
 export type Tier = [qty: number, total: number];
 export type ConfigRow = { sel: Record<string, string>; tiers: Tier[] };
@@ -148,6 +152,65 @@ export const PRINT_CONFIGS: Record<string, PrintConfig> = {
     printSize: (s) => s.size,
     orient: (s) => (s.type === "Roll-up standee" ? "portrait" : undefined),
     note: "Need a size that isn't listed? Message us on WhatsApp for a custom-size banner quote.",
+  },
+  // ---------- Wedding (rows and prices: wedding-prices.ts) ----------
+  "wedding-invitation-cards": {
+    fields: [
+      { key: "style", label: "Card style", hint: { "Flat card": "Single card printed on both sides.", "Folded card": "Folds like a greeting card: cover, inside spread and back. 5 × 7 in only." } },
+      { key: "size", label: "Size" },
+    ],
+    extras: [{ key: "paper", label: "Paper", choices: ["Premium matte 350 gsm", "Premium glossy 350 gsm"] }, { key: "orientation", label: "Orientation", choices: ["Vertical", "Horizontal"] }],
+    rows: WEDDING_CONFIG_ROWS["wedding-invitation-cards"],
+    unit: "cards",
+    printSize: (s) => (s.size === '6 x 9"' ? "6 x 9 in" : "5 x 7 in"),
+    orient: (s) => (s.orientation === "Horizontal" ? "landscape" : "portrait"),
+    note: "Prices include GST. Matching envelopes, function cards and seals are sold separately. Need a language other than English? Add it in the notes and our designer sets it.",
+  },
+  "wedding-function-cards": {
+    fields: [{ key: "size", label: "Size" }],
+    extras: [
+      { key: "function", label: "Function", choices: ["Haldi", "Mehndi", "Sangeet", "Cocktail", "Reception", "Roka / Sagai (engagement)", "Tilak", "Chooda / Jaago", "Mayra / Bhaat", "Griha Pravesh", "RSVP card", "Itinerary / schedule", "Other (tell us)"] },
+      { key: "paper", label: "Paper", choices: ["Premium matte 350 gsm", "Premium glossy 350 gsm"] },
+    ],
+    rows: WEDDING_CONFIG_ROWS["wedding-function-cards"],
+    unit: "cards",
+    printSize: (s) => (s.size.startsWith("7.2") ? "182 x 117 mm" : "139 x 107 mm"),
+    note: "One function per order line: add the product again for each function so every card gets its own quantity.",
+  },
+  "save-the-date-cards": {
+    fields: [{ key: "size", label: "Size" }],
+    extras: [{ key: "paper", label: "Paper", choices: ["Premium matte 350 gsm", "Premium glossy 350 gsm"] }],
+    rows: WEDDING_CONFIG_ROWS["save-the-date-cards"],
+    unit: "cards",
+    printSize: (s) => (s.size.startsWith("7.2") ? "182 x 117 mm" : "139 x 107 mm"),
+  },
+  "wedding-card-envelopes": {
+    fields: [{ key: "size", label: "Envelope size", hint: { "14.6 x 11 cm": "Fits A6 function, save-the-date and thank-you cards.", "19 x 12 cm": "Fits 5 × 7 in invitations and the larger function cards.", "22 x 11 cm (DL)": "Long envelope; also used for shagun.", "22.9 x 16.2 cm (C5)": "Fits 6 × 9 in invitations." } }],
+    rows: WEDDING_CONFIG_ROWS["wedding-card-envelopes"],
+    unit: "envelopes",
+    printSize: (s) => ({ "14.6 x 11 cm": "146 x 110 mm", "19 x 12 cm": "190 x 120 mm", "22 x 11 cm (DL)": "220 x 110 mm", "22.9 x 16.2 cm (C5)": "229 x 162 mm" }[s.size] ?? "190 x 120 mm"),
+  },
+  "wedding-welcome-boards": {
+    fields: [{ key: "size", label: "Board size" }],
+    extras: [
+      { key: "sign", label: "Sign type", choices: ["Welcome board", "Seating chart", "Direction sign", "Bride's side / Groom's side", "Hashtag / Instagram sign", "Bar or counter sign", "Mandap ritual guide", "Other (tell us)"] },
+      { key: "orientation", label: "Orientation", choices: ["Vertical", "Horizontal"] },
+    ],
+    rows: WEDDING_CONFIG_ROWS["wedding-welcome-boards"],
+    unit: "boards",
+    printSize: (s) => (s.size.startsWith("A2") ? "420 x 594 mm" : s.size.replace('"', " in")),
+    orient: (s) => (s.orientation === "Horizontal" ? "landscape" : "portrait"),
+    note: "Printed on rigid 5 mm foam board. Need a taller board or a flex welcome standee? See Banners & Standees, or message us on WhatsApp.",
+  },
+  "wedding-menu-cards": {
+    fields: [{ key: "size", label: "Size" }],
+    extras: [
+      { key: "card", label: "Card type", choices: ["Menu card", "Ceremony programme", "Mandap & phere guide", "Welcome letter", "Itinerary"] },
+      { key: "paper", label: "Paper", choices: ["Premium matte 350 gsm", "Premium glossy 350 gsm"] },
+    ],
+    rows: WEDDING_CONFIG_ROWS["wedding-menu-cards"],
+    unit: "cards",
+    printSize: (s) => (s.size === '6 x 9"' ? "6 x 9 in" : "5 x 7 in"),
   },
 };
 

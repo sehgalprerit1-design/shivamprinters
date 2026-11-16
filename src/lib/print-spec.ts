@@ -43,7 +43,10 @@ const FIXED: Record<string, [number, number]> = {
   "pet-tags": [32, 32], "name-keychain": [40, 40], "designer-keytag": [40, 40], "mobile-skin": [75, 160], "laptop-skin": [330, 220],
   "tote-bag": [270, 300], pouch: [210, 130], "pocket-notebook": [91, 130], "photo-magnets": [64, 64], "bag-tag": [90, 60],
   "wall-calendar-portrait": [300, 400], "wall-calendar-landscape": [400, 300], "five-year-diary": [150, 200], "combo-gift-set": [200, 154],
-  "custom-corporate-printing": [148, 210], "storybook": [140, 140], "childrens-wall-clock": [254, 254], "designer-wall-clock": [305, 305],
+  "custom-corporate-printing": [148, 210],
+  // Wedding
+  "gold-foil-wedding-cards": [127, 178], "wedding-card-packages": [127, 178], "digital-wedding-invite": [108, 192], "wedding-envelope-seals": [38, 38],
+  "table-numbers-place-cards": [140, 100], "photo-booth-props": [127, 127], "shagun-envelopes": [220, 110], "wedding-gift-tags": [50, 90], "wedding-thank-you-cards": [139, 107], "storybook": [140, 140], "childrens-wall-clock": [254, 254], "designer-wall-clock": [305, 305],
 };
 const MUG: [number, number] = [228, 95];
 
@@ -94,6 +97,9 @@ export function printSpec(product: Product, variant: Variant, opts: Record<strin
 
 const fmt = (n: number) => (Number.isInteger(n) ? String(n) : n.toFixed(1));
 
+/** Wedding cards printed on both sides: the editor offers a front and a back. */
+const WEDDING_TWO_SIDED = new Set(["wedding-invitation-cards", "gold-foil-wedding-cards", "wedding-function-cards", "save-the-date-cards", "wedding-card-packages", "wedding-menu-cards", "wedding-thank-you-cards", "wedding-gift-tags"]);
+
 function facesFor(product: Product, variant: Variant, opts: Record<string, string>): Face[] {
   const t = product.template, slug = product.slug;
   const one = (role: Face["role"] = "single", label = "Design", slots = t.photoSlots): Face[] => [{ id: "f1", label, slots, role }];
@@ -101,6 +107,7 @@ function facesFor(product: Product, variant: Variant, opts: Record<string, strin
     { id: "front", label: a, slots: t.photoSlots ? 1 : 0, role: "front" }, { id: "back", label: b, slots: backSlots, role: backRole }];
 
   if (slug === "business-cards") return two("Front", "Back");
+  if (WEDDING_TWO_SIDED.has(slug)) return two("Front", "Back");
   if (slug === "photo-postcards") return two("Front", "Back", opts.back === "postcard" || !opts.back ? "postcard-back" : "back");
   if (slug === "event-id-cards") return opts.sides === "double" ? two("Front", "Back") : one("front", "Front", 1);
   if (slug === "brochures") return two("Outside", "Inside", "back", 1);
@@ -136,7 +143,7 @@ export function printedFields(product: Product) {
 /** Products where customers can upload a finished, print-ready design instead of using the editor. */
 export function allowsOwnDesign(product: Product) {
   if (product.personalisation === "none" || product.category === "diaries-planners" || product.slug === "book-designing-service") return false;
-  return product.template.photoSlots > 0 || product.category === "business-printing";
+  return product.template.photoSlots > 0 || product.category === "business-printing" || product.category.startsWith("wedding-");
 }
 
 /** File requirements shown to customers uploading their own design. */
