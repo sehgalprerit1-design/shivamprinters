@@ -3,7 +3,10 @@ import { categories, products, productsByTag } from "@/data/catalog";
 import { giftPagesByGroup } from "@/data/gifts";
 import { Hero } from "@/components/home/Hero";
 import { liveEvents } from "@/lib/events";
-import { siteImage } from "@/data/site-images";
+import { siteImage, WEDDING_HERO } from "@/data/site-images";
+import { getGroup } from "@/data/nav";
+import { minPrice, getProduct } from "@/data/catalog";
+import { inr } from "@/lib/format";
 import { ProductGrid } from "@/components/product/ProductGrid";
 import { Section } from "@/components/ui/Section";
 import { Upload, Palette, Truck, ShieldCheck } from "lucide-react";
@@ -32,6 +35,7 @@ export default async function Home() {
   ].filter((g, i, a) => a.indexOf(g) === i);
   const occasionTiles = [...seasonal, ...giftPagesByGroup("occasion").filter((g) => ["birthday-gifts", "anniversary-gifts", "wedding-gifts", "corporate-gifts"].includes(g.slug))].slice(0, 4);
   const under499 = productsByTag(["under-499"], 8);
+  const wedding = getGroup("wedding"); const weddingCard = getProduct("wedding-invitation-cards");
   const steps = [
     { Icon: Upload, t: "Upload", d: "Straight from your phone or computer. Any size, we handle the rest." },
     { Icon: Palette, t: "Personalise", d: "Pick a layout, drop in photos, add names and captions. Preview before you pay." },
@@ -58,6 +62,24 @@ export default async function Home() {
           ))}
         </div>
       </Section>
+
+      {wedding && (
+        <section className="container-x mt-10 md:mt-14">
+          <div className="rounded-3xl overflow-hidden grid md:grid-cols-2 bg-rose-900 text-white">
+            <div className="p-8 md:p-12 flex flex-col justify-center order-2 md:order-1">
+              <div className="chip bg-white/10 text-white self-start">New · Wedding printing</div>
+              <h2 className="text-3xl md:text-4xl font-bold mt-3 leading-tight">Shaadi cards to shagun envelopes, printed in a day</h2>
+              <p className="text-white/80 mt-3">Invitation cards{weddingCard ? <> from {inr(minPrice(weddingCard))} for 10</> : null}, a card for every function, welcome boards, menus, table cards, lifafe and thank-you cards. Same-day printing in Delhi NCR.</p>
+              <div className="flex flex-wrap gap-2 mt-5 text-sm">
+                {wedding.categories.map((c) => <Link key={c.slug} href={`/c/${c.slug}`} className="rounded-full bg-white/10 hover:bg-white/20 px-3 py-1.5">{c.name}</Link>)}
+              </div>
+              <Link href="/c/wedding" className="btn bg-white text-rose-900 hover:bg-white/90 mt-6 self-start font-semibold">Shop wedding printing →</Link>
+            </div>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={siteImage("wedding.hero", WEDDING_HERO)} alt="Indian wedding invitation cards, function cards and shagun envelopes" className="w-full h-56 md:h-full object-cover order-1 md:order-2" loading="lazy" />
+          </div>
+        </section>
+      )}
 
       <Section title="Customer favourites" subtitle="The products that get reordered most." href="/products">
         <ProductGrid products={featured} />

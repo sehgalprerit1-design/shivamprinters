@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
 import { Menu, X } from "lucide-react";
-import type { NavItem } from "@/data/nav";
+import { HIGHLIGHT_TONE, type NavItem } from "@/data/nav";
 import type { GiftPage } from "@/data/gifts";
 import { SearchBox } from "./SearchBox";
 
@@ -45,11 +45,11 @@ export function MobileNav({ items, occasions, recipients }: { items: NavItem[]; 
             ))}
             {highlighted.map((it) => (
               <div key={it.group.slug} className="mt-3">
-                <Link href={`/c/${it.group.slug}`} onClick={close} className="inline-flex items-center rounded-full bg-amber-300 text-ink px-4 py-2 font-semibold">{it.group.name}</Link>
+                <Link href={`/c/${it.group.slug}`} onClick={close} className={`inline-flex items-center rounded-full px-4 py-2 font-semibold ${HIGHLIGHT_TONE[it.group.tone ?? "amber"]}`}>{it.group.name}</Link>
                 {it.group.categories.filter((c) => c.slug !== it.group.slug).map((c) => (
                   <Link key={c.slug} href={`/c/${c.slug}`} onClick={close} className="block py-1.5 pl-4 mt-1 text-ink-2 text-sm">{c.name}</Link>
                 ))}
-                <Link href="/custom-printing" onClick={close} className="block py-1.5 pl-4 text-ink-2 text-sm">Custom printing — get a quote</Link>
+                {it.group.quote && <Link href={it.group.quote.href} onClick={close} className="block py-1.5 pl-4 text-ink-2 text-sm">{it.group.quote.label}</Link>}
               </div>
             ))}
             <div className="mt-5 text-xs font-semibold uppercase tracking-wide text-ink-3">Gifts by occasion</div>

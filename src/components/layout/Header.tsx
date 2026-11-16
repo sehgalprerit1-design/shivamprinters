@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { productsInCategory, type Category } from "@/data/catalog";
-import { navItems, type NavGroup } from "@/data/nav";
+import { navItems, HIGHLIGHT_TONE, type NavGroup } from "@/data/nav";
 import { giftPagesByGroup, giftPages } from "@/data/gifts";
 import { liveFor, countdownLine } from "@/lib/events";
 import { CartButton } from "@/components/cart/CartButton";
@@ -46,7 +46,7 @@ function CategoryMega({ c }: { c: Category }) {
   );
 }
 
-/** Mega menu for a group (Photo, Business Printing): one column per sub-category + the group card. */
+/** Mega menu for a group (Photo, Wedding, Business Printing): one column per sub-category + the group card. */
 function GroupMega({ g }: { g: NavGroup }) {
   const cols = g.categories.length;
   const per = cols >= 3 ? 10 : 12;
@@ -60,7 +60,7 @@ function GroupMega({ g }: { g: NavGroup }) {
               <Link key={p.slug} href={`/p/${p.slug}`} className="block py-1.5 text-ink-2 hover:text-brand">{p.name}</Link>
             ))}
             <Link href={`/c/${c.slug}`} className="block py-1.5 font-semibold text-brand">All {c.name} →</Link>
-            {c.slug === "business-printing" && <Link href="/custom-printing" className="block py-1.5 font-semibold text-ink">Custom printing — get a quote</Link>}
+            {g.quote && c.slug === g.categories[0].slug && <Link href={g.quote.href} className="block py-1.5 font-semibold text-ink">{g.quote.label}</Link>}
           </div>
         ))}
         <PromoCard href={`/c/${g.slug}`} image={g.image} title={g.name} tagline={g.tagline} />
@@ -136,9 +136,9 @@ export function Header({ promo }: { promo?: CouponPublic | null }) {
               </div>
             </div>
           </li>
-          {navItems.filter((it) => it.kind === "group" && it.group.highlight).map((it) => it.kind === "group" && (
-            <li key={it.group.slug} className="nav-item static ml-auto">
-              <Link href={`/c/${it.group.slug}`} className="my-1.5 inline-flex items-center whitespace-nowrap rounded-full bg-amber-300 text-ink px-3.5 py-1.5 font-semibold hover:bg-amber-400 shadow-sm">{it.group.name}</Link>
+          {navItems.filter((it) => it.kind === "group" && it.group.highlight).map((it, i) => it.kind === "group" && (
+            <li key={it.group.slug} className={`nav-item static ${i === 0 ? "ml-auto" : "-ml-1 xl:-ml-2"}`}>
+              <Link href={`/c/${it.group.slug}`} className={`my-1.5 inline-flex items-center whitespace-nowrap rounded-full px-3.5 py-1.5 font-semibold shadow-sm ${HIGHLIGHT_TONE[it.group.tone ?? "amber"]}`}>{it.group.name}</Link>
               <GroupMega g={it.group} />
             </li>
           ))}

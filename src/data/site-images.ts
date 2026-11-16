@@ -2,6 +2,10 @@
 // banners, the corporate page photo. Admin replaces them in /admin/images; the choices are
 // saved to src/data/site-image-overrides.json and committed to GitHub like the catalogue overrides.
 import overrides from "./site-image-overrides.json";
+import weddingImages from "./wedding-images.json";
+
+/** Header photo the code ships for /c/wedding (admin can replace it in /admin/images, slot "wedding.hero"). */
+export const WEDDING_HERO: string = (weddingImages as Record<string, string>)["hero"] ?? "/images/wedding.jpg";
 
 const OV: Record<string, string> = (() => { const o = overrides as Record<string, unknown>; const out: Record<string, string> = {}; for (const [k, v] of Object.entries(o)) if (typeof v === "string" && v.trim()) out[k] = v.trim(); return out; })();
 
@@ -15,5 +19,6 @@ export type ImageSlot = { key: string; label: string; group: string; usedOn: str
 export const FIXED_SLOTS: ImageSlot[] = [
   { key: "home.hero", label: "Homepage hero", group: "Homepage", usedOn: "/", size: "1800×1000 or wider, landscape", fallback: "/images/hero.jpg" },
   { key: "home.kids-banner", label: "Kids range banner", group: "Homepage", usedOn: "/ (lower down)", size: "1400×1000, landscape", fallback: "/images/cat-kids.jpg" },
+  { key: "wedding.hero", label: "Wedding section header photo", group: "Wedding", usedOn: "/c/wedding, the Wedding menu and the homepage wedding band", size: "1400×1000, landscape", fallback: WEDDING_HERO },
   { key: "corporate.hero", label: "Corporate gifting header photo", group: "Corporate gifting", usedOn: "/corporate-gifting", size: "1800×1000, landscape", fallback: "/images/corporate-diwali.jpg" },
 ];

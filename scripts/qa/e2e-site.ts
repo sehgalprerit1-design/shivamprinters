@@ -45,6 +45,10 @@ async function overflow(page: Page, label: string) {
   await page.locator("nav a[href='/c/business-printing']").first().hover(); await page.waitForTimeout(400);
   check(await page.locator("a[href='/custom-printing']:visible").count() > 0, "mega menu: custom printing link visible on hover");
 
+  await page.mouse.move(0, 0); await page.waitForTimeout(200);
+  await page.locator("nav a[href='/c/wedding']").first().hover(); await page.waitForTimeout(400);
+  check(await page.locator("nav a[href='/p/wedding-invitation-cards']:visible").count() > 0 && await page.locator("nav a[href='/c/wedding-gifting']:visible").count() > 0, "mega menu: wedding products and sub-categories visible on hover");
+
   // cart → coupon → checkout COD
   await page.goto(`${BASE}/design/coffee-mug-white?v=GF-MUG-W&qty=1`, { waitUntil: "networkidle" });
   await page.locator("input[type=file]").first().setInputFiles(IMG); await page.waitForTimeout(800);
@@ -99,7 +103,7 @@ async function overflow(page: Page, label: string) {
   await ctx.close();
   ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 2 }); page = await ctx.newPage();
   page.on("pageerror", (e) => errs.push("pageerror(m) " + page.url() + ": " + e.message.slice(0, 150)));
-  for (const r of ["/", "/c/business-printing", "/p/hardcover-photobook", "/p/business-cards", "/design/business-cards", "/design/hardcover-photobook", "/gifts", "/gifts/birthday-gifts", "/cart", "/checkout", "/custom-printing", "/blog", "/help"]) {
+  for (const r of ["/", "/c/business-printing", "/c/wedding", "/p/wedding-invitation-cards", "/p/shagun-envelopes", "/design/wedding-invitation-cards", "/p/hardcover-photobook", "/p/business-cards", "/design/business-cards", "/design/hardcover-photobook", "/gifts", "/gifts/birthday-gifts", "/cart", "/checkout", "/custom-printing", "/blog", "/help"]) {
     await page.goto(BASE + r, { waitUntil: "networkidle" }); await overflow(page, "mobile " + r);
     await page.screenshot({ path: `${SHOTS}/m${r.replace(/[\/?=]/g, "_") || "_home"}.png`, fullPage: r === "/" || r.startsWith("/p/") || r.startsWith("/design") });
   }
@@ -107,6 +111,7 @@ async function overflow(page: Page, label: string) {
   await page.goto(`${BASE}/`, { waitUntil: "networkidle" });
   const menuBtn = page.locator("header button").first(); await menuBtn.click(); await page.waitForTimeout(400);
   check(await page.locator("a[href='/c/business-printing']:visible").count() > 0, "mobile nav: categories visible after opening menu");
+  check(await page.locator("a[href='/c/wedding']:visible").count() > 0 && await page.locator("a[href='/c/wedding-venue']:visible").count() > 0, "mobile nav: Wedding button and its sub-categories visible");
   await page.screenshot({ path: `${SHOTS}/m_nav_open.png` });
   // mobile search present?
   info.push("mobile header has search input: " + ((await page.locator("header input:visible").count()) > 0 ? "yes" : "NO"));
