@@ -142,6 +142,11 @@
       ]
     },
     "poster-calendar": {
+      "images": [
+        "/api/img?key=uploads%2F2026-11-16%2F5bab962a-13cc-438d-8b43-6cd09749c1a9-imagegj.png",
+        "/api/img?key=uploads%2F2026-11-16%2Fe6229bf2-9906-4813-94e0-63a0043e8fc1-imagegn.png",
+        "/api/img?key=uploads%2F2026-11-16%2F0f401c2c-5821-4ea8-a991-15c08d39061a-imagesj.png"
+      ],
       "variants": [
         {
           "sku": "CAL-POS-1218",
