@@ -34,13 +34,12 @@
         "/api/img?key=uploads%2F2026-10-26%2F32e6dfbe-a50b-4064-9c9f-b4a21bc157f9-Photo_Dining_table_set_of_8.png",
         "/api/img?key=uploads%2F2026-10-26%2Fe571da53-5c8e-4ae3-ac9a-eaf5beeab26f-office_certificate.png"
       ],
-      "hidden": true,
       "variants": [
         {
           "sku": "PT-57-1",
           "name": "5x7\" tile",
-          "price": 235,
-          "compareAt": 295
+          "price": 299,
+          "compareAt": 395
         },
         {
           "sku": "PT-88-1",
@@ -212,6 +211,33 @@
       "images": [
         "/images/p/banners-standees-2.jpg"
       ]
+    },
+    "gold-foil-wedding-cards": {
+      "variantLabel": "Quantity"
+    },
+    "wedding-card-packages": {
+      "variantLabel": "Package"
+    },
+    "digital-wedding-invite": {
+      "variantLabel": "Pages"
+    },
+    "wedding-envelope-seals": {
+      "variantLabel": "Quantity"
+    },
+    "table-numbers-place-cards": {
+      "variantLabel": "Quantity"
+    },
+    "photo-booth-props": {
+      "variantLabel": "Quantity"
+    },
+    "shagun-envelopes": {
+      "variantLabel": "Quantity"
+    },
+    "wedding-gift-tags": {
+      "variantLabel": "Quantity"
+    },
+    "wedding-thank-you-cards": {
+      "variantLabel": "Quantity"
     },
     "acrylic-print": {
       "images": [
